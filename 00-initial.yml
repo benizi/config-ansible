@@ -1,0 +1,38 @@
+---
+- name: Sudo
+  hosts: initial
+  tasks:
+    - name: Install sudo
+      pacman: name=sudo
+
+    - name: Passwordless sudo for wheel
+      lineinfile: "dest=/etc/sudoers.d/10_wheel
+        create=yes
+        line='%wheel ALL=(ALL) NOPASSWD: ALL'"
+
+- name: Set up initial user
+  hosts: initial
+  vars_prompt:
+   - name: user_password
+     prompt: initial user password
+     private: yes
+     confirm: yes
+     encrypt: sha512_crypt
+
+   - name: ssh_passphrase
+     prompt: SSH key passphrase (03)
+     private: yes
+     confirm: yes
+
+  tasks:
+    - name: My user
+      user: name=bhaskell
+        comment='Benjamin R. Haskell'
+        groups=wheel
+        password={{user_password}}
+        generate_ssh_key=yes
+        ssh_key_type=ed25519
+        ssh_key_bits=256
+        ssh_key_comment=bhaskell@{{ansible_hostname}}
+        ssh_key_file=.ssh/id_03_{{ansible_hostname}}
+        ssh_key_passphrase={{ssh_passphrase}}

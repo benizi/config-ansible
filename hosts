@@ -1,0 +1,11 @@
+[initial]
+# add host by IP here when initially configuring a new host
+
+[laptops]
+bhaskell-x240
+
+[vps]
+vps
+
+[arch:children]
+laptops

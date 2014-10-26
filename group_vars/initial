@@ -1,0 +1,3 @@
+---
+# passwordless sudo hasn't been set up yet:
+ansible_ssh_user: root

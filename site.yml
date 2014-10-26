@@ -1,0 +1,268 @@
+---
+- name: Arch packaging
+  hosts: arch
+  sudo: true
+  vars:
+    mirrorlist: /etc/pacman.d/mirrorlist
+    repos: [testing, core, extra, community, multilib]
+
+  tasks:
+    - name: Disable all repos (no includes)
+      lineinfile: dest=/etc/pacman.conf
+        state=absent
+        regexp='^Include\s*=\s*{{mirrorlist}}\s*$'
+      notify: Update packages
+
+    - name: Disable all repos (no sections)
+      lineinfile: dest=/etc/pacman.conf
+        line='#[{{item}}]'
+        regexp='\[{{item}}\]'
+      with_items: repos
+      notify: Update packages
+
+    - name: Add include for chosen repos
+      lineinfile: dest=/etc/pacman.conf
+        line='Include = /etc/pacman.d/repo.*'
+      notify: Update packages
+
+    - name: Create files for each repo
+      copy: content='[{{item.1}}]\nInclude = {{mirrorlist}}\n'
+        dest=/etc/pacman.d/repo.{{item.0}}.{{item.1}}
+        owner=root
+        group=root
+        mode=0644
+      with_indexed_items: repos
+      notify: Update packages
+
+  handlers:
+    - name: Update packages
+      command: pacman -Syy
+
+- name: Prereqs
+  hosts: arch
+  sudo: true
+  tasks:
+    - name: Very basic prereqs
+      pacman: name={{item}}
+      with_items:
+        - git
+        - ntp
+        - polkit
+        - vim-minimal
+        - zsh
+
+    - name: X Server prereqs
+      pacman: name={{item}}
+      with_items:
+        - xorg-server
+        - xf86-video-intel
+        - xf86-input-evdev
+        - xf86-input-keyboard
+        - xf86-input-mouse
+        - xorg-xauth
+
+    - name: X-related idiosyncratic prereqs
+      pacman: name={{item}}
+      with_items:
+        - perl-ipc-run # for my keyboard wrapper
+        - xdotool
+        - xorg-twm # fallback window manager
+        - xorg-xinput
+        - xorg-xmodmap
+        - xorg-xprop
+        - xorg-xrandr
+
+- name: Set up NTP
+  hosts: all
+  sudo: true
+  tasks:
+    - name: Set up NTP
+      service: name=ntpd state=started enabled=yes
+      register: ntp
+
+    # next tasks set the clock initially
+    - name: Stop existing
+      service: name=ntpd state=stopped
+      when: ntp.changed
+
+    - name: Set clock initially
+      command: ntpdate -s time.nist.gov
+      when: ntp.changed
+
+    - name: Restart NTP after setting clock
+      service: name=ntpd state=started
+      when: ntp.changed
+
+- name: Initial .ssh/config
+  hosts: all
+  tasks:
+    - name: .ssh/config
+      copy: content="Host gh\nHostName github.com\nUser git\n"
+        dest=.ssh/config
+        force=no
+
+- name: Development
+  hosts: arch # TODO: others
+  sudo: true
+  tasks:
+    - name: Standard compiling prereqs
+      pacman: name={{item}}
+      with_items:
+        - autoconf
+        - gcc
+        - make
+        - pkg-config
+
+- name: Custom dmenu
+  hosts: arch
+  vars:
+    dmenu: git/dmenu
+
+  tasks:
+    - name: Custom dmenu source
+      git: repo='gh:benizi/dmenu'
+        dest={{dmenu}}
+
+    - name: Custom dmenu build
+      shell: make && make install
+        chdir={{dmenu}}
+        creates=/usr/local/bin/dmenu
+
+- name: XMonad
+  hosts: arch
+  tasks:
+    - name: XMonad prereqs
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - dzen2 # status bars
+        - ghc
+        - ruby # needed for scripts, will be overridden later
+        - xlockmore # screensaver
+        - xorg-xdm
+        - xorg-xmessage
+
+    - name: Cabal (Haskell package manager)
+      sudo: yes
+      pacman: name=cabal-install
+      notify: Set up cabal
+
+    - meta: flush_handlers
+
+    - name: Cabal packages
+      command: cabal install {{item}}
+      with_items:
+        - darcs
+        - FindBin
+        - xmonad
+        - xmonad-contrib
+
+    - name: Enable services
+      sudo: yes
+      service: name=xdm state=started enabled=yes
+
+  handlers:
+    - name: Set up cabal
+      command: cabal update
+
+- name: Dotfiles
+  hosts: laptops
+  tasks:
+    - name: Directories
+      file: state=directory dest=~bhaskell/{{item}}
+      with_items:
+        - bin.local
+        - .cache
+        - git
+        - .vim.local
+        - .zsh.local
+
+    - name: Clone latest dotfiles
+      git: repo=https://github.com/benizi/dotfiles dest=dotfiles update=yes
+
+    - name: Link dotfiles
+      file: state=link
+        src=dotfiles/{{item.src}}
+        dest={{item.dest | default(item.src)}}
+      with_items:
+        - { src: bin }
+        - { src: .urxvt }
+        - { src: .vim/vimrc, dest: .vimrc }
+        - { src: .Xdefaults }
+        - { src: .xmonad }
+        - { src: .xsession }
+        - { src: .zsh/.zshenv, dest: .zshenv }
+
+    - name: Root zsh
+      sudo: yes
+      file: state=link src=~bhaskell/.zshenv dest=~root/.zshenv
+
+    - name: Set up build for bin.local files
+      file: state=link src=../bin/{{item}} dest=bin.local/{{item}}
+      with_items:
+        - Makefile
+        - src
+
+    - name: Set shell
+      sudo: true
+      user: name=bhaskell shell=/bin/zsh
+
+- name: Personal directories
+  hosts: laptops
+  tasks:
+    - name: Own some 'system' directories
+      sudo: true
+      file: dest={{item}}
+        state=directory
+        owner=bhaskell
+        group=bhaskell
+        recurse=yes
+      with_items:
+        - /opt
+        - /usr/local
+
+- name: Acceptable terminal emulators
+  hosts: laptops
+  vars:
+    rxvt_git: git/rxvt-unicode
+    rxvt: /usr/local/bin/urxvt
+
+  tasks:
+    - name: Fallback (xterm and standard rxvt-unicode)
+      sudo: true
+      pacman: name={{item}}
+      with_items:
+        - rxvt-unicode
+        - xterm
+
+    - name: Preferred (custom rxvt-unicode) prereqs
+      sudo: true
+      pacman: name={{item}}
+      with_items:
+        - cvs # for external libs
+        - libev
+
+    - name: Preferred (custom rxvt-unicode) source
+      git: repo='gh:benizi/rxvt-unicode'
+        dest={{rxvt_git}}
+        version=24bit
+
+    - name: Preferred (custom rxvt-unicode) CVS libs
+      command: cvs -z3 -d :pserver:anonymous@cvs.schmorp.de/schmorpforge co {{item}}
+        chdir={{rxvt_git}}
+        creates={{item}}
+      with_items:
+        - libev
+        - libptytty
+
+    - name: Preferred (custom rxvt-unicode) build
+      shell: sh ./autogen.sh &&
+        autoreconf &&
+        ./configure --enable-24-bit-color --enable-xft --enable-perl --enable-256-color --disable-iso14755 &&
+        make -j{{ansible_processor_vcpus}} &&
+        make install
+        chdir={{rxvt_git}}
+        creates={{rxvt}}
+
+    - name: Preferred (custom rxvt-unicode) link
+      file: dest=bin.local/term state=link src={{rxvt}}
