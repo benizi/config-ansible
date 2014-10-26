@@ -1,4 +1,4 @@
-# benizi-ansible
+# config-ansible
 
 Initial attempt at Ansible playbooks for my local machines.  This is very
 idiosyncratic, and probably doesn't make sense for anyone else's setup:
