@@ -188,12 +188,19 @@
     - name: Clone latest dotfiles
       git: repo=https://github.com/benizi/dotfiles dest=dotfiles update=yes
 
+    # TODO: replace this with script within dotfiles repo
     - name: Link dotfiles
       file: state=link
         src=dotfiles/{{item.src}}
         dest={{item.dest | default(item.src)}}
       with_items:
         - { src: bin }
+        - { src: .emacs.d }
+        - { src: .gitattributes.global }
+        - { src: .gitconfig }
+        - { src: .gitignore.global }
+        - { src: .terminfo }
+        - { src: .tmux.conf }
         - { src: .urxvt }
         - { src: .vim/vimrc, dest: .vimrc }
         - { src: .Xdefaults }
