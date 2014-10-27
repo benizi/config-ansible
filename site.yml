@@ -344,3 +344,41 @@
   handlers:
     - name: restart logind
       service: name=systemd-logind state=restarted
+
+- name: Prog langs
+  hosts: laptops
+  tasks:
+    - name: Install prereqs
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - git
+        - mercurial
+
+    - name: Install Verman
+      git: repo=bb:benizi/verman
+        dest=git/verman
+
+    # Verman uses ruby-build to install rubies
+    - name: Fetch ruby-build
+      git: repo=gh:sstephenson/ruby-build
+        dest=git/ruby-build
+      notify: Install ruby-build
+
+    - meta: flush_handlers
+
+    - name: Install langs
+      shell: verman {{item.lang}} install {{item.version}} | with-python2 sh
+        creates=/opt/{{item.lang}}/versions/{{item.version}}/bin/{{item.lang}}
+      with_items:
+        - { lang: go, version: go1.3.3 }
+        - { lang: node, version: v0.10.33 }
+        - { lang: ruby, version: '1.9.3-p550' }
+        - { lang: ruby, version: '2.0.0-p247' }
+        - { lang: ruby, version: '2.1.1' }
+        - { lang: ruby, version: '2.1.2' }
+
+  handlers:
+    - name: Install ruby-build
+      command: ./install.sh
+        chdir=git/ruby-build
