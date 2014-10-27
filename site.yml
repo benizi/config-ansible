@@ -322,3 +322,25 @@
         - firefox
         - opera
         - w3m
+
+- name: Power settings
+  hosts: laptops
+  sudo: yes
+  tasks:
+    - name: Disable lid switch and suspend key
+      lineinfile: dest=/etc/systemd/logind.conf
+        regexp={{item.setting}}
+        line='{{item.setting}}={{item.value}}'
+      with_items:
+        - { setting: HandleSuspendKey, value: ignore }
+        - { setting: HandleLidSwitch, value: lock }
+      notify: restart logind
+
+    - name: Install utilities
+      pacman: name={{item}}
+      with_items:
+        - pm-utils
+
+  handlers:
+    - name: restart logind
+      service: name=systemd-logind state=restarted
