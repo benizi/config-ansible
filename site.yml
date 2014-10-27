@@ -281,3 +281,44 @@
 
     - name: Preferred (custom rxvt-unicode) link
       file: dest=bin.local/term state=link src={{rxvt}}
+
+- name: Install many packages
+  hosts: arch
+  sudo: yes
+  tasks:
+    - name: System tools
+      pacman: name={{item}}
+      with_items:
+        - ack
+        - dnsutils
+        - htop
+        - iotop
+        - lsof
+        - nmap
+        - rsync
+        - socat
+        - strace
+
+    - name: Audio
+      pacman: name={{item}}
+      with_items:
+        - festival-us
+        - pavucontrol
+        - pulseaudio-alsa
+
+    - name: Fonts
+      pacman: name={{item}}
+      with_items:
+        - otf-ipafont
+        - opendesktop-fonts
+        - ttf-bitstream-vera
+        - ttf-dejavu
+        - wqy-zenhei
+
+    - name: Browsers
+      pacman: name={{item}}
+      with_items:
+        - chromium
+        - firefox
+        - opera
+        - w3m
