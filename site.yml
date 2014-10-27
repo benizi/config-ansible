@@ -101,6 +101,14 @@
         dest=.ssh/config
         force=no
 
+    - name: SSH known hosts
+      sudo: yes
+      copy: src=files/ssh_known_hosts
+        dest=/etc/ssh/ssh_known_hosts
+        owner=root
+        group=root
+        mode=0644
+
 - name: Development
   hosts: arch # TODO: others
   sudo: true
