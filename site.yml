@@ -323,7 +323,6 @@
     - name: System tools
       pacman: name={{item}}
       with_items:
-        - ack
         - dnsutils
         - htop
         - iotop
@@ -356,6 +355,40 @@
         - firefox
         - opera
         - w3m
+
+    - name: Graphics
+      pacman: name={{item}}
+      with_items:
+        - ghostscript
+        - graphviz
+        - imagemagick
+        - perl-image-exiftool
+
+    - name: Network monitoring
+      pacman: name={{item}}
+      with_items:
+        - tcpdump
+        - wireshark-gtk
+
+    - name: Programmer tools
+      pacman: name={{item}}
+      with_items:
+        - ack
+        - dtach
+        - screen
+        - tmux
+
+    - name: X11 utilities
+      pacman: name={{item}}
+      with_items:
+        - lxpanel
+        - parcellite
+        - xclip
+        - xorg-xbacklight
+        - xorg-xdpyinfo
+        - xorg-xev
+        - xorg-xwininfo
+        - xosd
 
 - name: Power settings
   hosts: laptops
