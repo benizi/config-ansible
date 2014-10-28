@@ -222,6 +222,15 @@
       sudo: true
       user: name=bhaskell shell=/bin/zsh
 
+    - name: Script prereqs
+      sudo: true
+      pacman: name={{item}}
+      with_items:
+        - inotify-tools
+        - perl-algorithm-diff
+        - perl-cgi
+        - perl-date-manip
+
 - name: Personal directories
   hosts: laptops
   tasks:
