@@ -390,6 +390,27 @@
         - xorg-xwininfo
         - xosd
 
+- name: Install Feh (image viewer)
+  hosts: arch
+  tasks:
+    - name: Feh (image viewer) prereqs
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - imlib2
+        - giblib
+
+    - name: Feh (image viewer) source
+      git: repo=gh:benizi/feh
+        dest=git/feh
+      notify: install feh
+
+  handlers:
+    - name: install feh
+      shell: make && make install
+        chdir=git/feh
+      notify: install feh
+
 - name: Power settings
   hosts: laptops
   sudo: yes
