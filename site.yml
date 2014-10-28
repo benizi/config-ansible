@@ -34,7 +34,21 @@
       with_indexed_items: repos
       notify: Update packages
 
+    - name: Atlassian repo
+      copy: src=files/atlassian.repo
+        dest=/etc/pacman.d/repo.atlassian
+        owner=root
+        group=root
+        mode=0644
+      notify:
+        - Atlassian key
+        - Update packages
+
   handlers:
+    - name: Atlassian key
+      shell: curl https://www.hipchat.com/keys/hipchat-linux.key |
+        GNUPGHOME=/etc/pacman.d/gnupg gpg --import
+
     - name: Update packages
       command: pacman -Syy
 

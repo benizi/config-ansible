@@ -1,0 +1,3 @@
+[atlassian]
+SigLevel = PackageOptional DatabaseRequired TrustAll
+Server = http://downloads.hipchat.com/linux/arch/$arch
