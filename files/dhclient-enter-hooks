@@ -1,0 +1,8 @@
+if [ x"$new_domain_name_servers" != x ]; then
+  cat /dev/null > /etc/resolv.conf.upstream
+  for server in $new_domain_name_servers; do
+    echo "nameserver $server" >> /etc/resolv.conf.upstream
+  done
+
+  new_domain_name_servers=127.0.0.1
+fi
