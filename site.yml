@@ -117,6 +117,7 @@
       pacman: name={{item}}
       with_items:
         - autoconf
+        - cmake
         - gcc
         - make
         - pkg-config
@@ -410,6 +411,42 @@
       shell: make && make install
         chdir=git/feh
       notify: install feh
+
+- name: Remote access tools
+  hosts: laptops
+  vars:
+    tag: v-enable-scroll-lock
+    cache: .cache/synergy.tar.gz
+
+  tasks:
+    - name: VNC and RDP
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - freerdp
+        - gtk-vnc
+        - x11vnc
+
+    - name: Custom synergy prereqs
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - qt4
+
+    - name: Custom synergy source
+      get_url: url=https://github.com/benizi/synergy/archive/{{tag}}.tar.gz
+        dest={{cache}}
+        sha256sum=bc0863b0352f536473cd860b86bfcd09b345ec9fa55b3510ae595796d0e770f8
+
+    - name: Custom synergy install
+      shell: rm -r /tmp/synergy-{{tag}} &&
+        tar zxf ~/{{cache}} &&
+        cd synergy-{{tag}} &&
+        with-python2 ./hm.sh conf -g1 &&
+        with-python2 ./hm.sh build &&
+        cp bin/synergy{c,d,s} ~/bin.local/
+        chdir=/tmp
+        creates=bin.local/synergyc
 
 - name: Power settings
   hosts: laptops
