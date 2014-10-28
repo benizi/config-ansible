@@ -507,3 +507,18 @@
     - name: Install ruby-build
       command: ./install.sh
         chdir=git/ruby-build
+
+- name: Password manager
+  hosts: laptops
+  tasks:
+    - name: Install password-manager prereqs
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - gnome-keyring
+        - libgnome-keyring
+
+    - name: build password-manager
+      command: make password-manager
+        chdir=bin.local
+        creates=password-manager
