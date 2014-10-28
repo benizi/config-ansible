@@ -494,8 +494,10 @@
 
     - name: Install langs
       shell: verman {{item.lang}} install {{item.version}} | with-python2 sh
-        creates=/opt/{{item.lang}}/versions/{{item.version}}/bin/{{item.lang}}
+        creates=/opt/{{item.lang}}/versions/{{item.version}}/bin/{{item.bin | default(item.lang)}}
       with_items:
+        - { lang: erlang, version: '17.0', bin: erl }
+        - { lang: elixir, version: v1.0.0 }
         - { lang: go, version: go1.3.3 }
         - { lang: node, version: v0.10.33 }
         - { lang: ruby, version: '1.9.3-p550' }
