@@ -291,6 +291,31 @@
     - name: Preferred (custom rxvt-unicode) link
       file: dest=bin.local/term state=link src={{rxvt}}
 
+- name: Acceptable editors
+  hosts: laptops
+  tasks:
+    - name: Fallback (emacs)
+      pacman: name={{item}}
+      with_items:
+        - emacs
+
+    - name: Preferred (custom vim) prereqs
+      sudo: true
+      pacman: name={{item}}
+      with_items:
+        - lua51
+        - tcl
+
+    - name: Preferred (custom vim) source
+      git: repo='gh:benizi/vim'
+        dest=git/vim
+        version=24-bit
+
+    - name: Preferred (custom vim) install
+      command: build-vim
+        chdir=git/vim
+        creates=/usr/local/bin/vim
+
 - name: Install many packages
   hosts: arch
   sudo: yes
