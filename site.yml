@@ -289,6 +289,10 @@
         - rxvt-unicode
         - xterm
 
+    - name: Acceptable terminal emulator detector (infocmp)
+      sudo: true
+      pacman: name=ncurses
+
     - name: Preferred (custom rxvt-unicode) prereqs
       sudo: true
       pacman: name={{item}}
