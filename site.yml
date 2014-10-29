@@ -869,6 +869,7 @@
       - oniguruma # for jq
       - ttf-ms-fonts # for decent fonts
       - ttf-noto # covers tons of writing systems
+      - xf86-input-evdev-trackpoint # middle-click scroll
 
   tasks:
     - name: Arch build system prereqs
@@ -886,6 +887,13 @@
       synchronize: dest=/tmp/{{item}}
         src=~/arch-builds/{{item}}/
       with_items: custom_pkgs
+
+    - name: Conflicting package
+      sudo: yes
+      shell: pacman -Qi xf86-input-evdev | grep -L . | grep -q . ||
+        pacman --noconfirm -Rdd xf86-input-evdev
+      register: conflicting
+      changed_when: conflicting.stdout != ''
 
     - name: Custom AUR installs
       sudo: yes
