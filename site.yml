@@ -44,6 +44,10 @@
         - Atlassian key
         - Update packages
 
+    - name: Arch build system
+      pacman: name=abs
+      notify: set abs perms
+
   handlers:
     - name: Atlassian key
       shell: curl https://www.hipchat.com/keys/hipchat-linux.key |
@@ -51,6 +55,9 @@
 
     - name: Update packages
       command: pacman -Syy
+
+    - name: set abs perms
+      command: set-all-facl -u -R /var/abs
 
 - name: Prereqs
   hosts: arch
