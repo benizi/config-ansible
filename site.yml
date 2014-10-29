@@ -667,6 +667,10 @@
         - { lang: ruby, version: '2.1.1' }
         - { lang: ruby, version: '2.1.2' }
 
+    - name: Java
+      sudo: yes
+      pacman: name=jdk7-openjdk
+
   handlers:
     - name: Install ruby-build
       command: ./install.sh
