@@ -698,6 +698,7 @@
     custom_pkgs:
       - uuid # for postgresql-uuid-ossp
       - postgresql-uuid-ossp
+      - oniguruma # for jq
 
   tasks:
     - name: Custom AUR builds
@@ -719,3 +720,19 @@
     - name: restart postgresql
       sudo: yes
       service: name=postgresql state=restarted
+
+- name: Install jq (JSON Swiss Army knife)
+  hosts: arch
+  tasks:
+    - name: jq source
+      git: repo=gh:stedolan/jq
+        dest=git/jq
+        update=false
+
+    - name: jq install
+      shell: git clean -xdf &&
+        autoreconf -vif &&
+        ./configure &&
+        make install
+        chdir=git/jq
+        creates=/usr/local/bin/jq
