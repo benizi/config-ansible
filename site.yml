@@ -474,6 +474,50 @@
       copy: src=files/lxpanel.conf
         dest={{conf_dir}}/panel
 
+- name: Install Dropbox
+  hosts: arch
+  vars:
+    build: /tmp/dropbox-build
+    cache: .cache/dropbox.tar.gz
+    dropbox: /usr/local/bin/dropbox
+
+  tasks:
+    - name: Dropbox prereqs
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - libnautilus-extension
+        - pygtk
+        - python2-docutils
+        - python2-pygpgme
+
+    - name: Dropbox source
+      get_url: url=https://linux.dropbox.com/packages/nautilus-dropbox-1.6.2.tar.bz2
+        dest={{cache}}
+        sha256sum=63d53109c7d0efc0e83f36ac47be3be923115eaf0be56cfc9a1aa8e2ecc633e4
+
+    - name: Dropbox install
+      shell: rm -rf {{build}} &&
+        mkdir {{build}} &&
+        tar -C {{build}} --strip-components 1 -xf ~/{{cache}} &&
+        cd {{build}} &&
+        with-python2 ./configure --prefix=/usr/local --with-nautilus-extension-dir=/tmp/garbage &&
+        with-python2 make &&
+        make install
+        creates={{dropbox}}
+
+    - name: Dropbox python2
+      lineinfile: dest={{dropbox}}
+        regexp='^#!'
+        line='#!/usr/bin/env python2'
+
+    - name: Dropbox daemon install
+      shell: yes |
+        sed q |
+        dropbox start -i &&
+        dropbox stop
+        creates=.dropbox-dist
+
 - name: Install Feh (image viewer)
   hosts: arch
   tasks:
