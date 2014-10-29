@@ -397,6 +397,7 @@
     - name: Fonts
       pacman: name={{item}}
       with_items:
+        - gsfonts
         - otf-ipafont
         - opendesktop-fonts
         - ttf-bitstream-vera
@@ -873,6 +874,8 @@
       - uuid # for postgresql-uuid-ossp
       - postgresql-uuid-ossp
       - oniguruma # for jq
+      - ttf-ms-fonts # for decent fonts
+      - ttf-noto # covers tons of writing systems
 
   tasks:
     - name: Custom AUR builds
