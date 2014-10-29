@@ -1,0 +1,11 @@
+[Unit]
+Description=Docker daemon
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/docker -d -dns 172.17.42.1 -s btrfs
+ExecStartPost=/home/bhaskell/bin/set-all-facl u:bhaskell /var/run/docker.sock
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

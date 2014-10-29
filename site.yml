@@ -736,3 +736,73 @@
         make install
         chdir=git/jq
         creates=/usr/local/bin/jq
+
+- name: Docker
+  hosts: arch
+  vars:
+    bootstrap: /opt/bootstrap-docker
+    bundle: bundles/{{version}}/binary
+    docker_root: /usr/local/bin
+    docker: '{{docker_root}}/docker'
+    version: 1.3.0
+
+  tasks:
+    - name: Install prereqs
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        # TODO: not sure these are needed for -e=native
+        - bridge-utils
+        - lxc
+
+    - name: Docker (bootstrap) dir
+      sudo: yes
+      file: dest={{bootstrap}}
+        state=directory
+        owner=bhaskell
+        group=bhaskell
+        mode=0755
+
+    - name: Docker (bootstrap) binaries
+      copy: dest={{bootstrap}}/docker{{item}}
+        src={{docker}}{{item}}
+        mode=0755
+      with_items: ['', init]
+
+    - name: Docker source
+      git: repo=gh:docker/docker
+        dest=git/docker
+        version=v{{version}}
+        update=no
+
+    - name: Docker build
+      sudo: yes
+      shell: dtach -n /tmp/docker.build {{bootstrap}}/docker -d &&
+        make &&
+        fuser -s -k -TERM /tmp/docker.build
+        chdir=git/docker
+        creates={{bundle}}/docker-{{version}}
+
+    - name: Docker install
+      shell: rsync -Pav {{bundle}}/docker* {{docker_root}}/
+        chdir=git/docker
+        creates={{docker}}-{{version}}
+
+    - name: Enable IPv4 forwarding
+      sudo: yes
+      sysctl: name=net.ipv4.ip_forward value=1 sysctl_set=yes
+
+    - name: Docker service file
+      sudo: yes
+      copy: src=files/docker.service
+        dest=/etc/systemd/system/docker.service
+      notify: reload systemd
+
+    - name: Docker service
+      sudo: yes
+      service: name=docker state=started enabled=yes
+
+  handlers:
+    - name: reload systemd
+      sudo: yes
+      command: systemctl daemon-reload
