@@ -456,6 +456,24 @@
         - xorg-xwininfo
         - xosd
 
+- name: Heroku Toolbelt
+  hosts: arch
+  vars:
+    cache: .cache/heroku-client.tar.gz
+    dir: /usr/local/heroku
+
+  tasks:
+    - name: Heroku CLI download
+      get_url: url=https://s3.amazonaws.com/assets.heroku.com/heroku-client/heroku-client.tgz
+        dest={{cache}}
+
+    - name: Heroku CLI directory
+      file: dest={{dir}} state=directory
+
+    - name: Heroku CLI install
+      command: tar -C {{dir}} --strip-components 1 -xf {{cache}}
+        creates={{dir}}/bin/heroku
+
 - name: LXPanel
   hosts: laptops
   vars:
