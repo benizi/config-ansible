@@ -694,6 +694,13 @@
       sudo: yes
       pacman: name=jdk7-openjdk
 
+    - name: Pythons (ensure both installed)
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - python
+        - python2
+
   handlers:
     - name: Install ruby-build
       command: ./install.sh
