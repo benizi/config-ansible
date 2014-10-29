@@ -139,9 +139,14 @@
       pacman: name={{item}}
       with_items:
         - autoconf
+        - automake
+        - bison
         - cmake
+        - flex
         - gcc
+        - libtool
         - make
+        - patch
         - pkg-config
 
 - name: Custom dmenu
