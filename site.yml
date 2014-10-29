@@ -672,6 +672,23 @@
       command: ./install.sh
         chdir=git/ruby-build
 
+- name: Rebar
+  hosts: arch
+  vars:
+    rebar: /usr/local/bin/rebar
+
+  tasks:
+    - name: Rebar source
+      git: repo=gh:rebar/rebar
+        dest=git/rebar
+        update=no
+
+    - name: Rebar install
+      shell: ./bootstrap &&
+        mv rebar {{rebar}}
+        chdir=git/rebar
+        creates={{rebar}}
+
 - name: Password manager
   hosts: laptops
   tasks:
