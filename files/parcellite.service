@@ -5,6 +5,7 @@ Description=Parcellite (clipboard manager)
 ExecStart=/bin/parcellite -d
 Restart=on-failure
 Environment=DISPLAY=:0
+StandardError=null
 
 [Install]
 WantedBy=default.target
