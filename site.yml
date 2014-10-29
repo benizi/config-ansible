@@ -373,6 +373,27 @@
         - pavucontrol
         - pulseaudio-alsa
 
+    - name: Disks
+      pacman: name={{item}}
+      with_items:
+        - baobab
+        - btrfs-progs
+
+    - name: Remote filesystems
+      pacman: name={{item}}
+      with_items:
+        - smbclient
+        - sshfs
+
+    - name: Compression
+      pacman: name={{item}}
+      with_items:
+        - p7zip
+        - unarj
+        - unrar
+        - unzip
+        - zip
+
     - name: Fonts
       pacman: name={{item}}
       with_items:
@@ -394,9 +415,24 @@
       pacman: name={{item}}
       with_items:
         - ghostscript
+        - graphicsmagick
         - graphviz
         - imagemagick
         - perl-image-exiftool
+
+    - name: Multimedia
+      pacman: name={{item}}
+      with_items:
+        - mplayer
+        - vlc
+
+    - name: Messaging
+      pacman: name={{item}}
+      with_items:
+        - qt5-multimedia # unspecified hipchat dep
+        - vlc # pulls in unspecified hipchat dep
+        - hipchat
+        - irssi
 
     - name: Network monitoring
       pacman: name={{item}}
