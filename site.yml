@@ -525,6 +525,7 @@
     services: # order is important
       - lxpanel
       - dropbox
+      - parcellite
     systemd: .config/systemd/user
 
   tasks:
