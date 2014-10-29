@@ -558,6 +558,7 @@
     - name: Services
       copy: src=files/{{item}}.service
         dest=~/{{systemd}}/{{item}}.service
+        mode=0644
       with_items: services
       register: service_files
       notify:
