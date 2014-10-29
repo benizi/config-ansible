@@ -461,6 +461,19 @@
         - xorg-xwininfo
         - xosd
 
+- name: LXPanel
+  hosts: laptops
+  vars:
+    conf_dir: ~/.config/lxpanel/default/panels
+
+  tasks:
+    - name: LXPanel config dir
+      file: dest={{conf_dir}} state=directory recurse=yes
+
+    - name: LXPanel config
+      copy: src=files/lxpanel.conf
+        dest={{conf_dir}}/panel
+
 - name: Install Feh (image viewer)
   hosts: arch
   tasks:
