@@ -480,7 +480,6 @@
     - name: install feh
       shell: make && make install
         chdir=git/feh
-      notify: install feh
 
 - name: Remote access tools
   hosts: laptops
