@@ -448,6 +448,7 @@
         - screen
         - tk # for gitk
         - tmux
+        - xorg-server-xvfb
 
     - name: X11 utilities
       pacman: name={{item}}
