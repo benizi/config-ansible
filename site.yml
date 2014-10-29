@@ -802,6 +802,66 @@
         - postgresql
         - redis
 
+- name: CouchDB
+  hosts: arch
+  tasks:
+    - name: CouchDB prereqs
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - autoconf-archive
+        - js185
+
+    - name: CouchDB service user
+      sudo: yes
+      user: name=couchdb
+        home=/opt/couchdb
+        createhome=no
+        system=yes
+
+    - name: CouchDB source
+      git: repo=gh:apache/couchdb
+        dest=git/couchdb
+        update=no
+
+    - name: CouchDB install
+      shell: ./configure &&
+        make &&
+        make install
+        chdir=git/couchdb
+        creates=/opt/couchdb/bin/couchdb
+      notify: set couchdb permissions
+
+    - name: set couchdb permissions
+      sudo: yes
+      command: set-all-facl u:couchdb -R /opt/couchdb
+
+    - name: CouchDB bind localhost
+      ini_file: dest=/opt/couchdb/etc/{{item.file}}.ini
+        section={{item.section}}
+        option={{item.option | default('bind_address')}}
+        value={{item.value | default('127.0.0.1')}}
+      with_items:
+        - { file: default, section: chttpd }
+        - { file: local, section: httpd }
+
+    - name: CouchDB service file
+      sudo: yes
+      copy: src=files/couchdb.service
+        dest=/etc/systemd/system/couchdb.service
+      notify: reload systemd
+
+    - meta: flush_handlers
+
+    - name: CouchDB service
+      sudo: yes
+      service: name=couchdb state=started enabled=yes
+
+  handlers:
+    - name: reload systemd
+      sudo: yes
+      command: systemctl daemon-reload
+
 - name: AUR packages # TODO: custom repo?
   hosts: arch
   vars:
