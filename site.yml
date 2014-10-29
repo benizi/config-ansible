@@ -691,3 +691,31 @@
       with_items:
         - postgresql
         - redis
+
+- name: AUR packages # TODO: custom repo?
+  hosts: arch
+  vars:
+    custom_pkgs:
+      - uuid # for postgresql-uuid-ossp
+      - postgresql-uuid-ossp
+
+  tasks:
+    - name: Custom AUR builds
+      synchronize: dest=/tmp/{{item}}
+        src=~/arch-builds/{{item}}/
+      with_items: custom_pkgs
+
+    - name: Custom AUR installs
+      sudo: yes
+      shell: pacman -Qi {{item}} 2>/dev/null | grep -q . ||
+        pacman --noconfirm -U {{item}}*.xz
+        chdir=/tmp/{{item}}
+      register: tempout
+      changed_when: tempout.stdout != ''
+      with_items: custom_pkgs
+      notify: restart postgresql
+
+  handlers:
+    - name: restart postgresql
+      sudo: yes
+      service: name=postgresql state=restarted
