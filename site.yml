@@ -871,6 +871,12 @@
       - ttf-noto # covers tons of writing systems
 
   tasks:
+    - name: Arch build system prereqs
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - fakeroot
+
     - name: Arch build system
       sudo: yes
       pacman: name=abs
