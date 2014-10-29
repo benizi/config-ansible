@@ -508,14 +508,14 @@
         sha256sum=bc0863b0352f536473cd860b86bfcd09b345ec9fa55b3510ae595796d0e770f8
 
     - name: Custom synergy install
-      shell: rm -r /tmp/synergy-{{tag}} &&
+      shell: rm -rf /tmp/synergy-{{tag}} &&
         tar zxf ~/{{cache}} &&
         cd synergy-{{tag}} &&
         with-python2 ./hm.sh conf -g1 &&
         with-python2 ./hm.sh build &&
-        cp bin/synergy{c,d,s} ~/bin.local/
+        mv bin/synergy{c,d,s} ~/bin.local/
         chdir=/tmp
-        creates=bin.local/synergyc
+        creates=~/bin.local/synergyc
 
 - name: Power settings
   hosts: laptops
