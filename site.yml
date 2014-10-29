@@ -44,10 +44,6 @@
         - Atlassian key
         - Update packages
 
-    - name: Arch build system
-      pacman: name=abs
-      notify: set abs perms
-
   handlers:
     - name: Atlassian key
       shell: curl https://www.hipchat.com/keys/hipchat-linux.key |
@@ -55,9 +51,6 @@
 
     - name: Update packages
       command: pacman -Syy
-
-    - name: set abs perms
-      command: set-all-facl -u -R /var/abs
 
 - name: Prereqs
   hosts: arch
@@ -878,6 +871,11 @@
       - ttf-noto # covers tons of writing systems
 
   tasks:
+    - name: Arch build system
+      sudo: yes
+      pacman: name=abs
+      notify: set abs perms
+
     - name: Custom AUR builds
       synchronize: dest=/tmp/{{item}}
         src=~/arch-builds/{{item}}/
@@ -894,6 +892,9 @@
       notify: restart postgresql
 
   handlers:
+    - name: set abs perms
+      command: set-all-facl -u -R /var/abs
+
     - name: restart postgresql
       sudo: yes
       service: name=postgresql state=restarted
