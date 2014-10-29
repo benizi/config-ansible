@@ -518,6 +518,40 @@
         dropbox stop
         creates=.dropbox-dist
 
+- name: User services
+  hosts: arch
+  vars:
+    services: # order is important
+      - lxpanel
+      - dropbox
+    systemd: .config/systemd/user
+
+  tasks:
+    - name: User service dir
+      file: dest=~/{{systemd}} state=directory recurse=yes
+
+    - name: Services
+      copy: src=files/{{item}}.service
+        dest=~/{{systemd}}/{{item}}.service
+      with_items: services
+      register: service_files
+      notify:
+        - reload user services
+        - enable user services
+        - start user services
+
+  handlers:
+    - name: reload user services
+      command: systemctl --user daemon-reload
+
+    - name: enable user services
+      command: systemctl --user enable ~/{{systemd}}/{{item}}.service
+      with_items: services
+
+    - name: start user services
+      command: systemctl --user start {{item}}
+      with_items: services
+
 - name: Install Feh (image viewer)
   hosts: arch
   tasks:

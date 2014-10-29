@@ -1,0 +1,10 @@
+[Unit]
+Description=LXPanel dock
+
+[Service]
+ExecStart=/bin/lxpanel
+Restart=on-failure
+Environment=DISPLAY=:0
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=Dropbox daemon
+After=lxpanel.service
+
+[Service]
+ExecStart=/home/bhaskell/.dropbox-dist/dropboxd
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+Environment=DISPLAY=:0
+
+[Install]
+WantedBy=default.target
