@@ -265,6 +265,13 @@
         - perl-cgi
         - perl-date-manip
 
+    - name: Script prereqs (compiled)
+      command: make {{item}}
+        chdir=bin.local
+      with_items:
+        - myod
+        - x-is-active
+
 - name: Personal directories
   hosts: laptops
   tasks:
@@ -453,6 +460,7 @@
         - screen
         - tk # for gitk
         - tmux
+        - x11vnc
         - xorg-server-xvfb
 
     - name: X11 utilities
