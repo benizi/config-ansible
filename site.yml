@@ -283,6 +283,7 @@
         group=bhaskell
         recurse=yes
       with_items:
+        - /mnt
         - /opt
         - /usr/local
 
