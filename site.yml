@@ -476,6 +476,28 @@
         - xorg-xwininfo
         - xosd
 
+- name: OpenConnect (VPN)
+  hosts: arch
+  tasks:
+    - name: VPNC Scripts source
+      git: repo=git://git.infradead.org/users/dwmw2/vpnc-scripts.git
+        dest=git/vpnc-scripts
+
+    - name: VPNC Scripts link
+      file: state=link dest=/etc/vpnc src=~bhaskell/git/vpnc-scripts
+
+    - name: OpenConnect source
+      git: repo=git://git.infradead.org/users/dwmw2/openconnect.git
+        dest=git/openconnect
+
+    - name: OpenConnect install
+      shell: sh ./autogen.sh &&
+        ./configure &&
+        make PYTHON=python2 &&
+        make install PYTHON=python2
+        creates=/usr/local/sbin/openconnect
+        chdir=git/openconnect
+
 - name: Heroku Toolbelt
   hosts: arch
   vars:
