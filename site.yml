@@ -498,6 +498,15 @@
         creates=/usr/local/sbin/openconnect
         chdir=git/openconnect
 
+- name: Fix user groups
+  hosts: arch
+  tasks:
+    - name: Permissions
+      sudo: yes
+      user: name=bhaskell
+        append=yes
+        groups=wireshark,audio
+
 - name: Heroku Toolbelt
   hosts: arch
   vars:
