@@ -642,6 +642,24 @@
         chdir=git/mosh
         creates=/usr/local/bin/mosh-server
 
+- name: PepperFlash
+  hosts: arch
+  vars:
+    arch: "{{'amd64' if ansible_machine == 'x86_64' else 'i386'}}"
+    cache: .cache/chrome.deb
+    url: "https://dl.google.com/linux/direct/google-chrome-unstable_current_{{arch}}.deb"
+
+  tasks:
+    - name: PepperFlash source
+      get_url: url={{url}}
+        dest={{cache}}
+
+    - name: PepperFlash extract
+      shell: bsdtar -Oxf {{cache}} data.tar.lzma |
+        xz -d |
+        tar -C ~ --strip-components 4 -x ./opt/google/chrome-unstable/PepperFlash
+        creates=PepperFlash
+
 - name: User services
   hosts: arch
   vars:
