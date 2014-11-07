@@ -162,6 +162,7 @@
     - name: Custom dmenu source
       git: repo='gh:benizi/dmenu'
         dest={{dmenu}}
+        remote=benizi
 
     - name: Custom dmenu build
       shell: make && make install
@@ -218,7 +219,10 @@
         - .zsh.local
 
     - name: Clone latest dotfiles
-      git: repo=https://github.com/benizi/dotfiles dest=dotfiles update=yes
+      git: repo=https://github.com/benizi/dotfiles
+        dest=dotfiles
+        update=yes
+        remote=benizi
 
     # TODO: replace this with script within dotfiles repo
     - name: Link dotfiles
@@ -316,6 +320,7 @@
       git: repo='gh:benizi/rxvt-unicode'
         dest={{rxvt_git}}
         version=24bit
+        remote=benizi
 
     - name: Preferred (custom rxvt-unicode) CVS libs
       command: cvs -z3 -d :pserver:anonymous@cvs.schmorp.de/schmorpforge co {{item}}
@@ -356,6 +361,7 @@
       git: repo='gh:benizi/vim'
         dest=git/vim
         version=24-bit
+        remote=benizi
 
     - name: Preferred (custom vim) install
       command: build-vim
@@ -482,6 +488,7 @@
     - name: VPNC Scripts source
       git: repo=git://git.infradead.org/users/dwmw2/vpnc-scripts.git
         dest=git/vpnc-scripts
+        remote=dwmw2
 
     - name: VPNC Scripts link
       file: state=link dest=/etc/vpnc src=~bhaskell/git/vpnc-scripts
@@ -489,6 +496,7 @@
     - name: OpenConnect source
       git: repo=git://git.infradead.org/users/dwmw2/openconnect.git
         dest=git/openconnect
+        remote=dwmw2
 
     - name: OpenConnect install
       shell: sh ./autogen.sh &&
@@ -633,6 +641,7 @@
     - name: MOSH source
       git: repo=https://github.com/keithw/mosh
         dest=git/mosh
+        remote=keithw
 
     - name: MOSH install
       shell: sh ./autogen.sh &&
@@ -709,6 +718,7 @@
     - name: Feh (image viewer) source
       git: repo=gh:benizi/feh
         dest=git/feh
+        remote=benizi
       notify: install feh
 
   handlers:
@@ -787,11 +797,13 @@
     - name: Install Verman
       git: repo=bb:benizi/verman
         dest=git/verman
+        remote=benizi
 
     # Verman uses ruby-build to install rubies
     - name: Fetch ruby-build
       git: repo=gh:sstephenson/ruby-build
         dest=git/ruby-build
+        remote=sstephenson
       notify: Install ruby-build
 
     - meta: flush_handlers
@@ -835,6 +847,7 @@
       git: repo=gh:rebar/rebar
         dest=git/rebar
         update=no
+        remote=rebar
 
     - name: Rebar install
       shell: ./bootstrap &&
@@ -986,6 +999,7 @@
       git: repo=gh:apache/couchdb
         dest=git/couchdb
         update=no
+        remote=apache
 
     - name: CouchDB install
       shell: ./configure &&
@@ -1085,6 +1099,7 @@
       git: repo=gh:stedolan/jq
         dest=git/jq
         update=false
+        remote=stedolan
 
     - name: jq install
       shell: git clean -xdf &&
@@ -1131,6 +1146,7 @@
         dest=git/docker
         version=v{{version}}
         update=no
+        remote=docker
 
     - name: Docker build
       sudo: yes
