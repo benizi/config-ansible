@@ -224,27 +224,30 @@
         update=yes
         remote=benizi
 
-    # TODO: replace this with script within dotfiles repo
-    - name: Link dotfiles
-      file: state=link
-        src=dotfiles/{{item.src}}
-        dest={{item.dest | default(item.src)}}
+    # TODO: replace this and the next task with script within dotfiles repo
+    - name: Link dotfiles (simple)
+      file: state=link src=dotfiles/{{item}} dest={{item}}
       with_items:
-        - { src: bin }
-        - { src: .emacs.d }
-        - { src: .gitattributes.global }
-        - { src: .gitconfig }
-        - { src: .gitignore.global }
-        - { src: .pg }
-        - { src: .psqlrc }
-        - { src: .terminfo }
-        - { src: .tmux.conf }
-        - { src: .urxvt }
-        - { src: .vim/vimrc, dest: .vimrc }
-        - { src: .Xdefaults }
-        - { src: .xmonad }
-        - { src: .xsession }
-        - { src: .zsh/.zshenv, dest: .zshenv }
+        - bin
+        - .emacs.d
+        - .gitattributes.global
+        - .gitconfig
+        - .gitignore.global
+        - .pg
+        - .psqlrc
+        - .terminfo
+        - .tmux.conf
+        - .urxvt
+        - .Xdefaults
+        - .xmonad
+        - .xsession
+
+    # TODO: see prior TODO
+    - name: Link dotfiles (non-homedir)
+      file: state=link src={{item.src}} dest={{item.dest}}
+      with_items:
+        - { src: dotfiles/.vim/vimrc, dest: .vimrc }
+        - { src: dotfiles/.zsh/.zshenv, dest: .zshenv }
 
     - name: Root zsh
       sudo: yes
