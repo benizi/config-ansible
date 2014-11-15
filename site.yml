@@ -1048,7 +1048,7 @@
       sudo: yes
       command: set-all-facl u:couchdb -R /opt/couchdb
 
-    - name: CouchDB bind localhost
+    - name: CouchDB settings
       ini_file: dest=/opt/couchdb/etc/{{item.file}}.ini
         section={{item.section}}
         option={{item.option | default('bind_address')}}
@@ -1056,6 +1056,8 @@
       with_items:
         - { file: default, section: chttpd }
         - { file: local, section: httpd }
+        - { file: default, section: cluster, option: r, value: 1 }
+        - { file: default, section: cluster, option: w, value: 1 }
 
     - name: CouchDB service file
       sudo: yes
