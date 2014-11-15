@@ -907,6 +907,28 @@
     - name: Ansible
       pip: name=ansible executable=pip2
 
+- name: AWS CLI
+  hosts: arch
+  sudo: yes
+  tasks:
+    - name: AWS CLI PIP
+      pip: name=awscli executable=pip2
+
+- name: Custom s3cmd
+  hosts: arch
+  tasks:
+    - name: Custom s3cmd source
+      git: repo=gh:benizi/s3cmd
+        dest=git/s3cmd
+        version=feature/fog-config
+        update=no
+        remote=benizi
+
+    - name: Custom s3cmd wrapper
+      copy: content='#!/bin/sh\nexec python2 $HOME/git/s3cmd/s3cmd "$@"'
+        dest=bin.local/s3cmd
+        mode=0750
+
 - name: Password manager
   hosts: laptops
   tasks:
