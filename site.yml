@@ -569,6 +569,9 @@
         - name: 'heroku-redis-cli'
           git: 'https://github.com/rapportive-oss/heroku-redis-cli.git'
 
+        - name: 'heroku-repo'
+          git: 'https://github.com/heroku/heroku-repo.git'
+
         - name: 'heroku-alternative-urls'
           git: 'https://github.com/benizi/heroku-alternative-urls.git'
 
