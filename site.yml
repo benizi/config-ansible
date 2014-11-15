@@ -444,6 +444,15 @@
         - opera
         - w3m
 
+    - name: Shells
+      tags: sh
+      pacman: name={{item}}
+      with_items:
+        - bash
+        - dash # much POSIX
+        - mksh # MirBSD ksh
+        - tcsh
+
     - name: Graphics
       pacman: name={{item}}
       with_items:
