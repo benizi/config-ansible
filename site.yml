@@ -219,6 +219,7 @@
         - bin.local
         - .cache
         - git
+        - .lein
         - .vim.local
         - .zsh.local
 
@@ -250,6 +251,7 @@
     - name: Link dotfiles (non-homedir)
       file: state=link src={{item.src}} dest={{item.dest}}
       with_items:
+        - { src: ../dotfiles/.lein/profiles.clj, dest: .lein/profiles.clj }
         - { src: dotfiles/.vim/vimrc, dest: .vimrc }
         - { src: dotfiles/.zsh/.zshenv, dest: .zshenv }
 
@@ -838,6 +840,15 @@
       with_items:
         - python
         - python2
+
+    - name: Clojure (leiningen) download
+      get_url: url=https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+        dest=bin.local/lein
+        mode=0750
+
+    - name: Clojure (leiningen) initial install
+      command: lein version
+        creates=.lein/self-installs
 
   handlers:
     - name: Install ruby-build
