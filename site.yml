@@ -70,6 +70,15 @@
     - name: Increase inotify user limit
       sysctl: name=fs.inotify.max_user_watches value=16384 sysctl_set=yes
 
+- name: Arch sysctl compatibility
+  hosts: arch
+  sudo: yes
+  tasks:
+    - name: Link file to systemd location
+      file: state=link
+        src=/etc/sysctl.conf
+        dest=/etc/sysctl.d/99-sysctl.conf
+
 - name: Prereqs
   hosts: arch
   sudo: true
