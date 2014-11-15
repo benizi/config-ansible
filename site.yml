@@ -289,16 +289,20 @@
   hosts: laptops
   tasks:
     - name: Own some 'system' directories
-      sudo: true
-      file: dest={{item}}
-        state=directory
-        owner=bhaskell
-        group=bhaskell
-        recurse=yes
+      shell: find {{item}} -xdev -maxdepth 1 2>&1 >/dev/null | grep -L . | grep -q . ||
+        set-all-facl u:bhaskell -v -R {{item}}
       with_items:
         - /mnt
         - /opt
         - /usr/local
+      register: dirs
+      changed_when: dirs.stdout != ''
+
+    - name: Own /etc but skip ssh
+      shell: (find /etc -xdev -maxdepth 1 2>&1 >/dev/null | grep -L . | grep -q . || grep -l . /etc/ssh/ssh_host_dsa_key) ||
+        (set-all-facl u:bhaskell -v -R /etc && sudo setfacl -R -b /etc/ssh)
+      register: etc
+      changed_when: etc.stdout != ''
 
 - name: Acceptable terminal emulators
   hosts: laptops
