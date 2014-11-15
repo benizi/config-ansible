@@ -248,6 +248,7 @@
         - perl-lib
         - .pg
         - .psqlrc
+        - .python
         - .terminfo
         - .tmux.conf
         - .urxvt
