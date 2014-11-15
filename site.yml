@@ -63,6 +63,13 @@
         group=root
         mode=0644
 
+- name: Inotify limits
+  hosts: laptops
+  sudo: yes
+  tasks:
+    - name: Increase inotify user limit
+      sysctl: name=fs.inotify.max_user_watches value=16384 sysctl_set=yes
+
 - name: Prereqs
   hosts: arch
   sudo: true
