@@ -238,6 +238,7 @@
         - .gitattributes.global
         - .gitconfig
         - .gitignore.global
+        - perl-lib
         - .pg
         - .psqlrc
         - .terminfo
