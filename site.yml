@@ -1211,11 +1211,10 @@
         group=bhaskell
         mode=0755
 
-    - name: Docker (bootstrap) binaries
-      copy: dest={{bootstrap}}/docker{{item}}
-        src={{docker}}{{item}}
+    - name: Docker (bootstrap) binary
+      copy: dest={{bootstrap}}/docker
+        src={{docker}}
         mode=0755
-      with_items: ['', init]
 
     - name: Docker source
       git: repo=gh:docker/docker
@@ -1226,8 +1225,10 @@
 
     - name: Docker build
       sudo: yes
-      shell: dtach -n /tmp/docker.build {{bootstrap}}/docker -d &&
+      shell: export PATH="{{bootstrap}}:$PATH" ;
+        dtach -n /tmp/docker.build docker -d &&
         make &&
+        chown -R bhaskell bundles &&
         fuser -s -k -TERM /tmp/docker.build
         chdir=git/docker
         creates={{bundle}}/docker-{{version}}
