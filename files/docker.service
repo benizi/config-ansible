@@ -1,10 +1,12 @@
 [Unit]
 Description=Docker daemon
-After=network.target
+After=network.target docker.socket
+Requires=docker.socket
 
 [Service]
-ExecStart=/usr/local/bin/docker -d -dns 172.17.42.1 -s btrfs
-ExecStartPost=/home/bhaskell/bin/set-all-facl u:bhaskell /var/run/docker.sock
+ExecStart=/usr/local/bin/docker -d -dns 172.17.42.1 -s btrfs -H fd://
+LimitNOFILE=1048576
+LimitNPROC=1048576
 Restart=on-failure
 
 [Install]

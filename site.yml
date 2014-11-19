@@ -1241,15 +1241,28 @@
       sudo: yes
       sysctl: name=net.ipv4.ip_forward value=1 sysctl_set=yes
 
-    - name: Docker service file
+    - name: Docker group
       sudo: yes
-      copy: src=files/docker.service
-        dest=/etc/systemd/system/docker.service
+      group: name=docker
+
+    - name: Docker group (add me)
+      sudo: yes
+      user: name=bhaskell
+        append=yes
+        groups=docker
+
+    - name: Docker service files
+      sudo: yes
+      copy: src=files/docker.{{item}}
+        dest=/etc/systemd/system/docker.{{item}}
+      with_items: [service, socket]
       notify: reload systemd
+
+    - meta: flush_handlers
 
     - name: Docker service
       sudo: yes
-      service: name=docker state=started enabled=yes
+      service: name=docker.socket state=started enabled=yes
 
   handlers:
     - name: reload systemd
