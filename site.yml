@@ -522,6 +522,23 @@
         - xorg-xwininfo
         - xosd
 
+- name: Avahi (mDNS)
+  hosts: arch
+  sudo: yes
+  vars:
+    prefix: 'hosts:'
+  tasks:
+    - name: Avahi services
+      service: name={{item}} enabled=yes state=started
+      with_items:
+        - avahi-daemon
+        - avahi-dnsconfd
+
+    - name: .local resolution
+      lineinfile: dest=/etc/nsswitch.conf
+        regexp='^'{{prefix}}
+        line='{{prefix}} files mdns_minimal [NOTFOUND=return] dns myhostname'
+
 - name: OpenConnect (VPN)
   hosts: arch
   tasks:
