@@ -240,7 +240,7 @@
         - .zsh.local
 
     - name: Clone latest dotfiles
-      git: repo=https://github.com/benizi/dotfiles
+      git: repo=gh:benizi/dotfiles
         dest=dotfiles
         update=yes
         remote=benizi
