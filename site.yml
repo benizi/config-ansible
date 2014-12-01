@@ -269,6 +269,7 @@
     - name: Link dotfiles (non-homedir)
       file: state=link src={{item.src}} dest={{item.dest}}
       with_items:
+        - { src: ../dotfiles/.config/feh, dest: .config/feh }
         - { src: ../dotfiles/.lein/profiles.clj, dest: .lein/profiles.clj }
         - { src: dotfiles/.vim/vimrc, dest: .vimrc }
         - { src: dotfiles/.zsh/.zshenv, dest: .zshenv }
