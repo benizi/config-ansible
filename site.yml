@@ -167,7 +167,7 @@
         - bison
         - cmake
         - flex
-        - gcc
+        - gcc-multilib
         - libtool
         - make
         - patch
