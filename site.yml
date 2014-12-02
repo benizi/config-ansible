@@ -303,6 +303,7 @@
     - name: Script prereqs (compiled)
       command: make {{item}}
         chdir=bin.local
+        creates={{item}}
       with_items:
         - myod
         - x-is-active
