@@ -880,7 +880,7 @@
         - mercurial
 
     - name: Install Verman
-      git: repo=bb:benizi/verman
+      git: repo=gh:benizi/verman
         dest=git/verman
         remote=benizi
 
