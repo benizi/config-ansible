@@ -211,12 +211,15 @@
     - meta: flush_handlers
 
     - name: Cabal packages
-      command: cabal install {{item}}
+      shell: cabal info {{item}} | grep -L 'Versions.installed.*Not.installed' | grep -q . ||
+        cabal install {{item}}
       with_items:
         - darcs
         - FindBin
         - xmonad
         - xmonad-contrib
+      register: cabal
+      changed_when: cabal.stdout != ''
 
     - name: Enable services
       sudo: yes
