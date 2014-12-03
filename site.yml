@@ -1154,7 +1154,6 @@
 
   handlers:
     - name: set couchdb permissions
-      sudo: yes
       command: set-all-facl u:couchdb -R {{prefix}}
 
     - name: reload systemd
