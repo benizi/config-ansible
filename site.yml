@@ -1132,6 +1132,8 @@
         cd {{build}} &&
         sh ./bootstrap &&
         ./configure --prefix={{prefix}} &&
+        grep -rl _BSD_SOURCE . | xargs sed -i 's/_BSD_SOURCE/_DEFAULT_SOURCE/g' &&
+        touch THANKS &&
         make &&
         make install
         chdir={{git}}
