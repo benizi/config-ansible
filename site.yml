@@ -721,7 +721,7 @@
       pacman: name={{item}}
       with_items:
         - protobuf
-      when: ec2 | failure
+      when: ec2 | failed
 
     - name: MOSH source
       git: repo=https://github.com/keithw/mosh
