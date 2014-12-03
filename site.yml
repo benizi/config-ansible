@@ -1096,6 +1096,13 @@
 
 - name: CouchDB
   hosts: arch
+  vars:
+    build: /tmp/couchdb-build
+    exe: '{{prefix}}/bin/couchdb'
+    git: ~bhaskell/git/couchdb
+    prefix: /opt/couchdb
+    version: 1.6.1
+
   tasks:
     - name: CouchDB prereqs
       sudo: yes
@@ -1107,34 +1114,29 @@
     - name: CouchDB service user
       sudo: yes
       user: name=couchdb
-        home=/opt/couchdb
+        home={{prefix}}
         createhome=no
         system=yes
 
     - name: CouchDB source
       git: repo=gh:apache/couchdb
-        dest=git/couchdb
+        dest={{git}}
+        version={{version}}
         update=no
         remote=apache
 
     - name: CouchDB install
-      shell: ./configure &&
+      shell: rm -rf {{build}} &&
+        mkdir {{build}} &&
+        git archive {{version}} | tar -C {{build}} -xv &&
+        cd {{build}} &&
+        sh ./bootstrap &&
+        ./configure --prefix={{prefix}} &&
         make &&
         make install
-        chdir=git/couchdb
-        creates=/opt/couchdb/bin/couchdb
+        chdir={{git}}
+        creates={{exe}}
       notify: set couchdb permissions
-
-    - name: CouchDB settings
-      ini_file: dest=/opt/couchdb/etc/{{item.file}}.ini
-        section={{item.section}}
-        option={{item.option | default('bind_address')}}
-        value={{item.value | default('127.0.0.1')}}
-      with_items:
-        - { file: default, section: chttpd }
-        - { file: local, section: httpd }
-        - { file: default, section: cluster, option: r, value: 1 }
-        - { file: default, section: cluster, option: w, value: 1 }
 
     - name: CouchDB service file
       sudo: yes
@@ -1151,7 +1153,7 @@
   handlers:
     - name: set couchdb permissions
       sudo: yes
-      command: set-all-facl u:couchdb -R /opt/couchdb
+      command: set-all-facl u:couchdb -R {{prefix}}
 
     - name: reload systemd
       sudo: yes
