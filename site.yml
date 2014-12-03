@@ -1125,10 +1125,6 @@
         creates=/opt/couchdb/bin/couchdb
       notify: set couchdb permissions
 
-    - name: set couchdb permissions
-      sudo: yes
-      command: set-all-facl u:couchdb -R /opt/couchdb
-
     - name: CouchDB settings
       ini_file: dest=/opt/couchdb/etc/{{item.file}}.ini
         section={{item.section}}
@@ -1153,6 +1149,10 @@
       service: name=couchdb state=started enabled=yes
 
   handlers:
+    - name: set couchdb permissions
+      sudo: yes
+      command: set-all-facl u:couchdb -R /opt/couchdb
+
     - name: reload systemd
       sudo: yes
       command: systemctl daemon-reload
