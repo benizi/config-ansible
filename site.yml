@@ -908,7 +908,10 @@
 
     - name: Java
       sudo: yes
-      pacman: name=jdk7-openjdk
+      pacman: name={{item}}
+      with_items:
+        - jdk7-openjdk
+        - maven
 
     - name: Pythons (ensure both installed)
       sudo: yes
