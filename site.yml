@@ -471,7 +471,6 @@
         - w3m
 
     - name: Shells
-      tags: sh
       pacman: name={{item}}
       with_items:
         - bash
