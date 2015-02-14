@@ -482,6 +482,7 @@
       pacman: name={{item}}
       with_items:
         - ghostscript
+        - gimp
         - graphicsmagick
         - graphviz
         - imagemagick
