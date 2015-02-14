@@ -97,11 +97,14 @@
       with_items:
         - xorg-server
         - xf86-video-intel
-        - xf86-input-evdev
         - xf86-input-keyboard
         - xf86-input-mouse
         - xf86-input-synaptics
         - xorg-xauth
+
+    - name: X Server evdev driver
+      pacman: name=xf86-input-evdev
+      when: not crappy_trackpoint
 
     - name: X-related idiosyncratic prereqs
       pacman: name={{item}}

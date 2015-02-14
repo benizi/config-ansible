@@ -2,7 +2,7 @@
 # add host by IP here when initially configuring a new host
 
 [laptops]
-bhaskell-x240
+bhaskell-x240 crappy_trackpoint=true
 bhaskell-asus
 
 [vps]
