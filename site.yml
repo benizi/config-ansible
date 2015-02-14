@@ -173,22 +173,6 @@
         - patch
         - pkg-config
 
-- name: Custom dmenu
-  hosts: arch
-  vars:
-    dmenu: git/dmenu
-
-  tasks:
-    - name: Custom dmenu source
-      git: repo='gh:benizi/dmenu'
-        dest={{dmenu}}
-        remote=benizi
-
-    - name: Custom dmenu build
-      shell: make && make install
-        chdir={{dmenu}}
-        creates=/usr/local/bin/dmenu
-
 - name: XMonad
   hosts: arch
   tasks:
@@ -326,6 +310,22 @@
         (set-all-facl u:bhaskell -v -R /etc && sudo setfacl -R -b /etc/ssh)
       register: etc
       changed_when: etc.stdout != ''
+
+- name: Custom dmenu
+  hosts: arch
+  vars:
+    dmenu: git/dmenu
+
+  tasks:
+    - name: Custom dmenu source
+      git: repo='gh:benizi/dmenu'
+        dest={{dmenu}}
+        remote=benizi
+
+    - name: Custom dmenu build
+      shell: make && make install
+        chdir={{dmenu}}
+        creates=/usr/local/bin/dmenu
 
 - name: Acceptable terminal emulators
   hosts: laptops
