@@ -427,6 +427,7 @@
         - festival-us
         - pavucontrol
         - pulseaudio-alsa
+        - sox
 
     - name: Disks
       pacman: name={{item}}
