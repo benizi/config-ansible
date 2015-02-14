@@ -507,6 +507,7 @@
       pacman: name={{item}}
       with_items:
         - tcpdump
+        - whois
         - wireshark-gtk
 
     - name: Programmer tools
