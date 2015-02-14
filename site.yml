@@ -443,7 +443,9 @@
     - name: Compression
       pacman: name={{item}}
       with_items:
+        - cpio
         - p7zip
+        - squashfs-tools
         - unarj
         - unrar
         - unzip
