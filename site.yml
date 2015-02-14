@@ -317,23 +317,23 @@
 - name: Custom dmenu
   hosts: arch
   vars:
-    dmenu: git/dmenu
+    build: '{{gitbuild}}/dmenu'
 
   tasks:
     - name: Custom dmenu source
       git: repo='gh:benizi/dmenu'
-        dest={{dmenu}}
+        dest={{build}}
         remote=benizi
 
     - name: Custom dmenu build
       shell: make && make install
-        chdir={{dmenu}}
+        chdir={{build}}
         creates=/usr/local/bin/dmenu
 
 - name: Acceptable terminal emulators
   hosts: laptops
   vars:
-    rxvt_git: git/rxvt-unicode
+    rxvt_git: '{{gitbuild}}/rxvt-unicode'
     rxvt: /usr/local/bin/urxvt
 
   tasks:
@@ -383,6 +383,8 @@
 
 - name: Acceptable editors
   hosts: laptops
+  vars:
+    build: '{{gitbuild}}/vim'
   tasks:
     - name: Fallback (emacs)
       pacman: name={{item}}
@@ -398,13 +400,13 @@
 
     - name: Preferred (custom vim) source
       git: repo='gh:benizi/vim'
-        dest=git/vim
+        dest={{build}}
         version=24-bit
         remote=benizi
 
     - name: Preferred (custom vim) install
       command: build-vim
-        chdir=git/vim
+        chdir={{build}}
         creates=/usr/local/bin/vim
 
 - name: Install many packages
@@ -574,18 +576,21 @@
 
 - name: OpenConnect (VPN)
   hosts: arch
+  vars:
+    build: '{{gitbuild}}/openconnect'
+    scriptbuild: '{{gitbuild}}/vpnc-scripts'
   tasks:
     - name: VPNC Scripts source
       git: repo=git://git.infradead.org/users/dwmw2/vpnc-scripts.git
-        dest=git/vpnc-scripts
+        dest={{scriptbuild}}
         remote=dwmw2
 
     - name: VPNC Scripts link
-      file: state=link dest=/etc/vpnc src=~bhaskell/git/vpnc-scripts
+      file: state=link dest=/etc/vpnc src={{scriptbuild}}
 
     - name: OpenConnect source
       git: repo=git://git.infradead.org/users/dwmw2/openconnect.git
-        dest=git/openconnect
+        dest={{build}}
         remote=dwmw2
 
     - name: OpenConnect install
@@ -594,7 +599,7 @@
         make PYTHON=python2 &&
         make install PYTHON=python2
         creates=/usr/local/sbin/openconnect
-        chdir=git/openconnect
+        chdir={{build}}
 
 - name: Fix user groups
   hosts: arch
@@ -659,7 +664,7 @@
   hosts: arch
   vars:
     build: /tmp/dropbox-build
-    cache: .cache/dropbox.tar.gz
+    cache: '{{gitbuild}}/dropbox.tar.gz'
     dropbox: /usr/local/bin/dropbox
 
   tasks:
@@ -680,7 +685,7 @@
     - name: Dropbox install
       shell: rm -rf {{build}} &&
         mkdir {{build}} &&
-        tar -C {{build}} --strip-components 1 -xf ~/{{cache}} &&
+        tar -C {{build}} --strip-components 1 -xf {{cache}} &&
         cd {{build}} &&
         with-python2 ./configure --prefix=/usr/local --with-nautilus-extension-dir=/tmp/garbage &&
         with-python2 make &&
@@ -701,6 +706,8 @@
 
 - name: MOSH (SSH alternative)
   hosts: all
+  vars:
+    build: '{{gitbuild}}/mosh'
   tasks:
     - name: Detect EC2
       shell: curl -s -m 0.5 http://169.254.169.254/1.0 2>/dev/null
@@ -733,7 +740,7 @@
 
     - name: MOSH source
       git: repo=https://github.com/keithw/mosh
-        dest=git/mosh
+        dest={{build}}
         remote=keithw
 
     - name: MOSH install
@@ -741,14 +748,14 @@
         ./configure &&
         make &&
         make install
-        chdir=git/mosh
+        chdir={{build}}
         creates=/usr/local/bin/mosh-server
 
 - name: PepperFlash
   hosts: arch
   vars:
     arch: "{{'amd64' if ansible_machine == 'x86_64' else 'i386'}}"
-    cache: .cache/chrome.deb
+    cache: '{{gitbuild}}/chrome.deb'
     url: "https://dl.google.com/linux/direct/google-chrome-unstable_current_{{arch}}.deb"
 
   tasks:
@@ -800,6 +807,8 @@
 
 - name: Install Feh (image viewer)
   hosts: arch
+  vars:
+    build: '{{gitbuild}}/feh'
   tasks:
     - name: Feh (image viewer) prereqs
       sudo: yes
@@ -810,20 +819,20 @@
 
     - name: Feh (image viewer) source
       git: repo=gh:benizi/feh
-        dest=git/feh
+        dest={{build}}
         remote=benizi
       notify: install feh
 
   handlers:
     - name: install feh
       shell: make && make install
-        chdir=git/feh
+        chdir={{build}}
 
 - name: Remote access tools
   hosts: laptops
   vars:
     tag: v-enable-scroll-lock
-    cache: .cache/synergy.tar.gz
+    cache: '{{gitbuild}}/synergy.tar.gz'
 
   tasks:
     - name: VNC and RDP
@@ -847,7 +856,7 @@
 
     - name: Custom synergy install
       shell: rm -rf /tmp/synergy-{{tag}} &&
-        tar zxf ~/{{cache}} &&
+        tar zxf {{cache}} &&
         cd synergy-{{tag}} &&
         with-python2 ./hm.sh conf -g1 &&
         with-python2 ./hm.sh build &&
@@ -879,6 +888,8 @@
 
 - name: Prog langs
   hosts: laptops
+  vars:
+    rubybuild: '{{gitbuild}}/ruby-build'
   tasks:
     - name: Install prereqs
       sudo: yes
@@ -895,7 +906,7 @@
     # Verman uses ruby-build to install rubies
     - name: Fetch ruby-build
       git: repo=gh:sstephenson/ruby-build
-        dest=git/ruby-build
+        dest={{rubybuild}}
         remote=sstephenson
       notify: Install ruby-build
 
@@ -940,24 +951,25 @@
   handlers:
     - name: Install ruby-build
       command: ./install.sh
-        chdir=git/ruby-build
+        chdir={{rubybuild}}
 
 - name: Rebar
   hosts: arch
   vars:
+    build: '{{gitbuild}}/rebar'
     rebar: /usr/local/bin/rebar
 
   tasks:
     - name: Rebar source
       git: repo=gh:rebar/rebar
-        dest=git/rebar
+        dest={{build}}
         update=no
         remote=rebar
 
     - name: Rebar install
       shell: ./bootstrap &&
         mv rebar {{rebar}}
-        chdir=git/rebar
+        chdir={{build}}
         creates={{rebar}}
 
 - name: Ansible
@@ -979,16 +991,18 @@
 
 - name: Custom s3cmd
   hosts: arch
+  vars:
+    build: '{{gitbuild}}/s3cmd'
   tasks:
     - name: Custom s3cmd source
       git: repo=gh:benizi/s3cmd
-        dest=git/s3cmd
+        dest={{build}}
         version=feature/fog-config
         update=no
         remote=benizi
 
     - name: Custom s3cmd wrapper
-      copy: content='#!/bin/sh\nexec python2 $HOME/git/s3cmd/s3cmd "$@"'
+      copy: content='#!/bin/sh\nexec python2 {{build}}/s3cmd "$@"'
         dest=bin.local/s3cmd
         mode=0750
 
@@ -1110,7 +1124,7 @@
   vars:
     build: /tmp/couchdb-build
     exe: '{{prefix}}/bin/couchdb'
-    git: ~bhaskell/git/couchdb
+    git: '{{gitbuild}}/couchdb'
     prefix: /opt/couchdb
     version: 1.6.1
 
@@ -1196,7 +1210,7 @@
 
     - name: Custom AUR builds
       synchronize: dest=/tmp/{{item}}
-        src=~/arch-builds/{{item}}/
+        src={{gitbuild}}/arch-builds/{{item}}/
       with_items: custom_pkgs
 
     - name: Conflicting package
@@ -1226,10 +1240,12 @@
 
 - name: Install jq (JSON Swiss Army knife)
   hosts: arch
+  vars:
+    build: '{{gitbuild}}/jq'
   tasks:
     - name: jq source
       git: repo=gh:stedolan/jq
-        dest=git/jq
+        dest={{build}}
         update=false
         remote=stedolan
 
@@ -1238,13 +1254,14 @@
         autoreconf -vif &&
         ./configure &&
         make install
-        chdir=git/jq
+        chdir={{build}}
         creates=/usr/local/bin/jq
 
 - name: Docker
   hosts: arch
   vars:
     bootstrap: /opt/bootstrap-docker
+    build: '{{gitbuild}}/docker'
     bundle: bundles/{{version}}/binary
     docker_root: /usr/local/bin
     docker: '{{docker_root}}/docker'
@@ -1274,7 +1291,7 @@
 
     - name: Docker source
       git: repo=gh:docker/docker
-        dest=git/docker
+        dest={{build}}
         version=v{{version}}
         update=no
         remote=docker
@@ -1286,12 +1303,12 @@
         make &&
         chown -R bhaskell bundles &&
         fuser -s -k -TERM /tmp/docker.build
-        chdir=git/docker
+        chdir={{build}}
         creates={{bundle}}/docker-{{version}}
 
     - name: Docker install
       shell: rsync -Pav {{bundle}}/docker* {{docker_root}}/
-        chdir=git/docker
+        chdir={{build}}
         creates={{docker}}-{{version}}
 
     - name: Enable IPv4 forwarding
