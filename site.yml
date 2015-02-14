@@ -412,6 +412,7 @@
       pacman: name={{item}}
       with_items:
         - dnsutils
+        - gdb
         - htop
         - iotop
         - lsof
