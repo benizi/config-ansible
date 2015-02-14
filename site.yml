@@ -140,13 +140,15 @@
 
 - name: Initial .ssh/config
   hosts: all
+  vars:
+    ssh: ~bhaskell/.ssh
   tasks:
     - name: .ssh directory
-      file: state=directory dest=.ssh mode=0700
+      file: state=directory dest={{ssh}} mode=0700
 
     - name: .ssh/config
       copy: content="Host gh\nHostName github.com\nUser git\n"
-        dest=.ssh/config
+        dest={{ssh}}/config
         mode=0640
         force=no
 
@@ -231,13 +233,13 @@
 
     - name: Clone latest dotfiles
       git: repo=gh:benizi/dotfiles
-        dest=dotfiles
+        dest=~bhaskell/dotfiles
         update=yes
         remote=benizi
 
     # TODO: replace this and the next task with script within dotfiles repo
     - name: Link dotfiles (simple)
-      file: state=link src=dotfiles/{{item}} dest={{item}}
+      file: state=link src=dotfiles/{{item}} dest=~bhaskell/{{item}}
       with_items:
         - bin
         - .emacs.d
@@ -257,7 +259,7 @@
 
     # TODO: see prior TODO
     - name: Link dotfiles (non-homedir)
-      file: state=link src={{item.src}} dest={{item.dest}}
+      file: state=link src={{item.src}} dest=~bhaskell/{{item.dest}}
       with_items:
         - { src: ../dotfiles/.config/feh, dest: .config/feh }
         - { src: ../dotfiles/.lein/profiles.clj, dest: .lein/profiles.clj }
@@ -269,7 +271,7 @@
       file: state=link src=~bhaskell/.zshenv dest=~root/.zshenv
 
     - name: Set up build for bin.local files
-      file: state=link src=../bin/{{item}} dest=bin.local/{{item}}
+      file: state=link src=../bin/{{item}} dest=~bhaskell/bin.local/{{item}}
       with_items:
         - Makefile
         - src
@@ -289,7 +291,7 @@
 
     - name: Script prereqs (compiled)
       command: make {{item}}
-        chdir=bin.local
+        chdir=~bhaskell/bin.local
         creates={{item}}
       with_items:
         - myod
@@ -379,7 +381,7 @@
         creates={{rxvt}}
 
     - name: Preferred (custom rxvt-unicode) link
-      file: dest=bin.local/term state=link src={{rxvt}}
+      file: dest=~bhaskell/bin.local/term state=link src={{rxvt}}
 
 - name: Acceptable editors
   hosts: laptops
@@ -650,7 +652,7 @@
 - name: LXPanel
   hosts: laptops
   vars:
-    conf_dir: ~/.config/lxpanel/default/panels
+    conf_dir: ~bhaskell/.config/lxpanel/default/panels
 
   tasks:
     - name: LXPanel config dir
@@ -780,11 +782,11 @@
 
   tasks:
     - name: User service dir
-      file: dest=~/{{systemd}} state=directory recurse=yes
+      file: dest=~bhaskell/{{systemd}} state=directory recurse=yes
 
     - name: Services
       copy: src=files/{{item}}.service
-        dest=~/{{systemd}}/{{item}}.service
+        dest=~bhaskell/{{systemd}}/{{item}}.service
         mode=0644
       with_items: services
       register: service_files
@@ -798,7 +800,7 @@
       command: systemctl --user daemon-reload
 
     - name: enable user services
-      command: systemctl --user enable ~/{{systemd}}/{{item}}.service
+      command: systemctl --user enable ~bhaskell/{{systemd}}/{{item}}.service
       with_items: services
 
     - name: start user services
@@ -860,9 +862,9 @@
         cd synergy-{{tag}} &&
         with-python2 ./hm.sh conf -g1 &&
         with-python2 ./hm.sh build &&
-        mv bin/synergy{c,d,s} ~/bin.local/
+        mv bin/synergy{c,d,s} ~bhaskell/bin.local/
         chdir=/tmp
-        creates=~/bin.local/synergyc
+        creates=~bhaskell/bin.local/synergyc
 
 - name: Power settings
   hosts: laptops
@@ -941,7 +943,7 @@
 
     - name: Clojure (leiningen) download
       get_url: url=https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
-        dest=bin.local/lein
+        dest=~bhaskell/bin.local/lein
         mode=0750
 
     - name: Clojure (leiningen) initial install
@@ -1003,7 +1005,7 @@
 
     - name: Custom s3cmd wrapper
       copy: content='#!/bin/sh\nexec python2 {{build}}/s3cmd "$@"'
-        dest=bin.local/s3cmd
+        dest=~bhaskell/bin.local/s3cmd
         mode=0750
 
 - name: Password manager
@@ -1018,7 +1020,7 @@
 
     - name: build password-manager
       command: make password-manager
-        chdir=bin.local
+        chdir=~bhaskell/bin.local
         creates=password-manager
 
 - name: Dev DNS
