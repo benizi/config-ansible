@@ -1305,7 +1305,7 @@
     bundle: bundles/{{version}}/binary
     docker_root: /usr/local/bin
     docker: '{{docker_root}}/docker'
-    version: 1.3.0
+    version: 1.5.0
 
   tasks:
     - name: Install prereqs
