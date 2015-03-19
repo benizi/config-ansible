@@ -987,6 +987,31 @@
         chdir={{build}}
         creates={{rebar}}
 
+- name: Android development
+  hosts: arch
+  vars:
+    base: android-studio-ide-135.1740770-linux.zip
+    tmp: /tmp/{{base}}
+    url: https://dl.google.com/dl/android/studio/ide-zips/1.1.0/{{base}}
+
+  tasks:
+    - name: Android Studio
+      get_url: url={{url}}
+        dest={{tmp}}
+        sha256sum=215bc100b1c94354cece28b4b1692ffc3098f386bf76c1ebc05d393f1acd50e4
+
+    - name: Android Studio (install)
+      unarchive: copy=no
+        src={{tmp}}
+        dest=/opt/
+        creates=/opt/android-studio
+
+    # TODO: is this needed? Otherwise add a link to the studio-installed tools.
+    #
+    - name: Android Tools
+      sudo: yes
+      pacman: name=android-tools
+
 - name: Ansible
   hosts: arch
   sudo: yes
