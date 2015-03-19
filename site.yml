@@ -680,9 +680,9 @@
         - python2-pygpgme
 
     - name: Dropbox source
-      get_url: url=https://linux.dropbox.com/packages/nautilus-dropbox-1.6.2.tar.bz2
+      get_url: url=https://linux.dropbox.com/packages/nautilus-dropbox-2015.02.12.tar.bz2
         dest={{cache}}
-        sha256sum=63d53109c7d0efc0e83f36ac47be3be923115eaf0be56cfc9a1aa8e2ecc633e4
+        sha256sum=06e152ee5a683a5911bb5147f491276d7a1ed5e05ac4065b0e9eea5e7d00ad8a
 
     - name: Dropbox install
       shell: rm -rf {{build}} &&
