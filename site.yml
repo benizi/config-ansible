@@ -668,6 +668,7 @@
     build: /tmp/dropbox-build
     cache: '{{gitbuild}}/dropbox.tar.gz'
     dropbox: /usr/local/bin/dropbox
+    old: '{{gitbuild}}/dropbox-old.tar.gz'
 
   tasks:
     - name: Dropbox prereqs
@@ -678,6 +679,18 @@
         - pygtk
         - python2-docutils
         - python2-pygpgme
+
+    - name: Dropbox dist source (workaround for tray icon)
+      get_url: url=https://d1ilhw0800yew8.cloudfront.net/client/dropbox-lnx.x86_64-2.10.52.tar.gz
+        dest={{old}}
+        sha256sum=e61ef14cdf8bd4801ff2794c1178b2cac5c097ebffb3b24d061738006e76c23a
+
+    - name: Dropbox dist install (workaround for tray icon)
+      shell: cd ~bhaskell &&
+        rm -r .dropbox-dist &&
+        tar xf {{old}} &&
+        chmod -R a-w .dropbox-dist
+        creates=~bhaskell/.dropbox-dist/dropboxd
 
     - name: Dropbox source
       get_url: url=https://linux.dropbox.com/packages/nautilus-dropbox-2015.02.12.tar.bz2
