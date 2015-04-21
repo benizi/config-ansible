@@ -1,4 +1,17 @@
 ---
+- name: Ansible
+  hosts: 'ansible:&arch'
+  sudo: true
+  tasks:
+    - name: Python PIP
+      pacman: name=python2-pip
+
+    - name: Ansible Modules
+      pip: name={{item}} executable=pip2
+      with_items:
+        - ansible
+        - passlib
+
 - name: Arch packaging
   hosts: arch
   sudo: true
@@ -1011,16 +1024,6 @@
     - name: Android Tools
       sudo: yes
       pacman: name=android-tools
-
-- name: Ansible
-  hosts: arch
-  sudo: yes
-  tasks:
-    - name: Python PIP
-      pacman: name=python2-pip
-
-    - name: Ansible
-      pip: name=ansible executable=pip2
 
 - name: AWS CLI
   hosts: arch
