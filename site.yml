@@ -544,6 +544,7 @@
         - tk # for gitk
         - tmux
         - x11vnc
+        - xorg-server-xephyr
         - xorg-server-xvfb
 
     - name: X11 utilities
