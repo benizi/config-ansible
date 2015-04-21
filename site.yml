@@ -1032,6 +1032,16 @@
       sudo: yes
       pacman: name=android-tools
 
+    - name: Android USB debugging
+      sudo: yes
+      pacman: name=android-udev
+
+    - name: Android USB group (add me)
+      sudo: yes
+      user: name=bhaskell
+        append=yes
+        groups=adbusers
+
 - name: AWS CLI
   hosts: arch
   sudo: yes
