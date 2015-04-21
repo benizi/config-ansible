@@ -192,6 +192,12 @@
         - patch
         - pkg-config
 
+    - name: Esoteric Source Control
+      pacman: name={{item}}
+      with_items:
+        - bzr # oddly popular for Go libs
+        - cvs # RXVT-Unicode
+
 - name: XMonad
   hosts: arch
   tasks:
@@ -368,7 +374,6 @@
       sudo: true
       pacman: name={{item}}
       with_items:
-        - cvs # for external libs
         - libev
 
     - name: Preferred (custom rxvt-unicode) source
