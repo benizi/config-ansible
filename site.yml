@@ -1066,6 +1066,36 @@
         dest=~bhaskell/bin.local/s3cmd
         mode=0750
 
+- name: Transparent caching proxy
+  hosts: arch
+  vars:
+    pkg: transproxy
+    version: '1.6'
+    pkgver: '{{pkg}}-{{version}}'
+    build: '{{gitbuild}}/{{pkg}}-{{version}}'
+    cache: '{{build}}.tgz'
+    url: 'http://downloads.sourceforge.net/project/{{pkg}}/{{pkg}}/{{version}}/{{pkgver}}.tgz'
+    binary: /usr/local/bin/tproxy
+
+  tasks:
+    - name: Fetch transproxy source
+      get_url: url={{url}}
+        dest={{cache}}
+        sha256sum=7bc4ce5ab01648dcaca25555eb4d4c3a67aed6bbb42e1432aaa4e9b20b75dab3
+
+    - name: Install transproxy
+      shell: cd {{gitbuild}} &&
+        rm -rf {{pkgver}} &&
+        tar zxf {{cache}} &&
+        cd {{pkgver}} &&
+        make &&
+        install -c -m 555 tproxy {{binary}}
+        creates={{binary}}
+
+    - name: Install polipo
+      sudo: yes
+      pacman: name=polipo
+
 - name: Password manager
   hosts: laptops
   tasks:
