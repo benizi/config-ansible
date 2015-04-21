@@ -447,6 +447,16 @@
         - socat
         - strace
 
+    - name: Hardware Info
+      pacman: name={{item}}
+      with_items:
+        - dmidecode
+        - hdparm
+        - hwinfo
+        - lshw
+        - pciutils
+        - usbutils
+
     - name: Audio
       pacman: name={{item}}
       with_items:
