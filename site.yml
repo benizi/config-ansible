@@ -635,7 +635,7 @@
 - name: Heroku Toolbelt
   hosts: arch
   vars:
-    cache: .cache/heroku-client.tar.gz
+    cache: '{{gitbuild}}/heroku-client.tar.gz'
     dir: /usr/local/heroku
 
   tasks:
@@ -652,7 +652,7 @@
 
     - name: Heroku CLI plugins
       command: heroku plugins:install {{item.git}}
-        creates=.heroku/plugins/{{item.name}}
+        creates=~bhaskell/.heroku/plugins/{{item.name}}
       with_items:
         - name: 'heroku-accounts'
           git: 'https://github.com/ddollar/heroku-accounts.git'
