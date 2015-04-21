@@ -183,6 +183,7 @@
         - autoconf
         - automake
         - bison
+        - clang
         - cmake
         - flex
         - gcc-multilib
