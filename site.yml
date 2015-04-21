@@ -1148,6 +1148,7 @@
       sudo: yes
       pacman: name={{item}}
       with_items:
+        - mariadb
         - mongodb
         - nginx
         - postgresql
