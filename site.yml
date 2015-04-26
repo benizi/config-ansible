@@ -747,7 +747,7 @@
         sed q |
         dropbox start -i &&
         dropbox stop
-        creates=.dropbox-dist
+        creates=~bhaskell/.dropbox-dist
 
 - name: MOSH (SSH alternative)
   hosts: all
@@ -812,7 +812,7 @@
       shell: bsdtar -Oxf {{cache}} data.tar.xz |
         xz -d |
         tar -C ~ --strip-components 4 -x ./opt/google/chrome-unstable/PepperFlash
-        creates=PepperFlash
+        creates=~bhaskell/PepperFlash
 
 - name: User services
   hosts: arch
@@ -991,7 +991,7 @@
 
     - name: Clojure (leiningen) initial install
       command: lein version
-        creates=.lein/self-installs
+        creates=~bhaskell/.lein/self-installs
 
   handlers:
     - name: Install ruby-build
