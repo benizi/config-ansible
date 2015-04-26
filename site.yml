@@ -251,10 +251,10 @@
         - .vim.local
         - .zsh.local
 
-    - name: Clone latest dotfiles
+    - name: Clone dotfiles
       git: repo=gh:benizi/dotfiles
         dest=~bhaskell/dotfiles
-        update=yes
+        update=no
         remote=benizi
 
     # TODO: replace this and the next task with script within dotfiles repo
