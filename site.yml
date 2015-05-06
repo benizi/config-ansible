@@ -244,7 +244,7 @@
     - meta: flush_handlers
 
     - name: Cabal packages
-      shell: cabal info {{item}} | grep -L 'Versions.installed.*Not.installed' | grep -q . ||
+      shell: ghc-pkg list --simple {{item}} | grep -q . ||
         cabal install {{item}}
       with_items:
         - darcs
