@@ -1324,17 +1324,19 @@
       notify: set abs perms
 
     - name: Aura prereqs
-      sudo: yes
-      pacman: name={{item}}
+      shell: ghc-pkg list --simple {{item}} | grep -q . ||
+        cabal install {{item}}
       with_items:
-        - haskell-regex-base
-        - haskell-parsec
-        - haskell-syb
-        - haskell-mtl
-        - haskell-json
-        - haskell-temporary
-        - haskell-regex-pcre-builtin
-        - haskell-http-conduit
+        - regex-base
+        - parsec
+        - syb
+        - mtl
+        - json
+        - temporary
+        - regex-pcre-builtin
+        - http-conduit
+      register: cabal
+      changed_when: cabal.stdout != ''
 
     - name: Custom AUR builds
       synchronize: dest=/tmp/{{item}}
