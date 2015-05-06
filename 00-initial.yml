@@ -30,9 +30,19 @@
         comment='Benjamin R. Haskell'
         groups=wheel
         password={{user_password}}
-        generate_ssh_key=yes
-        ssh_key_type=ed25519
-        ssh_key_bits=256
-        ssh_key_comment=bhaskell@{{ansible_hostname}}
-        ssh_key_file=.ssh/id_03_{{ansible_hostname}}
-        ssh_key_passphrase={{ssh_passphrase}}
+
+- name: Per-Host SSH Key
+  hosts: initial
+  vars_prompt:
+   - name: ssh_passphrase
+     prompt: SSH key passphrase (03)
+     private: yes
+     confirm: yes
+
+  tasks:
+    - name: SSH Key
+      sshkey: file=.ssh/id_03_{{ansible_hostname}}
+        type=rsa
+        bits=4096
+        comment=bhaskell@{{ansible_hostname}}
+        passphrase={{ssh_passphrase}}
