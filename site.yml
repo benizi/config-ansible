@@ -18,12 +18,13 @@
   vars:
     mirrorlist: /etc/pacman.d/mirrorlist
     repos: [testing, core, extra, community, multilib]
+    allrepos: '{{["haskell-core"] + repos + ["atlassian"]}}'
 
   tasks:
     - name: Disable all repos (no includes)
       lineinfile: dest=/etc/pacman.conf
         state=absent
-        regexp='^Include\s*=\s*{{mirrorlist}}\s*$'
+        regexp='^Include\s*=\s*/etc/pacman\.d/repo'
       notify: Update packages
 
     - name: Disable all repos (no sections)
@@ -35,16 +36,26 @@
 
     - name: Add include for chosen repos
       lineinfile: dest=/etc/pacman.conf
-        line='Include = /etc/pacman.d/repo.*'
+        line='Include = /etc/pacman.d/ansible.repos'
       notify: Update packages
 
-    - name: Create files for each repo
-      copy: content='[{{item.1}}]\nInclude = {{mirrorlist}}\n'
-        dest=/etc/pacman.d/repo.{{item.0}}.{{item.1}}
+    - name: Haskell Core repo
+      copy: content='[haskell-core]\nServer = http://xsounds.org/~haskell/core/$arch\n'
+        dest=/etc/pacman.d/repo.haskell-core
         owner=root
         group=root
         mode=0644
-      with_indexed_items: repos
+      notify:
+        - Haskell Core key
+        - Update packages
+
+    - name: Create files for each repo
+      copy: content='[{{item}}]\nInclude = {{mirrorlist}}\n'
+        dest=/etc/pacman.d/repo.{{item}}
+        owner=root
+        group=root
+        mode=0644
+      with_items: repos
       notify: Update packages
 
     - name: Atlassian repo
@@ -57,13 +68,26 @@
         - Atlassian key
         - Update packages
 
+    - name: All repos
+      lineinfile: dest=/etc/pacman.d/ansible.repos
+        line='Include = /etc/pacman.d/repo.{{item}}'
+        owner=root
+        group=root
+        mode=0644
+        create=yes
+      with_items: allrepos
+      notify: Update packages
+
   handlers:
     - name: Atlassian key
       shell: curl https://www.hipchat.com/keys/hipchat-linux.key |
         GNUPGHOME=/etc/pacman.d/gnupg gpg --import
 
+    - name: Haskell Core key
+      shell: pacman-key -r 4209170B && pacman-key --lsign-key 4209170B
+
     - name: Update packages
-      command: pacman -Syy
+      shell: pacman-key --refresh-keys && pacman -Syy
 
 - name: Sudo umask
   hosts: arch
