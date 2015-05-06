@@ -71,8 +71,11 @@
       shell: curl https://www.hipchat.com/keys/hipchat-linux.key |
         GNUPGHOME=/etc/pacman.d/gnupg gpg --import
 
+    - name: Refresh keys
+      command: pacman-key --refresh-keys
+
     - name: Update packages
-      shell: pacman-key --refresh-keys && pacman -Syy
+      command: pacman -Syy
 
 - name: Sudo umask
   hosts: arch
