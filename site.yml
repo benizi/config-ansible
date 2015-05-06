@@ -59,13 +59,11 @@
         - Update packages
 
     - name: All repos
-      lineinfile: dest=/etc/pacman.d/ansible.repos
-        line='Include = /etc/pacman.d/repo.{{item}}'
+      template: src=templates/ansible.repos.j2
+        dest=/etc/pacman.d/ansible.repos
         owner=root
         group=root
         mode=0644
-        create=yes
-      with_items: allrepos
       notify: Update packages
 
   handlers:
