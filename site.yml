@@ -18,7 +18,7 @@
   vars:
     mirrorlist: /etc/pacman.d/mirrorlist
     repos: [testing, core, extra, community, multilib]
-    allrepos: '{{["haskell-core"] + repos + ["atlassian"]}}'
+    allrepos: '{{repos + ["atlassian"]}}'
 
   tasks:
     - name: Disable all repos (no includes)
@@ -38,16 +38,6 @@
       lineinfile: dest=/etc/pacman.conf
         line='Include = /etc/pacman.d/ansible.repos'
       notify: Update packages
-
-    - name: Haskell Core repo
-      copy: content='[haskell-core]\nServer = http://xsounds.org/~haskell/core/$arch\n'
-        dest=/etc/pacman.d/repo.haskell-core
-        owner=root
-        group=root
-        mode=0644
-      notify:
-        - Haskell Core key
-        - Update packages
 
     - name: Create files for each repo
       copy: content='[{{item}}]\nInclude = {{mirrorlist}}\n'
@@ -82,9 +72,6 @@
     - name: Atlassian key
       shell: curl https://www.hipchat.com/keys/hipchat-linux.key |
         GNUPGHOME=/etc/pacman.d/gnupg gpg --import
-
-    - name: Haskell Core key
-      shell: pacman-key -r 4209170B && pacman-key --lsign-key 4209170B
 
     - name: Update packages
       shell: pacman-key --refresh-keys && pacman -Syy
