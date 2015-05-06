@@ -950,6 +950,7 @@
       pacman: name={{item}}
       with_items:
         - pm-utils
+        - powertop
 
   handlers:
     - name: restart logind
