@@ -1335,6 +1335,19 @@
       pacman: name=abs
       notify: set abs perms
 
+    - name: Aura prereqs
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - haskell-regex-base
+        - haskell-parsec
+        - haskell-syb
+        - haskell-mtl
+        - haskell-json
+        - haskell-temporary
+        - haskell-regex-pcre-builtin
+        - haskell-http-conduit
+
     - name: Custom AUR builds
       synchronize: dest=/tmp/{{item}}
         src={{gitbuild}}/arch-builds/{{item}}/
