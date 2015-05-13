@@ -582,6 +582,25 @@
         - xorg-xwininfo
         - xosd
 
+- name: ConTeXt
+  hosts: arch
+  vars:
+    prefix: /opt/context
+    installer: '{{prefix}}/installer'
+    binary: '{{prefix}}/bin/luatex'
+
+  tasks:
+    - name: ConTeXt directory
+      file: path={{prefix}} state=directory owner=bhaskell group=bhaskell
+
+    - name: ConTeXt installer
+      get_url: url=http://minimals.contextgarden.net/setup/first-setup.sh
+        dest={{installer}}
+        mode=0750
+
+    - name: ConTeXt
+      shell: '{{installer}} creates={{binary}} chdir={{prefix}}'
+
 - name: Virtualization
   hosts: arch
   sudo: yes
