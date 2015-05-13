@@ -953,13 +953,28 @@
       with_items:
         - { setting: HandleSuspendKey, value: ignore }
         - { setting: HandleLidSwitch, value: lock }
+        - { setting: HandlePowerKey, value: ignore }
       notify: restart logind
 
     - name: Install utilities
       pacman: name={{item}}
       with_items:
+        - acpid
         - pm-utils
         - powertop
+
+    - name: Start ACPID
+      service: name=acpid enabled=yes state=started
+
+    - name: Enable ACPID custom handlers
+      file: dest=/etc/acpi/events/anything mode=0750
+
+    - name: Use Power Button to toggle keyboard
+      copy: content='event=button/power\naction=/home/bhaskell/bin/acpi-power-button\n'
+        dest=/etc/acpi/events/power-button
+        owner=bhaskell
+        group=root
+        mode=0750
 
   handlers:
     - name: restart logind
