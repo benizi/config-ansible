@@ -1025,6 +1025,7 @@
       pacman: name={{item}}
       with_items:
         - jdk7-openjdk
+        - apache-ant
         - maven
 
     - name: Pythons (ensure both installed)
