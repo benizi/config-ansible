@@ -28,10 +28,9 @@
       notify: Update packages
 
     - name: Disable all repos (no sections)
-      lineinfile: dest=/etc/pacman.conf
-        line='#[{{item}}]'
-        regexp='\[{{item}}\]'
-      with_items: repos
+      replace: dest=/etc/pacman.conf
+        regexp='^\[(?!options\]$)(.+)\]$'
+        replace='#[\1]'
       notify: Update packages
 
     - name: Add include for chosen repos
