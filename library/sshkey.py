@@ -180,18 +180,18 @@ def main():
         supports_check_mode=True
     )
 
-    key = SSHKey(module)
+    sshkey = SSHKey(module)
 
     result = {
-            'state': key.state,
-            'ssh_key_file': key.path,
+            'state': sshkey.state,
+            'ssh_key_file': sshkey.path,
     }
 
-    (rc, out, err) = key.generate()
+    (rc, out, err) = sshkey.generate()
 
 
     if module.check_mode:
-        result['changed'] = not os.path.exists(key.path)
+        result['changed'] = not os.path.exists(sshkey.path)
         module.exit_json(**result)
 
     if rc is not None and rc != 0:
@@ -199,12 +199,12 @@ def main():
     if rc == 0:
         result['changed'] = True
 
-    (rc, out, err) = key.fingerprint()
+    (rc, out, err) = sshkey.fingerprint()
     if rc == 0:
         result['ssh_fingerprint'] = out.strip()
     else:
         result['ssh_fingerprint'] = err.strip()
-    result['ssh_public_key'] = key.public_key()
+    result['ssh_public_key'] = sshkey.public_key()
 
     module.exit_json(**result)
 
