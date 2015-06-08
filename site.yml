@@ -628,6 +628,12 @@
   vars:
     prefix: 'hosts:'
   tasks:
+    - name: Avahi packages
+      pacman: name={{item}}
+      with_items:
+        - avahi
+        - nss-mdns
+
     - name: Avahi services
       service: name={{item}} enabled=yes state=started
       with_items:
