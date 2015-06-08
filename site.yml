@@ -1433,6 +1433,24 @@
       sudo: yes
       service: name=postgresql state=restarted
 
+- name: Yubikey Neo support
+  hosts: yubikey
+  sudo: yes
+  tasks:
+    - name: Install Yubikey manager
+      shell: aura -Qi {{item}} >/dev/null 2>/dev/null ||
+        aura --noconfirm -A {{item}}
+      register: tempout
+      changed_when: tempout.stdout != ''
+      with_items:
+        - yubikey-neo-manager-git # 2nd factor USB key manager
+
+    - name: CCID manager
+      pacman: name=pcsclite
+
+    - name: CCID manager service
+      service: name=pcscd state=started enabled=yes
+
 - name: Install jq (JSON Swiss Army knife)
   hosts: arch
   vars:
