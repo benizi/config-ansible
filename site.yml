@@ -531,11 +531,13 @@
     - name: Graphics
       pacman: name={{item}}
       with_items:
+        - blender
         - ghostscript
         - gimp
         - graphicsmagick
         - graphviz
         - imagemagick
+        - inkscape
         - perl-image-exiftool
         - poppler # PDF handling
 
