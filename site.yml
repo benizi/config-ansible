@@ -714,7 +714,7 @@
         creates=~bhaskell/.heroku/plugins/{{item.name}}
       with_items:
         - name: 'heroku-accounts'
-          git: 'https://github.com/ddollar/heroku-accounts.git'
+          git: 'https://github.com/heroku/heroku-accounts.git'
 
         - name: 'heroku-anvil'
           git: 'https://github.com/ddollar/heroku-anvil'
