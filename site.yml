@@ -454,6 +454,7 @@
         - gdb
         - htop
         - iotop
+        - iw
         - lsof
         - nmap
         - rsync
