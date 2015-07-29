@@ -565,6 +565,7 @@
       with_items:
         - ack
         - dtach
+        - meld
         - screen
         - tk # for gitk
         - tmux
