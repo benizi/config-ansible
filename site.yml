@@ -585,6 +585,11 @@
         - xorg-xwininfo
         - xosd
 
+    - name: Science
+      pacman: name={{item}}
+      with_items:
+        - stellarium
+
 - name: ConTeXt
   hosts: arch
   vars:
