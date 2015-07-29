@@ -505,6 +505,7 @@
     - name: Fonts
       pacman: name={{item}}
       with_items:
+        - fontforge
         - gsfonts
         - otf-ipafont
         - opendesktop-fonts
