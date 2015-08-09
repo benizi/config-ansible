@@ -1358,18 +1358,9 @@
       sudo: yes
       command: systemctl daemon-reload
 
-- name: AUR packages # TODO: custom repo?
+- name: Aura and ABS
   hosts: arch
   vars:
-    custom_pkgs:
-      - uuid # for postgresql-uuid-ossp
-      - postgresql-uuid-ossp
-      - oniguruma # for jq
-      - ttf-ms-fonts # for decent fonts
-      - ttf-noto # covers tons of writing systems
-      - xf86-input-evdev-trackpoint # middle-click scroll
-      - xpdf
-      - lua-cjson # for Toshiba FlashAir
     archbuilds: /opt/arch-builds
     tarball: '{{archbuilds}}/aura.tar.gz'
     pkg: '{{archbuilds}}/aura/aura-1.3.0.5-1-x86_64.pkg.tar.xz'
@@ -1426,23 +1417,36 @@
       command: pacman --noconfirm -U {{pkg}}
         creates=/usr/sbin/aura
 
+  handlers:
+    - name: set abs perms
+      command: set-all-facl -u -R /var/abs
+
+- name: AUR packages
+  hosts: arch
+  sudo: yes
+  tasks:
     - name: Conflicting package
-      sudo: yes
       shell: pacman -Qi xf86-input-evdev | grep -L . | grep -q . ||
         pacman --noconfirm -Rdd xf86-input-evdev
       register: conflicting
       changed_when: conflicting.stdout != ''
 
-    - name: AUR installs
-      sudo: yes
-      aura: name={{item}}
-      with_items: custom_pkgs
+    - name: PostgreSQL extension
+      aura: name=postgresql-uuid-ossp
       notify: restart postgresql
 
-  handlers:
-    - name: set abs perms
-      command: set-all-facl -u -R /var/abs
+    - name: AUR installs
+      aura: name={{item}}
+      with_items:
+        - uuid # for postgresql-uuid-ossp
+        - oniguruma # for jq
+        - ttf-ms-fonts # for decent fonts
+        - ttf-noto # covers tons of writing systems
+        - xf86-input-evdev-trackpoint # middle-click scroll
+        - xpdf
+        - lua-cjson # for Toshiba FlashAir
 
+  handlers:
     - name: restart postgresql
       sudo: yes
       service: name=postgresql state=restarted
