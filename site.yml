@@ -1435,10 +1435,7 @@
 
     - name: AUR installs
       sudo: yes
-      shell: aura -Qi {{item}} >/dev/null 2>/dev/null ||
-        aura --noconfirm -A {{item}}
-      register: tempout
-      changed_when: tempout.stdout != ''
+      aura: name={{item}}
       with_items: custom_pkgs
       notify: restart postgresql
 
@@ -1455,12 +1452,7 @@
   sudo: yes
   tasks:
     - name: Install Yubikey manager
-      shell: aura -Qi {{item}} >/dev/null 2>/dev/null ||
-        aura --noconfirm -A {{item}}
-      register: tempout
-      changed_when: tempout.stdout != ''
-      with_items:
-        - yubikey-neo-manager-git # 2nd factor USB key manager
+      aura: name=yubikey-neo-manager-git
 
     - name: CCID manager
       pacman: name=pcsclite
