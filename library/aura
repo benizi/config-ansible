@@ -1,0 +1,104 @@
+#!/usr/bin/env python2
+### TODO ^^^ wrong for anything but Arch Linux
+# -*- coding: utf-8 -*-
+
+DOCUMENTATION = '''
+---
+module: aura
+short_description: Manage packages with I(aura)
+description:
+    - like `pacman`, but for `aura` and only for packages in AUR
+version_added: n/a
+author: Benjamin R. Haskell
+notes: []
+requirements: []
+options:
+    name:
+        description:
+            - Name of the aur package to install, upgrade, or remove.
+        required: true
+        default: null
+    state:
+        description:
+            - Desired state of aur package.
+        required: false
+        default: present
+        choices: [present, absent, latest]
+'''
+
+EXAMPLES = '''
+# Install aur package xyz
+- aura: name=xyz
+'''
+
+import re
+from ansible.module_utils.basic import *
+
+def uncolor(output):
+    return re.sub(r'\x1b\[[^m]*m', '', output)
+
+def parse_version(output):
+    '''Parse version out of aura -Qi or aura -Si output.'''
+    for line in uncolor(output).split('\n'):
+        if line.startswith('Version'):
+            return line.split(':')[1].strip()
+    return None
+
+def query(module, aura, pkg, state='present'):
+    if state == 'present':
+        lcmd = [aura, '-Qi', pkg]
+        lrc, lout, lerr = module.run_command(lcmd, check_rc=False)
+        if lrc != 0:
+            return False, False
+        rcmd = [aura, '-Ai', pkg]
+        rrc, rout, rerr = module.run_command(rcmd, check_rc=False)
+
+        lver = parse_version(lout)
+        rver = parse_version(rout)
+
+        if rrc == 0:
+            return True, (lver == rver)
+        return False, False
+
+def install(module, aura, pkg, state):
+    installed, uptodate = query(module, aura, pkg)
+    if installed and (state == 'present' or (state == 'latest' and uptodate)):
+        module.exit_json(changed=False, msg='package already installed')
+    cmd = [aura, '-A', pkg, '--noconfirm']
+    rc, out, err = module.run_command(cmd, check_rc=False)
+    if rc != 0:
+        module.fail_json(msg='Failed to install %s' % (pkg))
+    module.exit_json(changed=True, msg='installed %s' % (pkg))
+
+def check(module, aura, pkg, state):
+    installed, uptodate = query(module, aura, pkg)
+    if ((state == 'present' and not installed) or
+            (state == 'absent' and installed) or
+            (state == 'latest' and not uptodate)):
+        module.exit_json(changed=True, msg="%s would be %s" % (pkg, state))
+    else:
+        module.exit_json(changed=False, msg="%s already %s" % (pkg, state))
+
+def main():
+    module = AnsibleModule(
+            argument_spec = dict(
+                name = dict(),
+                state = dict(default='present', choices=['present', 'latest', 'absent']),
+            ),
+            supports_check_mode = True)
+    aura = module.get_bin_path('aura', True)
+    p = module.params
+    if p['name']:
+        pkg = p['name']
+        state = p['state']
+
+        if module.check_mode:
+            check(module, aura, pkg, state)
+
+        if state == 'present':
+            install(module, aura, pkg, state)
+        elif state == 'absent':
+            remove(module, aura, pkg)
+
+if __name__ == '__main__':
+    main()
