@@ -44,6 +44,18 @@ def parse_version(output):
             return line.split(':')[1].strip()
     return None
 
+def _version(module, aura, pkg, flag):
+    rc, out, err = module.run_command([aura, flag, pkg], check_rc=False)
+    if rc != 0:
+        return False
+    return parse_version(out)
+
+def installed_version(module, aura, pkg):
+    return _version(module, aura, pkg, '-Qi')
+
+def available_version(module, aura, pkg):
+    return _version(module, aura, pkg, '-Ai')
+
 def query(module, aura, pkg, state='present'):
     if state == 'present':
         lcmd = [aura, '-Qi', pkg]
@@ -61,9 +73,14 @@ def query(module, aura, pkg, state='present'):
         return False, False
 
 def install(module, aura, pkg, state):
-    installed, uptodate = query(module, aura, pkg)
-    if installed and (state == 'present' or (state == 'latest' and uptodate)):
+    installed = installed_version(module, aura, pkg)
+    if installed and state == 'present':
         module.exit_json(changed=False, msg='package already installed')
+    available = available_version(module, aura, pkg)
+    if state == 'latest' and installed and installed == available:
+        module.exit_json(changed=False, msg='package already latest')
+    if module.check_mode:
+        module.exit_json(changed=True, msg="%s would be %s" % (pkg, state))
     cmd = [aura, '-A', pkg, '--noconfirm']
     rc, out, err = module.run_command(cmd, check_rc=False)
     if rc != 0:
@@ -74,15 +91,6 @@ def install(module, aura, pkg, state):
             msg += ":\n%s" % (uncolor(out))
         module.fail_json(msg=msg)
     module.exit_json(changed=True, msg='installed %s' % (pkg))
-
-def check(module, aura, pkg, state):
-    installed, uptodate = query(module, aura, pkg)
-    if ((state == 'present' and not installed) or
-            (state == 'absent' and installed) or
-            (state == 'latest' and not uptodate)):
-        module.exit_json(changed=True, msg="%s would be %s" % (pkg, state))
-    else:
-        module.exit_json(changed=False, msg="%s already %s" % (pkg, state))
 
 def main():
     module = AnsibleModule(
@@ -97,10 +105,7 @@ def main():
         pkg = p['name']
         state = p['state']
 
-        if module.check_mode:
-            check(module, aura, pkg, state)
-
-        if state == 'present':
+        if state == 'present' or state == 'latest':
             install(module, aura, pkg, state)
         elif state == 'absent':
             remove(module, aura, pkg)
