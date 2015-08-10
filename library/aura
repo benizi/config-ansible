@@ -70,6 +70,8 @@ def install(module, aura, pkg, state):
         msg = 'Failed to install %s' % (pkg)
         if 'have to use `sudo`' in uncolor(out):
             msg += ': `aura` requires root'
+        else:
+            msg += ":\n%s" % (uncolor(out))
         module.fail_json(msg=msg)
     module.exit_json(changed=True, msg='installed %s' % (pkg))
 
