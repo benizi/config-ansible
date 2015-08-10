@@ -503,10 +503,12 @@
         - zip
 
     - name: Fonts
-      pacman: name={{item}}
+      archpkg: name={{item}}
       with_items:
         - fontforge
         - gsfonts
+        - aur/otf-fira-code-git
+        - otf-fira-mono
         - otf-ipafont
         - opendesktop-fonts
         - ttf-bitstream-vera
