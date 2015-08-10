@@ -1,0 +1,30 @@
+#!/usr/bin/env python2
+### TODO ^^^ wrong for anything but Arch Linux
+# -*- coding: utf-8 -*-
+DOCUMENTATION = '''
+---
+module: archpkg
+author: Benjamin R. Haskell
+short_description: Install a pacman or aur package.
+description:
+    - Uses `aura` or `pacman`, depending on an `aur/` prefix in the name of the
+      package.
+options:
+    state:
+        required: false
+        default: "present"
+        choices: [ present, absent ]
+    name:
+        required: true
+        description:
+            - Name of the package to install.  If it starts with "aur/", it
+              will be treated as the name of a package in the AUR.
+'''
+
+EXAMPLES = '''
+# Install stellarium (virtual planetarium) with `pacman`
+- archpkg: name=stellarium
+
+# Install oniguruma (regex library) from the AUR with `aura`
+- archpkg: name=aur/oniguruma
+'''
