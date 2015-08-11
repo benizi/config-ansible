@@ -1197,7 +1197,7 @@
         creates=password-manager
 
 - name: Dev DNS
-  hosts: laptops
+  hosts: none
   tasks:
     - name: Install local DNS prereqs
       sudo: yes
