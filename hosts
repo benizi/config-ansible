@@ -3,7 +3,7 @@
 
 [laptops]
 bhaskell-x240 crappy_trackpoint=true
-bhaskell-asus
+bhaskell-asus docker_storage=devicemapper
 
 [vps]
 vps

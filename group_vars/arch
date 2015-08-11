@@ -1,3 +1,4 @@
 ---
 ansible_python_interpreter: /usr/bin/python2
 gitbuild: /opt/git
+docker_storage: btrfs
