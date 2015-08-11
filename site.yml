@@ -1546,7 +1546,7 @@
 
     - name: Docker service files
       sudo: yes
-      copy: src=files/docker.{{item}}
+      template: src=templates/docker.{{item}}
         dest=/etc/systemd/system/docker.{{item}}
       with_items: [service, socket]
       notify: reload systemd
