@@ -643,6 +643,7 @@
       with_items:
         - qemu
         - virtualbox
+        - virtualbox-host-dkms
 
     - name: Virtualization (modules)
       copy: content='vboxdrv\nvboxnetadp\nvboxnetflt\nvboxpci\n'
