@@ -135,6 +135,7 @@
       with_items:
         - perl-ipc-run # for my keyboard wrapper
         - perl-tk # for old, graphical Perl scripts
+        - unclutter
         - xbindkeys
         - xdotool
         - xorg-twm # fallback window manager
@@ -142,6 +143,7 @@
         - xorg-xmodmap
         - xorg-xprop
         - xorg-xrandr
+        - xorg-xsetroot
 
 - name: Set up NTP
   hosts: all
