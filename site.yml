@@ -207,6 +207,13 @@
         - patch
         - pkg-config
 
+    - name: Standard source control
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - git
+        - mercurial
+
     - name: Esoteric Source Control
       pacman: name={{item}}
       with_items:
@@ -1051,13 +1058,6 @@
   vars:
     rubybuild: '{{gitbuild}}/ruby-build'
   tasks:
-    - name: Install prereqs
-      sudo: yes
-      pacman: name={{item}}
-      with_items:
-        - git
-        - mercurial
-
     - name: Install Verman
       git: repo=gh:benizi/verman
         dest=git/verman
