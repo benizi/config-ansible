@@ -1102,6 +1102,10 @@
       with_items:
         - lua-filesystem
 
+    - name: GNU APL
+      sudo: yes
+      pacman: name=gnu-apl
+
   handlers:
     - name: Install ruby-build
       command: ./install.sh
