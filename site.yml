@@ -1076,6 +1076,17 @@
         - python
         - python2
 
+    - name: PHP
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - php
+        - php-docs
+        - php-fpm
+        - php-memcache
+        - php-pgsql
+        - php-xsl
+
     - name: Clojure (leiningen) download
       get_url: url=https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
         dest=~bhaskell/bin.local/lein
