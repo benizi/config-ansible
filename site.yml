@@ -510,6 +510,7 @@
       with_items:
         - fontforge
         - gsfonts
+        - aur/ttf-monoid
         - aur/otf-fira-code-git
         - otf-fira-mono
         - otf-ipafont
