@@ -1111,6 +1111,11 @@
         - apache-ant
         - maven
 
+    - name: OpenJDK8 source
+      shell: hg tclone http://hg.openjdk.java.net/jdk8/jdk8
+        /opt/java/openjdk8
+        creates=/opt/java/openjdk8
+
     - name: Pythons (ensure both installed)
       sudo: yes
       pacman: name={{item}}
