@@ -1106,6 +1106,16 @@
       sudo: yes
       pacman: name=gnu-apl
 
+    - name: APLX prereqs
+      sudo: yes
+      archpkg: name={{item}}
+      with_items:
+        - aur/lib32-libjpeg6
+        - aur/libjpeg6-turbo
+        - lib32-libsm
+        - lib32-libx11
+        - lib32-libxext
+
   handlers:
     - name: Install ruby-build
       command: ./install.sh
