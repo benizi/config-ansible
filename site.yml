@@ -1595,3 +1595,37 @@
     - name: reload systemd
       sudo: yes
       command: systemctl daemon-reload
+
+- name: Graphics Tablet
+  hosts: graphics-tablet
+  tasks:
+    - name: HUION h610pro keymappings (hwdb file)
+      sudo: yes
+      copy: src=files/h610.hwdb
+        dest=/etc/udev/hwdb.d/h610.hwdb
+        owner=root
+        group=root
+        mode=0644
+      notify: reset udev
+
+    - name: osu! prereqs
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - lib32-alsa-lib
+        - lib32-alsa-plugins
+        - lib32-giflib
+        - lib32-gnutls
+        - lib32-libpulse
+        - lib32-libxml2
+        - lib32-mesa-libgl
+        - lib32-mpg123
+        - wine
+        - wine-mono
+        - wine_gecko
+        - winetricks
+
+  handlers:
+    - name: reset udev
+      sudo: yes
+      shell: udevadm hwdb --update && udevadm trigger
