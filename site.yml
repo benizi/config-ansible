@@ -658,6 +658,30 @@
         append=yes
         groups=kvm,vboxusers
 
+- name: Nix
+  hosts: arch
+  tasks:
+    - name: Nix prereqs
+      pacman: name={{item}}
+      sudo: yes
+      with_items:
+        - perl-dbd-sqlite
+        - perl-www-curl
+
+    - name: Nix package manager source
+      get_url: url=http://nixos.org/releases/nix/nix-1.9/nix-1.9.tar.xz
+        dest={{gitbuild}}/nix-1.9.tar.xz
+
+    - name: Nix package manager install
+      shell: cd {{gitbuild}} &&
+        rm -rf nix-1.9 &&
+        tar xJf {{gitbuild}}/nix-1.9.tar.xz &&
+        cd nix-1.9 &&
+        ./configure --prefix=/opt/nix &&
+        make &&
+        make install
+        creates=/opt/nix/bin/nix-build
+
 - name: Avahi (mDNS)
   hosts: arch
   sudo: yes
