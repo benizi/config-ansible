@@ -500,8 +500,9 @@
         - usbutils
 
     - name: Audio
-      pacman: name={{item}}
+      archpkg: name={{item}}
       with_items:
+        - aur/spotify
         - festival-us
         - pavucontrol
         - pulseaudio-alsa
