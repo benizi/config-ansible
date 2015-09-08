@@ -478,7 +478,7 @@
     - name: System tools
       pacman: name={{item}}
       with_items:
-        - dnsutils
+        - bind-tools
         - gdb
         - htop
         - iotop
