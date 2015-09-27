@@ -1425,7 +1425,7 @@
     - name: CouchDB install
       shell: rm -rf {{build}} &&
         mkdir {{build}} &&
-        git archive {{version}} | tar -C {{build}} -xv &&
+        git archive {{version}} | tar -C {{build}} -x &&
         cd {{build}} &&
         sh ./bootstrap &&
         ./configure --prefix={{prefix}} &&
