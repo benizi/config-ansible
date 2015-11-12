@@ -1530,25 +1530,15 @@
       register: conflicting
       changed_when: conflicting.stdout != ''
 
-    - name: PostgreSQL extension
-      aura: name=postgresql-uuid-ossp
-      notify: restart postgresql
-
     - name: AUR installs
       aura: name={{item}}
       with_items:
-        - uuid # for postgresql-uuid-ossp
         - oniguruma # for jq
         - ttf-ms-fonts # for decent fonts
         - ttf-noto # covers tons of writing systems
         - xf86-input-evdev-trackpoint # middle-click scroll
         - xpdf
         - lua-cjson # for Toshiba FlashAir
-
-  handlers:
-    - name: restart postgresql
-      sudo: yes
-      service: name=postgresql state=restarted
 
 - name: Yubikey Neo support
   hosts: yubikey
