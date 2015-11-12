@@ -121,14 +121,11 @@
       with_items:
         - xorg-server
         - xf86-video-intel
+        - xf86-input-evdev
         - xf86-input-keyboard
         - xf86-input-mouse
         - xf86-input-synaptics
         - xorg-xauth
-
-    - name: X Server evdev driver
-      pacman: name=xf86-input-evdev
-      when: not crappy_trackpoint
 
     - name: X-related idiosyncratic prereqs
       pacman: name={{item}}
@@ -1524,19 +1521,12 @@
   hosts: arch
   sudo: yes
   tasks:
-    - name: Conflicting package
-      shell: pacman -Qi xf86-input-evdev | grep -L . | grep -q . ||
-        pacman --noconfirm -Rdd xf86-input-evdev
-      register: conflicting
-      changed_when: conflicting.stdout != ''
-
     - name: AUR installs
       aura: name={{item}}
       with_items:
         - oniguruma # for jq
         - ttf-ms-fonts # for decent fonts
         - ttf-noto # covers tons of writing systems
-        - xf86-input-evdev-trackpoint # middle-click scroll
         - xpdf
         - lua-cjson # for Toshiba FlashAir
 
