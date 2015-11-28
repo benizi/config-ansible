@@ -286,6 +286,7 @@
         - .cache
         - git
         - .lein
+        - .urxvt
         - .vim.local
         - .zsh.local
 
@@ -310,7 +311,6 @@
         - .python
         - .terminfo
         - .tmux.conf
-        - .urxvt
         - .Xdefaults
         - .xmonad
         - .xsession
@@ -321,6 +321,7 @@
       with_items:
         - { src: ../dotfiles/.config/feh, dest: .config/feh }
         - { src: ../dotfiles/.lein/profiles.clj, dest: .lein/profiles.clj }
+        - { src: ../dotfiles/.urxvt, dest: .urxvt/ext }
         - { src: dotfiles/.vim/vimrc, dest: .vimrc }
         - { src: dotfiles/.zsh/.zshenv, dest: .zshenv }
 
