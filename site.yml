@@ -418,16 +418,8 @@
     - name: Preferred (custom rxvt-unicode) source
       git: repo='gh:benizi/rxvt-unicode'
         dest={{rxvt_git}}
-        version=24bit
+        version=24bit-build
         remote=benizi
-
-    - name: Preferred (custom rxvt-unicode) CVS libs
-      command: cvs -z3 -d :pserver:anonymous@cvs.schmorp.de/schmorpforge co {{item}}
-        chdir={{rxvt_git}}
-        creates={{item}}
-      with_items:
-        - libev
-        - libptytty
 
     - name: Preferred (custom rxvt-unicode) build
       shell: sh ./autogen.sh &&
