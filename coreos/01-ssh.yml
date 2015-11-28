@@ -1,0 +1,12 @@
+- name: SSH key
+  hosts: bhaskell-x240
+  vars_prompt:
+    - name: ssh_passphrase
+      prompt: SSH passphrase
+      private: yes
+      confirm: yes
+  tasks:
+    - name: key
+      sshkey: file=.ssh/id_03_coreos-digitalocean-cluster
+        comment=coreos-cluster@benizi.com
+        passphrase={{ssh_passphrase}}

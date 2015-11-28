@@ -1,0 +1,11 @@
+[all:children]
+www
+
+[all:vars]
+ansible_ssh_user=core
+ansible_python_interpreter=python/python
+
+[www]
+coreos4.www.benizi.com
+coreos5.www.benizi.com
+coreos6.www.benizi.com
