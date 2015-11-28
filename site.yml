@@ -597,6 +597,7 @@
       with_items:
         - ack
         - dtach
+        - jq
         - meld
         - screen
         - tk # for gitk
@@ -1524,7 +1525,6 @@
     - name: AUR installs
       aura: name={{item}}
       with_items:
-        - oniguruma # for jq
         - ttf-ms-fonts # for decent fonts
         - ttf-noto # covers tons of writing systems
         - xpdf
@@ -1542,25 +1542,6 @@
 
     - name: CCID manager service
       service: name=pcscd state=started enabled=yes
-
-- name: Install jq (JSON Swiss Army knife)
-  hosts: arch
-  vars:
-    build: '{{gitbuild}}/jq'
-  tasks:
-    - name: jq source
-      git: repo=gh:stedolan/jq
-        dest={{build}}
-        update=false
-        remote=stedolan
-
-    - name: jq install
-      shell: git clean -xdf &&
-        autoreconf -vif &&
-        ./configure &&
-        make install
-        chdir={{build}}
-        creates=/usr/local/bin/jq
 
 - name: Docker
   hosts: arch
