@@ -78,7 +78,7 @@
 
     - name: GNU APL
       sudo: yes
-      pacman: name=gnu-apl
+      archpkg: name=aur/gnu-apl
 
     - name: APLX prereqs
       sudo: yes
