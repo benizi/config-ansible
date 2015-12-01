@@ -70,6 +70,15 @@
       command: lein version
         creates=~bhaskell/.lein/self-installs
 
+    - name: Clojure Boot
+      get_url: url=https://github.com/boot-clj/boot-bin/releases/download/2.4.2/boot.sh
+        dest=~bhaskell/bin.local/boot
+        mode=0750
+
+    - name: Clojure Boot initial install
+      command: boot
+        creates=~bhaskell/.boot/boot.properties
+
     - name: Lua libraries
       sudo: yes
       pacman: name={{item}}
