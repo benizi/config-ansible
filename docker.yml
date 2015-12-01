@@ -5,7 +5,7 @@
     bundle: bundles/{{version}}/binary
     docker_root: /usr/local/bin
     docker: '{{docker_root}}/docker'
-    version: 1.7.1
+    version: 1.9.1
 
   tasks:
     - name: Install prereqs
