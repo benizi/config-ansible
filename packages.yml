@@ -1,0 +1,154 @@
+- name: Install many packages
+  hosts: arch
+  sudo: yes
+  tasks:
+    - name: System tools
+      pacman: name={{item}}
+      with_items:
+        - bind-tools
+        - gdb
+        - htop
+        - iotop
+        - iw
+        - lsof
+        - nmap
+        - rsync
+        - socat
+        - strace
+
+    - name: Hardware Info
+      pacman: name={{item}}
+      with_items:
+        - dmidecode
+        - hdparm
+        - hwinfo
+        - lshw
+        - pciutils
+        - usbutils
+
+    - name: Audio
+      archpkg: name={{item}}
+      with_items:
+        - aur/spotify
+        - festival-us
+        - pavucontrol
+        - pulseaudio-alsa
+        - sox
+
+    - name: Disks
+      pacman: name={{item}}
+      with_items:
+        - baobab
+        - btrfs-progs
+
+    - name: Remote filesystems
+      pacman: name={{item}}
+      with_items:
+        - smbclient
+        - sshfs
+
+    - name: Compression
+      pacman: name={{item}}
+      with_items:
+        - cpio
+        - p7zip
+        - squashfs-tools
+        - unarj
+        - unrar
+        - unzip
+        - zip
+
+    - name: Fonts
+      archpkg: name={{item}}
+      with_items:
+        - fontforge
+        - gsfonts
+        - aur/ttf-monoid
+        - aur/otf-fira-code-git
+        - otf-fira-mono
+        - otf-ipafont
+        - opendesktop-fonts
+        - ttf-bitstream-vera
+        - ttf-dejavu
+        - wqy-zenhei
+
+    - name: Browsers
+      pacman: name={{item}}
+      with_items:
+        - chromium
+        - firefox
+        - opera
+        - w3m
+
+    - name: Shells
+      pacman: name={{item}}
+      with_items:
+        - bash
+        - dash # much POSIX
+        - mksh # MirBSD ksh
+        - tcsh
+
+    - name: Graphics
+      pacman: name={{item}}
+      with_items:
+        - blender
+        - ghostscript
+        - gimp
+        - graphicsmagick
+        - graphviz
+        - imagemagick
+        - inkscape
+        - perl-image-exiftool
+        - poppler # PDF handling
+
+    - name: Multimedia
+      pacman: name={{item}}
+      with_items:
+        - mplayer
+        - vlc
+
+    - name: Messaging
+      pacman: name={{item}}
+      with_items:
+        - qt5-multimedia # unspecified hipchat dep
+        - vlc # pulls in unspecified hipchat dep
+        - hipchat
+        - irssi
+
+    - name: Network monitoring
+      pacman: name={{item}}
+      with_items:
+        - tcpdump
+        - whois
+        - wireshark-gtk
+
+    - name: Programmer tools
+      pacman: name={{item}}
+      with_items:
+        - ack
+        - dtach
+        - jq
+        - meld
+        - screen
+        - tk # for gitk
+        - tmux
+        - x11vnc
+        - xorg-server-xephyr
+        - xorg-server-xvfb
+
+    - name: X11 utilities
+      pacman: name={{item}}
+      with_items:
+        - lxpanel
+        - parcellite
+        - xclip
+        - xorg-xbacklight
+        - xorg-xdpyinfo
+        - xorg-xev
+        - xorg-xwininfo
+        - xosd
+
+    - name: Science
+      pacman: name={{item}}
+      with_items:
+        - stellarium

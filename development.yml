@@ -1,0 +1,32 @@
+- name: Development
+  hosts: arch # TODO: others
+  sudo: true
+  tasks:
+    - name: Standard compiling prereqs
+      pacman: name={{item}}
+      with_items:
+        - autoconf
+        - automake
+        - bison
+        - clang
+        - cmake
+        - flex
+        - gcc-multilib
+        - libtool
+        - make
+        - patch
+        - pkg-config
+
+    - name: Standard source control
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - git
+        - mercurial
+
+    - name: Esoteric Source Control
+      pacman: name={{item}}
+      with_items:
+        - bzr # oddly popular for Go libs
+        - cvs # RXVT-Unicode
+        - svn # for my own old, old backups

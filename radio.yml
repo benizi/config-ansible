@@ -1,0 +1,18 @@
+- name: Software Defined Radio
+  hosts: sdr
+  tasks:
+    - name: GNU Radio
+      archpkg: name={{item}}
+      with_items:
+        - gnuradio
+        - gnuradio-osmosdr
+        - gnuradio-companion
+
+    - name: GNU Radio config dir
+      file: dest=~bhaskell/.gnuradio state=directory
+
+    - name: GNU Radio fix Pulse
+      ini_file: dest=~bhaskell/.gnuradio/config.conf
+        section=audio_alsa
+        option=nperiods
+        value=128

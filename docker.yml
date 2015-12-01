@@ -1,0 +1,75 @@
+- name: Docker
+  hosts: arch
+  vars:
+    build: '{{gitbuild}}/docker'
+    bundle: bundles/{{version}}/binary
+    docker_root: /usr/local/bin
+    docker: '{{docker_root}}/docker'
+    version: 1.7.1
+
+  tasks:
+    - name: Install prereqs
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        # TODO: not sure these are needed for -e=native
+        - bridge-utils
+        - lxc
+
+    - name: Docker source
+      connection: local
+      run_once: true
+      git: repo=gh:docker/docker
+        dest={{build}}
+        version=v{{version}}
+        update=yes
+        remote=docker
+
+    - name: Docker build
+      connection: local
+      run_once: true
+      shell:
+        cd {{build}} &&
+        make &&
+        sudo chown -R bhaskell bundles
+        creates={{build}}/{{bundle}}/docker-{{version}}
+
+    - name: Docker install
+      synchronize: src={{build}}/{{bundle}}/docker-{{version}}
+        dest={{docker_root}}
+        archive=no
+
+    - name: Docker link
+      file: state=link dest={{docker}} src={{docker}}-{{version}}
+
+    - name: Enable IPv4 forwarding
+      sudo: yes
+      sysctl: name=net.ipv4.ip_forward value=1 sysctl_set=yes
+
+    - name: Docker group
+      sudo: yes
+      group: name=docker
+
+    - name: Docker group (add me)
+      sudo: yes
+      user: name=bhaskell
+        append=yes
+        groups=docker
+
+    - name: Docker service files
+      sudo: yes
+      template: src=templates/docker.{{item}}
+        dest=/etc/systemd/system/docker.{{item}}
+      with_items: [service, socket]
+      notify: reload systemd
+
+    - meta: flush_handlers
+
+    - name: Docker service
+      sudo: yes
+      service: name=docker.socket state=started enabled=yes
+
+  handlers:
+    - name: reload systemd
+      sudo: yes
+      command: systemctl daemon-reload

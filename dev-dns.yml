@@ -1,0 +1,66 @@
+- name: Dev DNS
+  hosts: none
+  tasks:
+    - name: Install local DNS prereqs
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - dhclient
+        - dnsmasq
+
+    - name: Ensure wicd uses dhclient
+      sudo: yes
+      lineinfile: dest=/etc/wicd/manager-settings.conf
+        regexp='dhcp_client'
+        line='dhcp_client = 1'
+      notify: restart wicd
+
+    - name: DHClient configuration
+      sudo: yes
+      copy: src=files/{{item}}
+        dest=/etc/{{item}}
+        owner=root
+        group=root
+        mode=0755
+      with_items:
+        - dhclient-enter-hooks
+        - dhclient-exit-hooks
+
+    - name: DNSMasq configuration dir
+      sudo: yes
+      file: dest=/etc/dnsmasq.d
+        state=directory
+        owner=root
+        group=root
+        mode=0770
+
+    - name: DNSMasq configuration
+      sudo: yes
+      copy: src=files/dnsmasq.conf
+        dest=/etc/dnsmasq.conf
+        owner=root
+        group=root
+        mode=0644
+      notify: restart dnsmasq
+
+    - name: DNSMasq dev addresses
+      sudo: yes
+      copy: src=files/dev.conf
+        dest=/etc/dnsmasq.d/dev.conf
+        mode=0644
+      notify: restart dnsmasq
+
+    - name: Run DNSMasq
+      sudo: true
+      service: name=dnsmasq
+        state=started
+        enabled=yes
+
+  handlers:
+    - name: restart dnsmasq
+      sudo: yes
+      service: name=dnsmasq state=restarted
+
+    - name: restart wicd
+      sudo: yes
+      service: name=wicd state=restarted

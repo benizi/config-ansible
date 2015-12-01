@@ -1,0 +1,17 @@
+- name: PepperFlash
+  hosts: arch
+  vars:
+    arch: "{{'amd64' if ansible_machine == 'x86_64' else 'i386'}}"
+    cache: '{{gitbuild}}/chrome.deb'
+    url: "https://dl.google.com/linux/direct/google-chrome-unstable_current_{{arch}}.deb"
+
+  tasks:
+    - name: PepperFlash source
+      get_url: url={{url}}
+        dest={{cache}}
+
+    - name: PepperFlash extract
+      shell: bsdtar -Oxf {{cache}} data.tar.xz |
+        xz -d |
+        tar -C ~ --strip-components 4 -x ./opt/google/chrome-unstable/PepperFlash
+        creates=~bhaskell/PepperFlash

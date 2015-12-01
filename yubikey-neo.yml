@@ -1,0 +1,12 @@
+- name: Yubikey Neo support
+  hosts: yubikey
+  sudo: yes
+  tasks:
+    - name: Install Yubikey manager
+      aura: name=yubikey-neo-manager-git
+
+    - name: CCID manager
+      pacman: name=pcsclite
+
+    - name: CCID manager service
+      service: name=pcscd state=started enabled=yes

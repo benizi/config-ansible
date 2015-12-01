@@ -1,0 +1,21 @@
+- name: Initial .ssh/config
+  hosts: all
+  vars:
+    ssh: ~bhaskell/.ssh
+  tasks:
+    - name: .ssh directory
+      file: state=directory dest={{ssh}} mode=0700
+
+    - name: .ssh/config
+      copy: content="Host gh\nHostName github.com\nUser git\n"
+        dest={{ssh}}/config
+        mode=0640
+        force=no
+
+    - name: SSH known hosts
+      sudo: yes
+      copy: src=files/ssh_known_hosts
+        dest=/etc/ssh/ssh_known_hosts
+        owner=root
+        group=root
+        mode=0644

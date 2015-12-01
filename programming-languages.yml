@@ -1,0 +1,96 @@
+- name: Prog langs
+  hosts: laptops
+  vars:
+    rubybuild: '{{gitbuild}}/ruby-build'
+  tasks:
+    - name: Install Verman
+      git: repo=gh:benizi/verman
+        dest=git/verman
+        remote=benizi
+
+    # Verman uses ruby-build to install rubies
+    - name: Fetch ruby-build
+      git: repo=gh:sstephenson/ruby-build
+        dest={{rubybuild}}
+        remote=sstephenson
+      notify: Install ruby-build
+
+    - meta: flush_handlers
+
+    - name: Install langs
+      shell: verman {{item.lang}} install {{item.version}} | with-python2 sh
+        creates=/opt/{{item.lang}}/versions/{{item.version}}/bin/{{item.bin | default(item.lang)}}
+      with_items:
+        - { lang: erlang, version: '17.0', bin: erl }
+        - { lang: elixir, version: v1.0.0 }
+        - { lang: go, version: go1.3.3 }
+        - { lang: node, version: v0.10.33 }
+        - { lang: ruby, version: '1.9.3-p550' }
+        - { lang: ruby, version: '2.0.0-p247' }
+        - { lang: ruby, version: '2.1.1' }
+        - { lang: ruby, version: '2.1.2' }
+
+    - name: Java
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - jdk7-openjdk
+        - apache-ant
+        - maven
+
+    - name: OpenJDK8 source
+      shell: hg tclone http://hg.openjdk.java.net/jdk8/jdk8
+        /opt/java/openjdk8
+        creates=/opt/java/openjdk8
+
+    - name: Pythons (ensure both installed)
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - python
+        - python2
+
+    - name: PHP
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - php
+        - php-docs
+        - php-fpm
+        - php-memcache
+        - php-pgsql
+        - php-xsl
+
+    - name: Clojure (leiningen) download
+      get_url: url=https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+        dest=~bhaskell/bin.local/lein
+        mode=0750
+
+    - name: Clojure (leiningen) initial install
+      command: lein version
+        creates=~bhaskell/.lein/self-installs
+
+    - name: Lua libraries
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - lua-filesystem
+
+    - name: GNU APL
+      sudo: yes
+      pacman: name=gnu-apl
+
+    - name: APLX prereqs
+      sudo: yes
+      archpkg: name={{item}}
+      with_items:
+        - aur/lib32-libjpeg6
+        - aur/libjpeg6-turbo
+        - lib32-libsm
+        - lib32-libx11
+        - lib32-libxext
+
+  handlers:
+    - name: Install ruby-build
+      command: ./install.sh
+        chdir={{rubybuild}}

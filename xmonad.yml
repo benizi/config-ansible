@@ -1,0 +1,39 @@
+- name: XMonad
+  hosts: arch
+  tasks:
+    - name: XMonad prereqs
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - dzen2 # status bars
+        - ghc
+        - ruby # needed for scripts, will be overridden later
+        - xlockmore # screensaver
+        - xorg-xdm
+        - xorg-xmessage
+
+    - name: Cabal (Haskell package manager)
+      sudo: yes
+      pacman: name=cabal-install
+      notify: Set up cabal
+
+    - meta: flush_handlers
+
+    - name: Cabal packages
+      shell: ghc-pkg list --simple {{item}} | grep -q . ||
+        cabal install {{item}}
+      with_items:
+        - darcs
+        - FindBin
+        - xmonad
+        - xmonad-contrib
+      register: cabal
+      changed_when: cabal.stdout != ''
+
+    - name: Enable services
+      sudo: yes
+      service: name=xdm state=started enabled=yes
+
+  handlers:
+    - name: Set up cabal
+      command: cabal update

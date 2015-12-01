@@ -1,0 +1,27 @@
+- name: Acceptable editors
+  hosts: laptops
+  vars:
+    build: '{{gitbuild}}/vim'
+  tasks:
+    - name: Fallback (emacs)
+      pacman: name={{item}}
+      with_items:
+        - emacs
+
+    - name: Preferred (custom vim) prereqs
+      sudo: true
+      pacman: name={{item}}
+      with_items:
+        - lua51
+        - tcl
+
+    - name: Preferred (custom vim) source
+      git: repo='gh:benizi/vim'
+        dest={{build}}
+        version=24-bit
+        remote=benizi
+
+    - name: Preferred (custom vim) install
+      command: build-vim
+        chdir={{build}}
+        creates=/usr/local/bin/vim

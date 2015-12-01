@@ -1,0 +1,46 @@
+- name: MOSH (SSH alternative)
+  hosts: all
+  vars:
+    build: '{{gitbuild}}/mosh'
+  tasks:
+    - name: Detect EC2
+      shell: curl -s -m 0.5 http://169.254.169.254/1.0 2>/dev/null
+      register: ec2
+      changed_when: False
+      failed_when: False
+
+    - name: MOSH prereqs (EC2)
+      sudo: yes
+      yum: name={{item}}
+        enablerepo=epel
+      with_items:
+        - automake
+        - gcc-c++
+        - protobuf-compiler
+        - protobuf-devel
+        - libutempter-devel
+        - ncurses
+        - ncurses-devel
+        - zlib-devel
+        - boost-devel
+      when: ec2 | success
+
+    - name: MOSH prereqs (non-EC2)
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - protobuf
+      when: ec2 | failed
+
+    - name: MOSH source
+      git: repo=https://github.com/keithw/mosh
+        dest={{build}}
+        remote=keithw
+
+    - name: MOSH install
+      shell: sh ./autogen.sh &&
+        ./configure &&
+        make &&
+        make install
+        chdir={{build}}
+        creates=/usr/local/bin/mosh-server

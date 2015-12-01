@@ -1,0 +1,36 @@
+- name: Heroku Toolbelt
+  hosts: arch
+  vars:
+    cache: '{{gitbuild}}/heroku-client.tar.gz'
+    dir: /usr/local/heroku
+
+  tasks:
+    - name: Heroku CLI download
+      get_url: url=https://s3.amazonaws.com/assets.heroku.com/heroku-client/heroku-client.tgz
+        dest={{cache}}
+
+    - name: Heroku CLI directory
+      file: dest={{dir}} state=directory
+
+    - name: Heroku CLI install
+      command: tar -C {{dir}} --strip-components 1 -xf {{cache}}
+        creates={{dir}}/bin/heroku
+
+    - name: Heroku CLI plugins
+      command: heroku plugins:install {{item.git}}
+        creates=~bhaskell/.heroku/plugins/{{item.name}}
+      with_items:
+        - name: 'heroku-accounts'
+          git: 'https://github.com/heroku/heroku-accounts.git'
+
+        - name: 'heroku-anvil'
+          git: 'https://github.com/ddollar/heroku-anvil'
+
+        - name: 'heroku-redis-cli'
+          git: 'https://github.com/rapportive-oss/heroku-redis-cli.git'
+
+        - name: 'heroku-repo'
+          git: 'https://github.com/heroku/heroku-repo.git'
+
+        - name: 'heroku-alternative-urls'
+          git: 'https://github.com/benizi/heroku-alternative-urls.git'

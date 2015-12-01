@@ -1,0 +1,38 @@
+- name: Prereqs
+  hosts: arch
+  sudo: true
+  tasks:
+    - name: Very basic prereqs
+      pacman: name={{item}}
+      with_items:
+        - git
+        - ntp
+        - polkit
+        - vim-minimal
+        - zsh
+
+    - name: X Server prereqs
+      pacman: name={{item}}
+      with_items:
+        - xorg-server
+        - xf86-video-intel
+        - xf86-input-evdev
+        - xf86-input-keyboard
+        - xf86-input-mouse
+        - xf86-input-synaptics
+        - xorg-xauth
+
+    - name: X-related idiosyncratic prereqs
+      pacman: name={{item}}
+      with_items:
+        - perl-ipc-run # for my keyboard wrapper
+        - perl-tk # for old, graphical Perl scripts
+        - unclutter
+        - xbindkeys
+        - xdotool
+        - xorg-twm # fallback window manager
+        - xorg-xinput
+        - xorg-xmodmap
+        - xorg-xprop
+        - xorg-xrandr
+        - xorg-xsetroot

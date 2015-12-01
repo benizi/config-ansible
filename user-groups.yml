@@ -1,0 +1,8 @@
+- name: Fix user groups
+  hosts: arch
+  tasks:
+    - name: Permissions
+      sudo: yes
+      user: name=bhaskell
+        append=yes
+        groups=wireshark,audio

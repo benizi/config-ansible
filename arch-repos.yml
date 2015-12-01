@@ -1,0 +1,63 @@
+- name: Arch packaging
+  hosts: arch
+  sudo: true
+  vars:
+    mirrorlist: /etc/pacman.d/mirrorlist
+    repos: [testing, core, extra, community, multilib]
+    allrepos: '{{repos + ["atlassian"]}}'
+
+  tasks:
+    - name: Disable all repos (no includes)
+      lineinfile: dest=/etc/pacman.conf
+        state=absent
+        regexp='^Include\s*=\s*/etc/pacman\.d/repo'
+      notify: Update packages
+
+    - name: Disable all repos (no sections)
+      replace: dest=/etc/pacman.conf
+        regexp='^\[(?!options\]$)(.+)\]$'
+        replace='#[\1]'
+      notify: Update packages
+
+    - name: Add include for chosen repos
+      lineinfile: dest=/etc/pacman.conf
+        line='Include = /etc/pacman.d/ansible.repos'
+      notify: Update packages
+
+    - name: Create files for each repo
+      copy: content='[{{item}}]\nInclude = {{mirrorlist}}\n'
+        dest=/etc/pacman.d/repo.{{item}}
+        owner=root
+        group=root
+        mode=0644
+      with_items: repos
+      notify: Update packages
+
+    - name: Atlassian repo
+      copy: src=files/atlassian.repo
+        dest=/etc/pacman.d/repo.atlassian
+        owner=root
+        group=root
+        mode=0644
+      notify:
+        - Atlassian key
+        - Update packages
+
+    - name: All repos
+      template: src=templates/ansible.repos.j2
+        dest=/etc/pacman.d/ansible.repos
+        owner=root
+        group=root
+        mode=0644
+      notify: Update packages
+
+  handlers:
+    - name: Atlassian key
+      shell: curl https://www.hipchat.com/keys/hipchat-linux.key |
+        GNUPGHOME=/etc/pacman.d/gnupg gpg --import
+
+    - name: Refresh keys
+      command: pacman-key --refresh-keys
+
+    - name: Update packages
+      command: pacman -Syy

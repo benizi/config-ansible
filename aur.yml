@@ -1,0 +1,11 @@
+- name: AUR packages
+  hosts: arch
+  sudo: yes
+  tasks:
+    - name: AUR installs
+      aura: name={{item}}
+      with_items:
+        - ttf-ms-fonts # for decent fonts
+        - ttf-noto # covers tons of writing systems
+        - xpdf
+        - lua-cjson # for Toshiba FlashAir

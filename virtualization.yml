@@ -1,0 +1,20 @@
+- name: Virtualization
+  hosts: arch
+  sudo: yes
+  tasks:
+    - name: Virtualization (packages)
+      pacman: name={{item}}
+      with_items:
+        - qemu
+        - virtualbox
+        - virtualbox-host-dkms
+
+    - name: Virtualization (modules)
+      copy: content='vboxdrv\nvboxnetadp\nvboxnetflt\nvboxpci\n'
+        dest=/etc/modules-load.d/virtualbox.conf
+        mode=0640
+
+    - name: Virtualization (user groups)
+      user: name=bhaskell
+        append=yes
+        groups=kvm,vboxusers

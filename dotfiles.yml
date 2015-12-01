@@ -1,0 +1,79 @@
+- name: Dotfiles
+  hosts: laptops
+  tasks:
+    - name: Directories
+      file: state=directory dest=~bhaskell/{{item}}
+      with_items:
+        - bin.local
+        - .cache
+        - git
+        - .lein
+        - .urxvt
+        - .vim.local
+        - .zsh.local
+
+    - name: Clone dotfiles
+      git: repo=gh:benizi/dotfiles
+        dest=~bhaskell/dotfiles
+        update=no
+        remote=benizi
+
+    # TODO: replace this and the next task with script within dotfiles repo
+    - name: Link dotfiles (simple)
+      file: state=link src=dotfiles/{{item}} dest=~bhaskell/{{item}}
+      with_items:
+        - bin
+        - .emacs.d
+        - .gitattributes.global
+        - .gitconfig
+        - .gitignore.global
+        - perl-lib
+        - .pg
+        - .psqlrc
+        - .python
+        - .terminfo
+        - .tmux.conf
+        - .Xdefaults
+        - .xmonad
+        - .xsession
+
+    # TODO: see prior TODO
+    - name: Link dotfiles (non-homedir)
+      file: state=link src={{item.src}} dest=~bhaskell/{{item.dest}}
+      with_items:
+        - { src: ../dotfiles/.config/feh, dest: .config/feh }
+        - { src: ../dotfiles/.lein/profiles.clj, dest: .lein/profiles.clj }
+        - { src: ../dotfiles/.urxvt, dest: .urxvt/ext }
+        - { src: dotfiles/.vim/vimrc, dest: .vimrc }
+        - { src: dotfiles/.zsh/.zshenv, dest: .zshenv }
+
+    - name: Root zsh
+      sudo: yes
+      file: state=link src=~bhaskell/.zshenv dest=~root/.zshenv
+
+    - name: Set up build for bin.local files
+      file: state=link src=../bin/{{item}} dest=~bhaskell/bin.local/{{item}}
+      with_items:
+        - Makefile
+        - src
+
+    - name: Set shell
+      sudo: true
+      user: name=bhaskell shell=/bin/zsh
+
+    - name: Script prereqs
+      sudo: true
+      pacman: name={{item}}
+      with_items:
+        - inotify-tools
+        - perl-algorithm-diff
+        - perl-cgi
+        - perl-date-manip
+
+    - name: Script prereqs (compiled)
+      command: make {{item}}
+        chdir=~bhaskell/bin.local
+        creates={{item}}
+      with_items:
+        - myod
+        - x-is-active

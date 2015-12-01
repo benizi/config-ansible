@@ -1,0 +1,20 @@
+- name: Set up NTP
+  hosts: all
+  sudo: true
+  tasks:
+    - name: Set up NTP
+      service: name=ntpd state=started enabled=yes
+      register: ntp
+
+    # next tasks set the clock initially
+    - name: Stop existing
+      service: name=ntpd state=stopped
+      when: ntp.changed
+
+    - name: Set clock initially
+      command: ntpdate -s time.nist.gov
+      when: ntp.changed
+
+    - name: Restart NTP after setting clock
+      service: name=ntpd state=started
+      when: ntp.changed

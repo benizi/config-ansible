@@ -1,0 +1,65 @@
+- name: CouchDB
+  hosts: arch
+  vars:
+    build: /tmp/couchdb-build
+    exe: '{{prefix}}/bin/couchdb'
+    git: '{{gitbuild}}/couchdb'
+    prefix: /opt/couchdb
+    version: 1.6.1
+
+  tasks:
+    - name: CouchDB prereqs
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - autoconf-archive
+        - js185
+
+    - name: CouchDB service user
+      sudo: yes
+      user: name=couchdb
+        home={{prefix}}
+        createhome=no
+        system=yes
+
+    - name: CouchDB source
+      git: repo=gh:apache/couchdb
+        dest={{git}}
+        version={{version}}
+        update=no
+        remote=apache
+
+    - name: CouchDB install
+      shell: rm -rf {{build}} &&
+        mkdir {{build}} &&
+        git archive {{version}} | tar -C {{build}} -x &&
+        cd {{build}} &&
+        sh ./bootstrap &&
+        ./configure --prefix={{prefix}} &&
+        grep -rl _BSD_SOURCE . | xargs sed -i 's/_BSD_SOURCE/_DEFAULT_SOURCE/g' &&
+        touch THANKS &&
+        make &&
+        make install
+        chdir={{git}}
+        creates={{exe}}
+      notify: set couchdb permissions
+
+    - name: CouchDB service file
+      sudo: yes
+      copy: src=files/couchdb.service
+        dest=/etc/systemd/system/couchdb.service
+      notify: reload systemd
+
+    - meta: flush_handlers
+
+    - name: CouchDB service
+      sudo: yes
+      service: name=couchdb state=started enabled=yes
+
+  handlers:
+    - name: set couchdb permissions
+      command: set-all-facl u:couchdb -R {{prefix}}
+
+    - name: reload systemd
+      sudo: yes
+      command: systemctl daemon-reload

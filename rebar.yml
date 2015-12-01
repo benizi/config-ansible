@@ -1,0 +1,18 @@
+- name: Rebar
+  hosts: arch
+  vars:
+    build: '{{gitbuild}}/rebar'
+    rebar: /usr/local/bin/rebar
+
+  tasks:
+    - name: Rebar source
+      git: repo=gh:rebar/rebar
+        dest={{build}}
+        update=no
+        remote=rebar
+
+    - name: Rebar install
+      shell: ./bootstrap &&
+        mv rebar {{rebar}}
+        chdir={{build}}
+        creates={{rebar}}

@@ -1,0 +1,17 @@
+- name: Mercurial trees extension
+  hosts: arch
+  vars:
+    repo: 'http://hg.openjdk.java.net/code-tools/trees'
+    dest: /opt/hg-trees
+  tasks:
+    - name: HG Trees extension
+      hg: repo={{repo}} dest={{dest}} force=no
+
+    - name: HG Extensions
+      ini_file: dest=~bhaskell/.hgrc
+        section=extensions
+        option={{item.option}}
+        value={{item.value}}
+      with_items:
+        - { option: trees, value: '{{dest}}/trees.py' }
+        - { option: hgk, value: '' }

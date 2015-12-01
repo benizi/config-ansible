@@ -1,0 +1,12 @@
+- name: Ansible
+  hosts: 'ansible:&arch'
+  sudo: true
+  tasks:
+    - name: Python PIP
+      pacman: name=python2-pip
+
+    - name: Ansible Modules
+      pip: name={{item}} executable=pip2
+      with_items:
+        - ansible
+        - passlib

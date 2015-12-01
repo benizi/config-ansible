@@ -1,0 +1,26 @@
+- name: OpenConnect (VPN)
+  hosts: arch
+  vars:
+    build: '{{gitbuild}}/openconnect'
+    scriptbuild: '{{gitbuild}}/vpnc-scripts'
+  tasks:
+    - name: VPNC Scripts source
+      git: repo=git://git.infradead.org/users/dwmw2/vpnc-scripts.git
+        dest={{scriptbuild}}
+        remote=dwmw2
+
+    - name: VPNC Scripts link
+      file: state=link dest=/etc/vpnc src={{scriptbuild}}
+
+    - name: OpenConnect source
+      git: repo=git://git.infradead.org/users/dwmw2/openconnect.git
+        dest={{build}}
+        remote=dwmw2
+
+    - name: OpenConnect install
+      shell: sh ./autogen.sh &&
+        ./configure &&
+        make PYTHON=python2 &&
+        make install PYTHON=python2
+        creates=/usr/local/sbin/openconnect
+        chdir={{build}}

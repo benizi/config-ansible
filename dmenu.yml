@@ -1,0 +1,15 @@
+- name: Custom dmenu
+  hosts: arch
+  vars:
+    build: '{{gitbuild}}/dmenu'
+
+  tasks:
+    - name: Custom dmenu source
+      git: repo='gh:benizi/dmenu'
+        dest={{build}}
+        remote=benizi
+
+    - name: Custom dmenu build
+      shell: make && make install
+        chdir={{build}}
+        creates=/usr/local/bin/dmenu

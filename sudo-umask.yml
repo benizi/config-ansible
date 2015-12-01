@@ -1,0 +1,10 @@
+- name: Sudo umask
+  hosts: arch
+  sudo: true
+  tasks:
+    - name: Override user umask
+      copy: content='Defaults umask = 0022\nDefaults umask_override\n'
+        dest=/etc/sudoers.d/20_umask
+        owner=root
+        group=root
+        mode=0644
