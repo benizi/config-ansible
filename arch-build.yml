@@ -2,8 +2,8 @@
   hosts: arch
   vars:
     archbuilds: /opt/arch-builds
-    tarball: '{{archbuilds}}/aura.tar.gz'
-    pkg: '{{archbuilds}}/aura/aura-1.3.0.5-1-x86_64.pkg.tar.xz'
+    build: '{{archbuilds}}/aura-bin'
+    pkg: '{{build}}/aura-bin-1.3.4-1-x86_64.pkg.tar.xz'
 
   tasks:
     - name: Arch build system prereqs
@@ -20,37 +20,16 @@
     - name: AUR build dir
       file: path={{archbuilds}} state=directory owner=bhaskell group=bhaskell
 
-    - name: Aura prereqs
-      shell: ghc-pkg list --simple {{item}} | grep -q . ||
-        cabal install {{item}}
-      with_items:
-        - regex-base
-        - parsec
-        - syb
-        - mtl
-        - json
-        - temporary
-        - regex-pcre-builtin
-        - http-conduit
-        - lens
-        - split
-        - wreq
-        - aur
-      register: cabal
-      changed_when: cabal.stdout != ''
-
     - name: Aura source
-      get_url: url=https://aur.archlinux.org/packages/au/aura/aura.tar.gz
-        dest={{tarball}}
+      git: repo=https://aur.archlinux.org/aura-bin.git
+        dest={{build}}
+        update=no
+        remote=aur
 
     - name: Aura build package
-      shell: cd {{archbuilds}} &&
-        tar xvf {{tarball}} &&
-        cd aura &&
-        perl -000 -i -lpwe 's/^(makedepends=\().*?\)/$1)/sm' PKGBUILD &&
-        makepkg -si
+      shell: makepkg -sr
         creates={{pkg}}
-        chdir={{archbuilds}}
+        chdir={{build}}
 
     - name: Aura install
       sudo: yes
