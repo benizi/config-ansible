@@ -93,7 +93,6 @@
       sudo: yes
       archpkg: name={{item}}
       with_items:
-        - aur/lib32-libjpeg6
         - aur/libjpeg6-turbo
         - lib32-libsm
         - lib32-libx11
