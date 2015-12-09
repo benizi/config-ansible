@@ -3,3 +3,4 @@ ansible_python_interpreter: /usr/bin/python2
 gitbuild: /opt/git
 docker_dns: 172.17.0.1
 docker_storage: btrfs
+docker_extra_opts: '--exec-opt native.cgroupdriver=cgroupfs'
