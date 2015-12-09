@@ -4,7 +4,7 @@ After=network.target docker.socket
 Requires=docker.socket
 
 [Service]
-ExecStart=/usr/local/bin/docker daemon --dns 172.17.42.1 -s {{docker_storage}} --exec-opt native.cgroupdriver=cgroupfs -H fd://
+ExecStart=/usr/local/bin/docker daemon --dns {{docker_dns}} -s {{docker_storage}} --exec-opt native.cgroupdriver=cgroupfs -H fd://
 LimitNOFILE=1048576
 LimitNPROC=1048576
 Restart=on-failure
