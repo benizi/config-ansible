@@ -4,3 +4,10 @@ gitbuild: /opt/git
 docker_dns: 172.17.0.1
 docker_storage: btrfs
 docker_extra_opts: '--exec-opt native.cgroupdriver=cgroupfs'
+localdns_bogus:
+  - 193.234.222.38
+  - 199.101.28.20
+  - 64.94.110.11
+  - 67.215.65.130
+  - 67.215.65.132
+  - 92.242.140.21

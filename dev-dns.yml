@@ -1,12 +1,16 @@
 - name: Dev DNS
-  hosts: none
+  hosts: arch
+  vars:
+    binary: /usr/local/bin/localdns
+    build: '{{gitbuild}}/localdns'
+    systemd_dir: /etc/systemd/system
+
   tasks:
-    - name: Install local DNS prereqs
+    - name: Install localdns prereqs
       sudo: yes
       pacman: name={{item}}
       with_items:
         - dhclient
-        - dnsmasq
 
     - name: Ensure wicd uses dhclient
       sudo: yes
@@ -26,41 +30,48 @@
         - dhclient-enter-hooks
         - dhclient-exit-hooks
 
-    - name: DNSMasq configuration dir
-      sudo: yes
-      file: dest=/etc/dnsmasq.d
-        state=directory
-        owner=root
-        group=root
-        mode=0770
+    - name: localdns source
+      git: repo='gh:benizi/localdns'
+        dest={{build}}
+        remote=benizi
 
-    - name: DNSMasq configuration
-      sudo: yes
-      copy: src=files/dnsmasq.conf
-        dest=/etc/dnsmasq.conf
-        owner=root
-        group=root
-        mode=0644
-      notify: restart dnsmasq
+    - name: localdns install
+      shell: make &&
+        cp localdns {{binary}}
+        creates={{binary}}
+        chdir={{build}}
 
-    - name: DNSMasq dev addresses
+    - name: localdns service
       sudo: yes
-      copy: src=files/dev.conf
-        dest=/etc/dnsmasq.d/dev.conf
-        mode=0644
-      notify: restart dnsmasq
+      copy: src=files/{{item}}
+        dest={{systemd_dir}}/{{item}}
+      with_items: [localdns.service]
+      notify:
+        - reload systemd
+        - restart localdns
 
-    - name: Run DNSMasq
-      sudo: true
-      service: name=dnsmasq
-        state=started
-        enabled=yes
+    - name: localdns env
+      sudo: yes
+      template: src=templates/{{item}}.j2
+        dest=/etc/{{item}}
+      with_items: [localdns.env]
+      notify:
+        - reload systemd
+        - restart localdns
+
+    - name: localdns service
+      sudo: yes
+      service: name=localdns state=started enabled=yes
 
   handlers:
-    - name: restart dnsmasq
+    - name: restart localdns
       sudo: yes
-      service: name=dnsmasq state=restarted
+      service: name=localdns state=restarted
 
     - name: restart wicd
       sudo: yes
       service: name=wicd state=restarted
+
+    - name: reload systemd
+      sudo: yes
+      command: systemctl daemon-reload

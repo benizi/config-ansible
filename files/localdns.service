@@ -1,0 +1,8 @@
+[Unit]
+Description=Local DNS server
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/localdns.env
+ExecStart=/usr/local/bin/localdns
+Restart=on-failure
