@@ -2,6 +2,7 @@
   hosts: arch
   vars:
     binary: /usr/local/bin/localdns
+    package: github.com/benizi/localdns
     systemd_dir: /etc/systemd/system
 
   tasks:
@@ -30,7 +31,7 @@
         - dhclient-exit-hooks
 
     - name: localdns binary
-      command: go build -o {{binary}} github.com/benizi/localdns
+      shell: go get {{package}} && go build -o {{binary}} {{package}}
         creates={{binary}}
 
     - name: localdns service
