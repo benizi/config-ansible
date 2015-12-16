@@ -25,8 +25,6 @@
     - name: X-related idiosyncratic prereqs
       pacman: name={{item}}
       with_items:
-        - perl-ipc-run # for my keyboard wrapper
-        - perl-tk # for old, graphical Perl scripts
         - unclutter
         - xbindkeys
         - xdotool
@@ -36,3 +34,11 @@
         - xorg-xprop
         - xorg-xrandr
         - xorg-xsetroot
+
+    - name: Idiosyncratic prereqs # mostly for old Perl scripts
+      pacman: name={{item}}
+      with_items:
+        - perl-fuse
+        - perl-ipc-run
+        - perl-json
+        - perl-tk
