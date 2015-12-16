@@ -2,7 +2,6 @@
   hosts: arch
   vars:
     binary: /usr/local/bin/localdns
-    build: '{{gitbuild}}/localdns'
     systemd_dir: /etc/systemd/system
 
   tasks:
@@ -30,16 +29,9 @@
         - dhclient-enter-hooks
         - dhclient-exit-hooks
 
-    - name: localdns source
-      git: repo='gh:benizi/localdns'
-        dest={{build}}
-        remote=benizi
-
-    - name: localdns install
-      shell: make &&
-        cp localdns {{binary}}
+    - name: localdns binary
+      command: go build -o {{binary}} github.com/benizi/localdns
         creates={{binary}}
-        chdir={{build}}
 
     - name: localdns service
       sudo: yes
