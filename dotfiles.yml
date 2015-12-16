@@ -69,6 +69,11 @@
         - perl-algorithm-diff
         - perl-cgi
         - perl-date-manip
+        - perl-fuse
+        - perl-ipc-run
+        - perl-json
+        - perl-tk
+        - perl-xml-twig
 
     - name: Script prereqs (compiled)
       command: make {{item}}
