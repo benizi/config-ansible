@@ -11,3 +11,7 @@ localdns_bogus:
   - 67.215.65.130
   - 67.215.65.132
   - 92.242.140.21
+localdns_loop:
+  - dev
+  - pow
+  - vhost
