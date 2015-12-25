@@ -3,7 +3,7 @@ Description=Dropbox daemon
 After=lxpanel.service
 
 [Service]
-ExecStart=/home/bhaskell/.dropbox-dist/dropboxd
+ExecStart=/usr/bin/dropbox
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
 Environment=DISPLAY=:0

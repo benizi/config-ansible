@@ -1,56 +1,11 @@
 - name: Install Dropbox
   hosts: arch
-  vars:
-    build: /tmp/dropbox-build
-    cache: '{{gitbuild}}/dropbox.tar.gz'
-    dropbox: /usr/local/bin/dropbox
-    old: '{{gitbuild}}/dropbox-old.tar.gz'
-
   tasks:
-    - name: Dropbox prereqs
+    - name: Dropbox package
       sudo: yes
-      pacman: name={{item}}
-      with_items:
-        - libnautilus-extension
-        - pygtk
-        - python2-docutils
-        - python2-pygpgme
-
-    - name: Dropbox dist source (workaround for tray icon)
-      get_url: url=https://d1ilhw0800yew8.cloudfront.net/client/dropbox-lnx.x86_64-2.10.52.tar.gz
-        dest={{old}}
-        sha256sum=e61ef14cdf8bd4801ff2794c1178b2cac5c097ebffb3b24d061738006e76c23a
-
-    - name: Dropbox dist install (workaround for tray icon)
-      shell: cd ~bhaskell &&
-        rm -r .dropbox-dist &&
-        tar xf {{old}} &&
-        chmod -R a-w .dropbox-dist
-        creates=~bhaskell/.dropbox-dist/dropboxd
-
-    - name: Dropbox source
-      get_url: url=https://linux.dropbox.com/packages/nautilus-dropbox-2015.02.12.tar.bz2
-        dest={{cache}}
-        sha256sum=06e152ee5a683a5911bb5147f491276d7a1ed5e05ac4065b0e9eea5e7d00ad8a
-
-    - name: Dropbox install
-      shell: rm -rf {{build}} &&
-        mkdir {{build}} &&
-        tar -C {{build}} --strip-components 1 -xf {{cache}} &&
-        cd {{build}} &&
-        with-python2 ./configure --prefix=/usr/local --with-nautilus-extension-dir=/tmp/garbage &&
-        with-python2 make &&
-        make install
-        creates={{dropbox}}
-
-    - name: Dropbox python2
-      lineinfile: dest={{dropbox}}
-        regexp='^#!'
-        line='#!/usr/bin/env python2'
+      archpkg: name=aur/dropbox
 
     - name: Dropbox daemon install
-      shell: yes |
-        sed q |
-        dropbox start -i &&
+      shell: echo y | dropbox start -i &&
         dropbox stop
         creates=~bhaskell/.dropbox-dist
