@@ -27,6 +27,21 @@
       sudo: yes
       pacman: name=android-udev
 
+    # Work around Aura bug: https://github.com/aurapm/aura/issues/14
+    - name: Android SDK deps
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - lib32-openal
+        - lib32-libstdc++5
+        - lib32-libxv
+        - lib32-sdl
+        - swt
+
+    - name: Android SDK
+      sudo: yes
+      archpkg: name=aur/android-sdk
+
     - name: Android USB group (add me)
       sudo: yes
       user: name=bhaskell
