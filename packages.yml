@@ -15,6 +15,7 @@
         - rsync
         - socat
         - strace
+        - sysstat
 
     - name: Hardware Info
       pacman: name={{item}}
