@@ -3,9 +3,10 @@
   sudo: yes
   tasks:
     - name: System tools
-      pacman: name={{item}}
+      archpkg: name={{item}}
       with_items:
         - bind-tools
+        - aur/daemontools
         - gdb
         - htop
         - iotop
