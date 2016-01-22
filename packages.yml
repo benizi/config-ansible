@@ -17,6 +17,7 @@
         - socat
         - strace
         - sysstat
+        - words
 
     - name: Hardware Info
       pacman: name={{item}}
