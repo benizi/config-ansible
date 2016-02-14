@@ -19,11 +19,16 @@
         - pkg-config
 
     - name: Standard source control
-      sudo: yes
       pacman: name={{item}}
       with_items:
         - git
         - mercurial
+
+    - name: Source control frontends
+      pacman: name={{item}}
+      with_items:
+        - tig
+        - tk # for gitk
 
     - name: Esoteric Source Control
       pacman: name={{item}}

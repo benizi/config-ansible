@@ -133,7 +133,6 @@
         - jq
         - meld
         - screen
-        - tk # for gitk
         - tmux
         - x11vnc
         - xorg-server-xephyr
