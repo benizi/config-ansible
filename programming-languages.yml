@@ -5,7 +5,7 @@
   tasks:
     - name: Install Verman
       git: repo=gh:benizi/verman
-        dest=~bhaskell/git/verman
+        dest=/opt/verman
         remote=benizi
 
     # Verman uses ruby-build to install rubies
