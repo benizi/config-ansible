@@ -3,16 +3,26 @@
   vars:
     build: '{{gitbuild}}/rebar'
     rebar: /usr/local/bin/rebar
+    build3: '{{gitbuild}}/rebar3'
+    rebar3: ~bhaskell/.cache/rebar3/bin/rebar3
 
   tasks:
     - name: Rebar source
-      git: repo=gh:rebar/rebar
-        dest={{build}}
+      git: repo=gh:rebar/{{item.name}}
+        dest={{item.dest}}
         update=no
-        remote=rebar
+        remote={{item.name}}
+      with_items:
+        - { name: rebar, dest: '{{build}}' }
+        - { name: rebar3, dest: '{{build3}}' }
 
     - name: Rebar install
       shell: ./bootstrap &&
         mv rebar {{rebar}}
         chdir={{build}}
         creates={{rebar}}
+
+    - name: Rebar3 install
+      shell: ./bootstrap && ./rebar3 local install
+        chdir={{build3}}
+        creates={{rebar3}}
