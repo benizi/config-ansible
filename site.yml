@@ -32,6 +32,7 @@
 - include: pepperflash.yml
 - include: user-services.yml
 - include: feh.yml
+- include: imv.yml
 - include: remote-access.yml
 - include: power.yml
 - include: programming-languages.yml
