@@ -13,6 +13,7 @@
         - colordiff
         - flex
         - gcc-multilib
+        - intltool
         - libtool
         - make
         - patch
