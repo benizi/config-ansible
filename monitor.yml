@@ -28,3 +28,8 @@
       with_items:
         - { build: '{{toolbuild}}', creates: '{{destroot}}/bin/ddccontrol' }
         - { build: '{{dbbuild}}', creates: '{{destroot}}/share/ddccontrol-db' }
+
+    - name: i2c kernel module
+      copy: content='i2c-dev\n'
+        dest=/etc/modules-load.d/ddccontrol.conf
+        mode=0640
