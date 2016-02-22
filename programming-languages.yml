@@ -99,6 +99,10 @@
         - lib32-libx11
         - lib32-libxext
 
+    - name: Z3 (Liquid Haskell solver prereq)
+      sudo: yes
+      archpkg: name=aur/z3
+
   handlers:
     - name: Install ruby-build
       command: ./install.sh
