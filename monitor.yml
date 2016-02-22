@@ -1,0 +1,30 @@
+- name: Monitor
+  hosts: laptops
+  vars:
+    dbbuild: '{{gitbuild}}/ddccontrol-db'
+    toolbuild: '{{gitbuild}}/ddccontrol'
+    destroot: /opt/ddccontrol
+  tasks:
+    - name: DDC/CI tool source
+      git: repo='gh:benizi/ddccontrol'
+        dest={{toolbuild}}
+        version=automated-build
+        remote=benizi
+        update=no
+
+    - name: DDC/CI monitor database source
+      git: repo='gh:benizi/ddccontrol-db'
+        dest={{dbbuild}}
+        remote=benizi
+        update=no
+
+    - name: DDC/CI tool install
+      shell: ./autogen.sh &&
+        ./configure --prefix={{destroot}} &&
+        make &&
+        make install
+        chdir={{item.build}}
+        creates={{item.creates}}
+      with_items:
+        - { build: '{{toolbuild}}', creates: '{{destroot}}/bin/ddccontrol' }
+        - { build: '{{dbbuild}}', creates: '{{destroot}}/share/ddccontrol-db' }
