@@ -1,0 +1,22 @@
+- name: Install imv (image viewer)
+  hosts: arch
+  vars:
+    build: '{{gitbuild}}/imv'
+  tasks:
+    - name: imv (image viewer) prereqs
+      sudo: yes
+      pacman: name={{item}}
+      with_items:
+        - freeimage
+        - sdl2_image
+        - sdl2_ttf
+
+    - name: imv (image viewer) source
+      git: repo=gh:benizi/imv
+        dest={{build}}
+        remote=benizi
+
+    - name: Install imv
+      shell: make && PREFIX=/usr/local make install
+        chdir={{build}}
+        creates=/usr/local/bin/imv
