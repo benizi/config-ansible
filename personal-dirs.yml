@@ -12,7 +12,10 @@
       changed_when: dirs.stdout != ''
 
     - name: Own /etc but skip ssh
-      shell: (find /etc -xdev -maxdepth 1 2>&1 >/dev/null | grep -L . | grep -q . || grep -l . /etc/ssh/ssh_host_dsa_key) ||
-        (set-all-facl u:bhaskell -v -R /etc && sudo setfacl -R -b /etc/ssh)
+      shell: if find /etc -xdev -type d ! -writable | grep -qvxF /etc/ssh; then
+        set-all-facl u:bhaskell -v -R /etc &&
+        sudo setfacl -R -b /etc/ssh &&
+        sudo chmod -R go-rwx /etc/ssh/*_key &&
+        sudo chmod -R go+r /etc/ssh/*.pub; fi
       register: etc
       changed_when: etc.stdout != ''
