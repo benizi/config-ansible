@@ -1,5 +1,5 @@
 - name: Monitor
-  hosts: laptops
+  hosts: physical
   vars:
     dbbuild: '{{gitbuild}}/ddccontrol-db'
     toolbuild: '{{gitbuild}}/ddccontrol'

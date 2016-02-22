@@ -11,6 +11,9 @@ vps
 [arch:children]
 laptops
 
+[physical:children]
+laptops
+
 [ansible]
 bhaskell-x240
 
