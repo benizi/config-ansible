@@ -103,6 +103,10 @@
       sudo: yes
       archpkg: name=aur/z3
 
+    - name: Urbit prereqs
+      sudo: yes
+      pacman: name=libsigsegv
+
   handlers:
     - name: Install ruby-build
       command: ./install.sh
