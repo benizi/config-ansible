@@ -17,6 +17,7 @@
 - include: editors.yml
 - include: arch-build.yml
 - include: packages.yml
+- include: audio.yml
 - include: radio.yml
 - include: monitor.yml
 - include: context.yml
