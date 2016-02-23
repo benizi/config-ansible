@@ -1,0 +1,7 @@
+- name: Audio
+  hosts: physical
+  tasks:
+    - name: PulseAudio network config
+      lineinfile: dest=/etc/pulse/default.pa
+        line='load-module module-native-protocol-tcp'
+        regexp=module-native-protocol-tcp
