@@ -36,4 +36,4 @@
       with_items:
         - bzr # oddly popular for Go libs
         - cvs # RXVT-Unicode
-        - svn # for my own old, old backups
+        - subversion # for my own old, old backups
