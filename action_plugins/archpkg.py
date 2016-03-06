@@ -1,21 +1,14 @@
 from ansible import utils
-from ansible.runner.return_data import ReturnData
+from ansible.plugins.action import ActionBase
 
-class ActionModule(object):
-    def __init__(self, runner):
-        self.runner = runner
-
-    # in 2.0+?: def run(self, tmp=None, task_vars=dict()):
-    def run(self, conn, tmp, module_name, module_args, inject, complex_args=None, **kwargs):
+class ActionModule(ActionBase):
+    def run(self, tmp=None, task_vars=dict()):
         '''Run pacman or aura as appropriate'''
 
-        options = {}
-        if complex_args:
-            options.update(complex_args)
-        options.update(utils.parse_kv(module_args))
+        options = self._task.args.copy()
 
-        if self.runner.noop_on_check(inject):
-            options['CHECKMODE'] = True
+        if self._play_context.check_mode:
+            options['_ansible_check_mode'] = True
 
         name = options['name'] or None
         next_mod = 'pacman'
@@ -24,4 +17,4 @@ class ActionModule(object):
             options['name'] = name.replace(aur_prefix, '', 1)
             next_mod = 'aura'
 
-        return self.runner._execute_module(conn, tmp, next_mod, '', inject=inject, complex_args=options)
+        return self._execute_module(module_name=next_mod, module_args=options, task_vars=task_vars)
