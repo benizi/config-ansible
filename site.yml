@@ -50,3 +50,4 @@
 - include: yubikey-neo.yml
 - include: docker.yml
 - include: graphics-tablet.yml
+- include: google-cloud-sdk.yml
