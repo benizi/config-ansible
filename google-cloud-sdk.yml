@@ -1,0 +1,18 @@
+- name: Google Cloud SDK
+  hosts: arch
+  vars:
+    installer: '{{gitbuild}}/google-cloud-sdk-installer'
+    prefix: /opt/google/cloud-sdk
+
+  tasks:
+    - name: Google Cloud SDK installer
+      get_url: url=https://sdk.cloud.google.com/
+        dest={{installer}}
+        mode=0750
+        sha256sum=5a09c109a203a1fb1b4a0edb60be646ca6f9e2b4df48b391bb62ffe392bb9b76
+
+    - name: Install Google Cloud SDK
+      shell: CLOUDSDK_PYTHON=python2
+        CLOUDSDK_INSTALL_DIR={{prefix}}
+        CLOUDSDK_CORE_DISABLE_PROMPTS=1
+        {{installer}}
