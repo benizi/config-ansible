@@ -55,6 +55,7 @@
     - name: Atlassian key
       shell: curl https://www.hipchat.com/keys/hipchat-linux.key |
         GNUPGHOME=/etc/pacman.d/gnupg gpg --import
+        warn=no
 
     - name: Refresh keys
       command: pacman-key --refresh-keys
