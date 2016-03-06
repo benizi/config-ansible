@@ -6,7 +6,7 @@
 
   tasks:
     - name: VNC and RDP
-      sudo: yes
+      become: true
       pacman: name={{item}}
       with_items:
         - freerdp
@@ -14,7 +14,7 @@
         - x11vnc
 
     - name: Custom synergy prereqs
-      sudo: yes
+      become: true
       pacman: name={{item}}
       with_items:
         - qt4

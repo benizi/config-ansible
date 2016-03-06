@@ -1,6 +1,6 @@
 - name: Install many packages
   hosts: arch
-  sudo: yes
+  become: true
   tasks:
     - name: System tools
       archpkg: name={{item}}

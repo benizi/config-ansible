@@ -1,6 +1,6 @@
 - name: Prereqs
   hosts: arch
-  sudo: true
+  become: true
   tasks:
     - name: Very basic prereqs
       pacman: name={{item}}

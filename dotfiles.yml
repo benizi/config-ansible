@@ -48,7 +48,7 @@
         - { src: dotfiles/.zsh/.zshenv, dest: .zshenv }
 
     - name: Root zsh
-      sudo: yes
+      become: true
       file: state=link src=~bhaskell/.zshenv dest=~root/.zshenv
 
     - name: Set up build for bin.local files
@@ -58,11 +58,11 @@
         - src
 
     - name: Set shell
-      sudo: true
+      become: true
       user: name=bhaskell shell=/bin/zsh
 
     - name: Script prereqs
-      sudo: true
+      become: true
       pacman: name={{item}}
       with_items:
         - inotify-tools

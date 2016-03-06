@@ -25,5 +25,5 @@
         creates={{binary}}
 
     - name: Install polipo
-      sudo: yes
+      become: true
       pacman: name=polipo

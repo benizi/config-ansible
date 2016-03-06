@@ -1,6 +1,6 @@
 - name: Sudo umask
   hosts: arch
-  sudo: true
+  become: true
   tasks:
     - name: Override user umask
       copy: content='Defaults umask = 0022\nDefaults umask_override\n'

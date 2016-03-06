@@ -7,20 +7,20 @@
 
   tasks:
     - name: Install localdns prereqs
-      sudo: yes
+      become: true
       pacman: name={{item}}
       with_items:
         - dhclient
 
     - name: Ensure wicd uses dhclient
-      sudo: yes
+      become: true
       lineinfile: dest=/etc/wicd/manager-settings.conf
         regexp='dhcp_client'
         line='dhcp_client = 1'
       notify: restart wicd
 
     - name: DHClient configuration
-      sudo: yes
+      become: true
       copy: src=files/{{item}}
         dest=/etc/{{item}}
         owner=root
@@ -35,7 +35,7 @@
         creates={{binary}}
 
     - name: localdns service
-      sudo: yes
+      become: true
       copy: src=files/{{item}}
         dest={{systemd_dir}}/{{item}}
       with_items: [localdns.service]
@@ -44,7 +44,7 @@
         - restart localdns
 
     - name: localdns env
-      sudo: yes
+      become: true
       template: src=templates/{{item}}.j2
         dest=/etc/{{item}}
       with_items: [localdns.env]
@@ -53,18 +53,18 @@
         - restart localdns
 
     - name: localdns service
-      sudo: yes
+      become: true
       service: name=localdns state=started enabled=yes
 
   handlers:
     - name: restart localdns
-      sudo: yes
+      become: true
       service: name=localdns state=restarted
 
     - name: restart wicd
-      sudo: yes
+      become: true
       service: name=wicd state=restarted
 
     - name: reload systemd
-      sudo: yes
+      become: true
       command: systemctl daemon-reload

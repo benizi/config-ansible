@@ -13,7 +13,7 @@
         force=no
 
     - name: SSH known hosts
-      sudo: yes
+      become: true
       copy: src=files/ssh_known_hosts
         dest=/etc/ssh/ssh_known_hosts
         owner=root

@@ -9,7 +9,7 @@
         - emacs
 
     - name: Preferred (custom vim) prereqs
-      sudo: true
+      become: true
       pacman: name={{item}}
       with_items:
         - lua51

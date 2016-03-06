@@ -7,13 +7,13 @@
 
   tasks:
     - name: Arch build system prereqs
-      sudo: yes
+      become: true
       pacman: name={{item}}
       with_items:
         - fakeroot
 
     - name: Arch build system
-      sudo: yes
+      become: true
       pacman: name=abs
       notify: set abs perms
 
@@ -32,7 +32,7 @@
         chdir={{build}}
 
     - name: Aura install
-      sudo: yes
+      become: true
       command: pacman --noconfirm -U {{pkg}}
         creates=/usr/sbin/aura
 

@@ -1,6 +1,6 @@
 - name: Development
   hosts: arch # TODO: others
-  sudo: true
+  become: true
   tasks:
     - name: Standard compiling prereqs
       pacman: name={{item}}

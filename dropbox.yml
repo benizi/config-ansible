@@ -2,7 +2,7 @@
   hosts: arch
   tasks:
     - name: Dropbox package
-      sudo: yes
+      become: true
       archpkg: name=aur/dropbox
 
     - name: Dropbox daemon install

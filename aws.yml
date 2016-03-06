@@ -1,6 +1,6 @@
 - name: AWS CLI
   hosts: arch
-  sudo: yes
+  become: true
   tasks:
     - name: AWS CLI PIP
       pip: name=awscli executable=pip2

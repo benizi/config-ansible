@@ -1,6 +1,6 @@
 - name: Virtualization
   hosts: arch
-  sudo: yes
+  become: true
   tasks:
     - name: Virtualization (packages)
       pacman: name={{item}}

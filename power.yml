@@ -1,6 +1,6 @@
 - name: Power settings
   hosts: laptops
-  sudo: yes
+  become: true
   tasks:
     - name: Disable lid switch and suspend key
       lineinfile: dest=/etc/systemd/logind.conf

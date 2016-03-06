@@ -3,7 +3,7 @@
   tasks:
     - name: Nix prereqs
       pacman: name={{item}}
-      sudo: yes
+      become: true
       with_items:
         - perl-dbd-sqlite
         - perl-www-curl

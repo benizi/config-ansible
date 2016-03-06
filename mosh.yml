@@ -10,7 +10,7 @@
       failed_when: False
 
     - name: MOSH prereqs (EC2)
-      sudo: yes
+      become: true
       yum: name={{item}}
         enablerepo=epel
       with_items:
@@ -26,7 +26,7 @@
       when: ec2 | success
 
     - name: MOSH prereqs (non-EC2)
-      sudo: yes
+      become: true
       pacman: name={{item}}
       with_items:
         - protobuf

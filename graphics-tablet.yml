@@ -2,7 +2,7 @@
   hosts: graphics-tablet
   tasks:
     - name: HUION h610pro keymappings (hwdb file)
-      sudo: yes
+      become: true
       copy: src=files/h610.hwdb
         dest=/etc/udev/hwdb.d/h610.hwdb
         owner=root
@@ -11,7 +11,7 @@
       notify: reset udev
 
     - name: osu! prereqs
-      sudo: yes
+      become: true
       pacman: name={{item}}
       with_items:
         - lib32-alsa-lib
@@ -29,5 +29,5 @@
 
   handlers:
     - name: reset udev
-      sudo: yes
+      become: true
       shell: udevadm hwdb --update && udevadm trigger

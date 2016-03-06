@@ -1,6 +1,6 @@
 - name: AUR packages
   hosts: arch
-  sudo: yes
+  become: true
   tasks:
     - name: AUR installs
       aura: name={{item}}

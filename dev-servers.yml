@@ -5,7 +5,7 @@
 
   tasks:
     - name: Install server packages
-      sudo: yes
+      become: true
       pacman: name={{item}}
       with_items:
         - mariadb
@@ -15,16 +15,16 @@
         - redis
 
     - name: Prevent system nginx
-      sudo: yes
+      become: true
       service: name=nginx state=stopped enabled=no
 
     - name: PostgreSQL initdb
-      sudo: yes
+      become: true
       command: su - postgres -c 'initdb --locale en_US.UTF-8 -D {{pgdata}}'
         creates={{pgdata}}/postgresql.conf
 
     - name: Start dev servers
-      sudo: yes
+      become: true
       service: name={{item}} state=started enabled=yes
       with_items:
         - postgresql

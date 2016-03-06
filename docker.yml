@@ -9,7 +9,7 @@
 
   tasks:
     - name: Install prereqs
-      sudo: yes
+      become: true
       pacman: name={{item}}
       with_items:
         # TODO: not sure these are needed for -e=native
@@ -43,21 +43,21 @@
       file: state=link dest={{docker}} src={{docker}}-{{version}}
 
     - name: Enable IPv4 forwarding
-      sudo: yes
+      become: true
       sysctl: name=net.ipv4.ip_forward value=1 sysctl_set=yes
 
     - name: Docker group
-      sudo: yes
+      become: true
       group: name=docker
 
     - name: Docker group (add me)
-      sudo: yes
+      become: true
       user: name=bhaskell
         append=yes
         groups=docker
 
     - name: Docker service files
-      sudo: yes
+      become: true
       template: src=templates/docker.{{item}}
         dest=/etc/systemd/system/docker.{{item}}
       with_items: [service, socket]
@@ -66,10 +66,10 @@
     - meta: flush_handlers
 
     - name: Docker service
-      sudo: yes
+      become: true
       service: name=docker.socket state=started enabled=yes
 
   handlers:
     - name: reload systemd
-      sudo: yes
+      become: true
       command: systemctl daemon-reload

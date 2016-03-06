@@ -32,7 +32,7 @@
         - { lang: ruby, version: '2.1.2' }
 
     - name: Java
-      sudo: yes
+      become: true
       pacman: name={{item}}
       with_items:
         - jdk7-openjdk
@@ -45,14 +45,14 @@
         creates=/opt/java/openjdk8
 
     - name: Pythons (ensure both installed)
-      sudo: yes
+      become: true
       pacman: name={{item}}
       with_items:
         - python
         - python2
 
     - name: PHP
-      sudo: yes
+      become: true
       pacman: name={{item}}
       with_items:
         - php
@@ -81,17 +81,17 @@
         creates=~bhaskell/.boot/boot.properties
 
     - name: Lua libraries
-      sudo: yes
+      become: true
       pacman: name={{item}}
       with_items:
         - lua-filesystem
 
     - name: GNU APL
-      sudo: yes
+      become: true
       archpkg: name=aur/gnu-apl
 
     - name: APLX prereqs
-      sudo: yes
+      become: true
       archpkg: name={{item}}
       with_items:
         - aur/libjpeg6-turbo
@@ -100,11 +100,11 @@
         - lib32-libxext
 
     - name: Z3 (Liquid Haskell solver prereq)
-      sudo: yes
+      become: true
       archpkg: name=aur/z3
 
     - name: Urbit prereqs
-      sudo: yes
+      become: true
       pacman: name=libsigsegv
 
   handlers:

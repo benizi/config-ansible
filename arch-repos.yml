@@ -1,6 +1,6 @@
 - name: Arch packaging
   hosts: arch
-  sudo: true
+  become: true
   vars:
     mirrorlist: /etc/pacman.d/mirrorlist
     repos: [testing, core, extra, community, multilib]

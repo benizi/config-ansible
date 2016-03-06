@@ -9,14 +9,14 @@
 
   tasks:
     - name: CouchDB prereqs
-      sudo: yes
+      become: true
       pacman: name={{item}}
       with_items:
         - autoconf-archive
         - js185
 
     - name: CouchDB service user
-      sudo: yes
+      become: true
       user: name=couchdb
         home={{prefix}}
         createhome=no
@@ -45,7 +45,7 @@
       notify: set couchdb permissions
 
     - name: CouchDB service file
-      sudo: yes
+      become: true
       copy: src=files/couchdb.service
         dest=/etc/systemd/system/couchdb.service
       notify: reload systemd
@@ -53,7 +53,7 @@
     - meta: flush_handlers
 
     - name: CouchDB service
-      sudo: yes
+      become: true
       service: name=couchdb state=started enabled=yes
 
   handlers:
@@ -61,5 +61,5 @@
       command: set-all-facl u:couchdb -R {{prefix}}
 
     - name: reload systemd
-      sudo: yes
+      become: true
       command: systemctl daemon-reload

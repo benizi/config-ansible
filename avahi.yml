@@ -1,6 +1,6 @@
 - name: Avahi (mDNS)
   hosts: arch
-  sudo: yes
+  become: true
   vars:
     prefix: 'hosts:'
   tasks:

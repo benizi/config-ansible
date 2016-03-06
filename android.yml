@@ -20,16 +20,16 @@
     # TODO: is this needed? Otherwise add a link to the studio-installed tools.
     #
     - name: Android Tools
-      sudo: yes
+      become: true
       pacman: name=android-tools
 
     - name: Android USB debugging
-      sudo: yes
+      become: true
       pacman: name=android-udev
 
     # Work around Aura bug: https://github.com/aurapm/aura/issues/14
     - name: Android SDK deps
-      sudo: yes
+      become: true
       pacman: name={{item}}
       with_items:
         - lib32-openal
@@ -39,11 +39,11 @@
         - swt
 
     - name: Android SDK
-      sudo: yes
+      become: true
       archpkg: name=aur/android-sdk
 
     - name: Android USB group (add me)
-      sudo: yes
+      become: true
       user: name=bhaskell
         append=yes
         groups=adbusers

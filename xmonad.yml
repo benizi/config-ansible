@@ -2,7 +2,7 @@
   hosts: arch
   tasks:
     - name: XMonad prereqs
-      sudo: yes
+      become: true
       pacman: name={{item}}
       with_items:
         - dzen2 # status bars
@@ -13,7 +13,7 @@
         - xorg-xmessage
 
     - name: Cabal (Haskell package manager)
-      sudo: yes
+      become: true
       pacman: name=cabal-install
       notify: Set up cabal
 
@@ -31,7 +31,7 @@
       changed_when: cabal.stdout != ''
 
     - name: Enable services
-      sudo: yes
+      become: true
       service: name=xdm state=started enabled=yes
 
   handlers:

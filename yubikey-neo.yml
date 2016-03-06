@@ -1,6 +1,6 @@
 - name: Yubikey Neo support
   hosts: yubikey
-  sudo: yes
+  become: true
   tasks:
     - name: Install Yubikey manager
       aura: name=yubikey-neo-manager-git

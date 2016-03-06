@@ -4,7 +4,7 @@
     build: '{{gitbuild}}/imv'
   tasks:
     - name: imv (image viewer) prereqs
-      sudo: yes
+      become: true
       pacman: name={{item}}
       with_items:
         - freeimage

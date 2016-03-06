@@ -6,18 +6,18 @@
 
   tasks:
     - name: Fallback (xterm and standard rxvt-unicode)
-      sudo: true
+      become: true
       pacman: name={{item}}
       with_items:
         - rxvt-unicode
         - xterm
 
     - name: Acceptable terminal emulator detector (infocmp)
-      sudo: true
+      become: true
       pacman: name=ncurses
 
     - name: Preferred (custom rxvt-unicode) prereqs
-      sudo: true
+      become: true
       pacman: name={{item}}
       with_items:
         - libev

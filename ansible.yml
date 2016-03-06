@@ -1,6 +1,6 @@
 - name: Ansible
   hosts: 'ansible:&arch'
-  sudo: true
+  become: true
   tasks:
     - name: Python PIP
       pacman: name=python2-pip

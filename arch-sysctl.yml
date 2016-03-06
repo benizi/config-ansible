@@ -1,6 +1,6 @@
 - name: Arch sysctl compatibility
   hosts: arch
-  sudo: yes
+  become: true
   tasks:
     - name: Link file to systemd location
       file: state=link
