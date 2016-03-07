@@ -1,5 +1,5 @@
 - name: Android development
-  hosts: arch
+  hosts: android
   vars:
     base: android-studio-ide-135.1740770-linux.zip
     tmp: /tmp/{{base}}
