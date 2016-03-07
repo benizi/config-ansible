@@ -18,16 +18,18 @@
     - meta: flush_handlers
 
     - name: Install langs
-      shell: verman {{item.lang}} install {{item.version}} | with-python2 sh
-        creates=/opt/{{item.lang}}/versions/{{item.version}}/bin/{{item.bin | default(item.lang)}}
+      shell: verman {{item.lang}} installed 2>/dev/null | grep -Fxq {{item.version}} ||
+        verman {{item.lang}} install {{item.version}} | with-python2 sh
+      register: verman
+      changed_when: verman.stdout != ''
       with_items:
-        - { lang: erlang, version: '18.1.5', bin: erl }
+        - { lang: erlang, version: '18.1.5' }
         - { lang: elixir, version: v1.2.1 }
         - { lang: go, version: go1.4.1 } # needed to bootstrap newer Go
         - { lang: go, version: go1.5.2 }
         - { lang: node, version: v5.6.0 }
         - { lang: ruby, version: '2.2.2' }
-        - { lang: rust, version: '1.6.0', bin: rustc }
+        - { lang: rust, version: '1.6.0' }
 
     - name: Java
       become: true
