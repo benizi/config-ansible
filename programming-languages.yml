@@ -23,6 +23,7 @@
       register: verman
       changed_when: verman.stdout != ''
       with_items:
+        - { lang: erlang, version: '17.5.1' } # needed for old CouchDB
         - { lang: erlang, version: '18.1.5' }
         - { lang: elixir, version: v1.2.1 }
         - { lang: go, version: go1.4.1 } # needed to bootstrap newer Go
