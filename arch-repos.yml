@@ -30,7 +30,7 @@
         owner=root
         group=root
         mode=0644
-      with_items: repos
+      with_items: '{{repos}}'
       notify: Update packages
 
     - name: Atlassian repo
