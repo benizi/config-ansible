@@ -1,8 +1,5 @@
 - name: Dev servers
   hosts: laptops
-  vars:
-    pgdata: /var/lib/postgres/data
-
   tasks:
     - name: Install server packages
       become: true
@@ -14,18 +11,10 @@
         - postgresql
         - redis
 
-    - name: Prevent system nginx
+    - name: Prevent system versions
       become: true
-      service: name=nginx state=stopped enabled=no
-
-    - name: PostgreSQL initdb
-      become: true
-      command: su - postgres -c 'initdb --locale en_US.UTF-8 -D {{pgdata}}'
-        creates={{pgdata}}/postgresql.conf
-
-    - name: Start dev servers
-      become: true
-      service: name={{item}} state=started enabled=yes
+      service: name={{item}} state=stopped enabled=no
       with_items:
+        - nginx
         - postgresql
         - redis
