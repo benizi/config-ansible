@@ -16,3 +16,4 @@
         CLOUDSDK_INSTALL_DIR={{prefix}}
         CLOUDSDK_CORE_DISABLE_PROMPTS=1
         {{installer}}
+        creates={{prefix}}/google-cloud-sdk/bin/gcloud
