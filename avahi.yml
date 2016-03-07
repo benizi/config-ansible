@@ -18,5 +18,5 @@
 
     - name: .local resolution
       lineinfile: dest=/etc/nsswitch.conf
-        regexp='^'{{prefix}}
+        regexp='^{{prefix}}'
         line='{{prefix}} files mdns_minimal [NOTFOUND=return] dns myhostname'
