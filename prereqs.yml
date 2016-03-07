@@ -2,6 +2,11 @@
   hosts: arch
   become: true
   tasks:
+    - name: Remove conflicting full packages
+      pacman: name={{item}} state=absent
+      with_items:
+        - vim # conflicts with vim-minimal
+
     - name: Very basic prereqs
       pacman: name={{item}}
       with_items:
