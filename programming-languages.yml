@@ -27,6 +27,7 @@
         - { lang: go, version: go1.5.2 }
         - { lang: node, version: v5.6.0 }
         - { lang: ruby, version: '2.2.2' }
+        - { lang: rust, version: '1.6.0' }
 
     - name: Java
       become: true
