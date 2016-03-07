@@ -35,6 +35,7 @@
         git archive {{version}} | tar -C {{build}} -x &&
         cd {{build}} &&
         sh ./bootstrap &&
+        eval "$(VERMAN_EVAL=1 verman erlang use 17.5.1)" &&
         ./configure --prefix={{prefix}} &&
         grep -rl _BSD_SOURCE . | xargs sed -i 's/_BSD_SOURCE/_DEFAULT_SOURCE/g' &&
         touch THANKS &&
