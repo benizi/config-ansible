@@ -21,15 +21,12 @@
       shell: verman {{item.lang}} install {{item.version}} | with-python2 sh
         creates=/opt/{{item.lang}}/versions/{{item.version}}/bin/{{item.bin | default(item.lang)}}
       with_items:
-        - { lang: erlang, version: '17.0', bin: erl }
-        - { lang: elixir, version: v1.0.0 }
+        - { lang: erlang, version: '18.1.5', bin: erl }
+        - { lang: elixir, version: v1.2.1 }
         - { lang: go, version: go1.4.1 } # needed to bootstrap newer Go
         - { lang: go, version: go1.5.2 }
-        - { lang: node, version: v0.10.33 }
-        - { lang: ruby, version: '1.9.3-p550' }
-        - { lang: ruby, version: '2.0.0-p247' }
-        - { lang: ruby, version: '2.1.1' }
-        - { lang: ruby, version: '2.1.2' }
+        - { lang: node, version: v5.6.0 }
+        - { lang: ruby, version: '2.2.2' }
 
     - name: Java
       become: true
