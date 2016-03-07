@@ -38,6 +38,7 @@
       synchronize: src={{build}}/{{bundle}}/docker-{{version}}
         dest={{docker_root}}
         archive=no
+        times=yes
 
     - name: Docker link
       file: state=link dest={{docker}} src={{docker}}-{{version}}
