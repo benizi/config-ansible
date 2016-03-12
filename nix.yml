@@ -1,5 +1,8 @@
 - name: Nix
   hosts: arch
+  vars:
+    version: 1.11.2
+
   tasks:
     - name: Nix prereqs
       pacman: name={{item}}
@@ -9,14 +12,14 @@
         - perl-www-curl
 
     - name: Nix package manager source
-      get_url: url=http://nixos.org/releases/nix/nix-1.9/nix-1.9.tar.xz
-        dest={{gitbuild}}/nix-1.9.tar.xz
+      get_url: url=http://nixos.org/releases/nix/nix-{{version}}/nix-{{version}}.tar.xz
+        dest={{gitbuild}}/nix-{{version}}.tar.xz
 
     - name: Nix package manager install
       shell: cd {{gitbuild}} &&
-        rm -rf nix-1.9 &&
-        tar xJf {{gitbuild}}/nix-1.9.tar.xz &&
-        cd nix-1.9 &&
+        rm -rf nix-{{version}} &&
+        tar xJf {{gitbuild}}/nix-{{version}}.tar.xz &&
+        cd nix-{{version}} &&
         ./configure --prefix=/opt/nix &&
         make &&
         make install
