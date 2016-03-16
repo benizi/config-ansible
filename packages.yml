@@ -101,8 +101,10 @@
         - graphviz
         - imagemagick
         - inkscape
+        - maim # screenshot tool
         - perl-image-exiftool
         - poppler # PDF handling
+        - slop # region selector
 
     - name: Multimedia
       pacman: name={{item}}
