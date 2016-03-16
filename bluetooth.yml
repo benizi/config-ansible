@@ -1,0 +1,12 @@
+- name: Bluetooth
+  hosts: physical
+  become: true
+  tasks:
+    - name: Bluetooth packages
+      pacman: name={{item}}
+      with_items:
+        - bluez
+        - bluez-utils
+
+    - name: Bluetooth daemon
+      service: name=bluetooth state=started enabled=yes
