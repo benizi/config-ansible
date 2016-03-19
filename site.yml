@@ -39,6 +39,7 @@
 - include: programming-languages.yml
 - include: rebar.yml
 - include: android.yml
+- include: hub.yml
 - include: aws.yml
 - include: s3cmd.yml
 - include: transproxy.yml
