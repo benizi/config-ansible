@@ -1,0 +1,20 @@
+- name: Install Hub (GitHub wrapper)
+  hosts: arch
+  vars:
+    build: '{{gitbuild}}/hub'
+    dest: '/usr/local/bin/hub'
+  tasks:
+    - name: Hub source
+      git: repo=gh:benizi/hub
+        dest={{build}}
+        remote=benizi
+
+    - name: Hub build
+      shell: script/build
+        chdir={{build}}
+        creates=bin/hub
+
+    - name: Hub install
+      copy: src={{build}}/bin/hub
+        dest={{dest}}
+        mode=0755
