@@ -24,3 +24,4 @@
         make &&
         make install
         creates=/opt/nix/bin/nix-build
+        warn=no

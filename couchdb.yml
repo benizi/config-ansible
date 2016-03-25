@@ -43,6 +43,7 @@
         make install
         chdir={{git}}
         creates={{exe}}
+        warn=no
       notify: set couchdb permissions
 
     - name: CouchDB service file

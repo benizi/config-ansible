@@ -23,6 +23,7 @@
         make &&
         install -c -m 555 tproxy {{binary}}
         creates={{binary}}
+        warn=no
 
     - name: Install polipo
       become: true

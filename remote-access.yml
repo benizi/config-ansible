@@ -33,3 +33,4 @@
         mv bin/synergy{c,d,s} ~bhaskell/bin.local/
         chdir=/tmp
         creates=~bhaskell/bin.local/synergyc
+        warn=no
