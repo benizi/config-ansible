@@ -145,6 +145,7 @@
       with_items:
         - lxpanel
         - parcellite
+        - rofi # dmenu-replacement
         - xclip
         - xorg-xbacklight
         - xorg-xdpyinfo
