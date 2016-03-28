@@ -1,0 +1,9 @@
+- name: Install many packages
+  hosts: arch
+  become: true
+  tasks:
+    - name: Multimedia
+      pacman: name={{item}}
+      with_items:
+        - mplayer
+        - vlc

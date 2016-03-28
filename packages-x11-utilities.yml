@@ -1,0 +1,16 @@
+- name: Install many packages
+  hosts: arch
+  become: true
+  tasks:
+    - name: X11 utilities
+      pacman: name={{item}}
+      with_items:
+        - lxpanel
+        - parcellite
+        - rofi # dmenu-replacement
+        - xclip
+        - xorg-xbacklight
+        - xorg-xdpyinfo
+        - xorg-xev
+        - xorg-xwininfo
+        - xosd

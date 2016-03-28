@@ -1,0 +1,11 @@
+- name: Install many packages
+  hosts: arch
+  become: true
+  tasks:
+    - name: Browsers
+      pacman: name={{item}}
+      with_items:
+        - chromium
+        - firefox
+        - opera
+        - w3m

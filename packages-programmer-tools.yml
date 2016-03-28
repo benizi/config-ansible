@@ -1,0 +1,16 @@
+- name: Install many packages
+  hosts: arch
+  become: true
+  tasks:
+    - name: Programmer tools
+      pacman: name={{item}}
+      with_items:
+        - ack
+        - dtach
+        - jq
+        - meld
+        - screen
+        - tmux
+        - x11vnc
+        - xorg-server-xephyr
+        - xorg-server-xvfb

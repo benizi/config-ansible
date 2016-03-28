@@ -1,0 +1,11 @@
+- name: Install many packages
+  hosts: arch
+  become: true
+  tasks:
+    - name: Shells
+      pacman: name={{item}}
+      with_items:
+        - bash
+        - dash # much POSIX
+        - mksh # MirBSD ksh
+        - tcsh

@@ -1,0 +1,9 @@
+- name: Install many packages
+  hosts: arch
+  become: true
+  tasks:
+    - name: Remote filesystems
+      pacman: name={{item}}
+      with_items:
+        - smbclient
+        - sshfs

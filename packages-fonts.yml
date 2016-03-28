@@ -1,0 +1,17 @@
+- name: Install many packages
+  hosts: arch
+  become: true
+  tasks:
+    - name: Fonts
+      archpkg: name={{item}}
+      with_items:
+        - fontforge
+        - gsfonts
+        - aur/ttf-monoid
+        - aur/otf-fira-code-git
+        - otf-fira-mono
+        - otf-ipafont
+        - opendesktop-fonts
+        - ttf-bitstream-vera
+        - ttf-dejavu
+        - wqy-zenhei

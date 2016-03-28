@@ -1,0 +1,10 @@
+- name: Install many packages
+  hosts: arch
+  become: true
+  tasks:
+    - name: Network monitoring
+      pacman: name={{item}}
+      with_items:
+        - tcpdump
+        - whois
+        - wireshark-gtk

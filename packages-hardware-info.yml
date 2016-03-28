@@ -1,0 +1,13 @@
+- name: Install many packages
+  hosts: arch
+  become: true
+  tasks:
+    - name: Hardware Info
+      pacman: name={{item}}
+      with_items:
+        - dmidecode
+        - hdparm
+        - hwinfo
+        - lshw
+        - pciutils
+        - usbutils

@@ -1,0 +1,9 @@
+- name: Install many packages
+  hosts: arch
+  become: true
+  tasks:
+    - name: Disks
+      pacman: name={{item}}
+      with_items:
+        - baobab
+        - btrfs-progs

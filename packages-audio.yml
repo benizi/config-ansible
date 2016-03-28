@@ -1,0 +1,12 @@
+- name: Install many packages
+  hosts: arch
+  become: true
+  tasks:
+    - name: Audio
+      archpkg: name={{item}}
+      with_items:
+        - aur/spotify
+        - festival-us
+        - pavucontrol
+        - pulseaudio-alsa
+        - sox

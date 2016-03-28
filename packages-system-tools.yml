@@ -1,0 +1,20 @@
+- name: Install many packages
+  hosts: arch
+  become: true
+  tasks:
+    - name: System tools
+      archpkg: name={{item}}
+      with_items:
+        - bind-tools
+        - aur/daemontools
+        - gdb
+        - htop
+        - iotop
+        - iw
+        - lsof
+        - nmap
+        - rsync
+        - socat
+        - strace
+        - sysstat
+        - words
