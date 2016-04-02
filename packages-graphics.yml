@@ -7,6 +7,7 @@
       with_items:
         - blender
         - ghostscript
+        - gifsicle
         - gimp
         - graphicsmagick
         - graphviz
@@ -14,5 +15,6 @@
         - inkscape
         - maim # screenshot tool
         - perl-image-exiftool
+        - pngcrush
         - poppler # PDF handling
         - slop # region selector
