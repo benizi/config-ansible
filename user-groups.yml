@@ -5,4 +5,4 @@
       become: true
       user: name=bhaskell
         append=yes
-        groups=wireshark,audio
+        groups=wireshark,audio,systemd-journal
