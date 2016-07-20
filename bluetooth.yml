@@ -8,5 +8,15 @@
         - bluez
         - bluez-utils
 
+    - name: Enable SDP compatibility
+      lineinfile: dest=/usr/lib/systemd/system/bluetooth.service
+        regexp='^ExecStart='
+        line='ExecStart=/usr/lib/bluetooth/bluetoothd --compat'
+      notify: restart bluetoothd
+
     - name: Bluetooth daemon
       service: name=bluetooth state=started enabled=yes
+
+  handlers:
+    - name: restart bluetoothd
+      service: name=bluetooth state=restarted
