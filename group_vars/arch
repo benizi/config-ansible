@@ -1,5 +1,6 @@
 ---
 ansible_python_interpreter: /usr/bin/python2
+homedir: /home/bhaskell
 gitbuild: /opt/git
 docker_dns: 172.17.0.1
 docker_storage: btrfs
