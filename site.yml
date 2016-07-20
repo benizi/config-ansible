@@ -15,6 +15,9 @@
 - include: dmenu.yml
 - include: terminals.yml
 - include: editors.yml
+- include: nix.yml
+- include: programming-languages.yml
+- include: rebar.yml
 - include: arch-build.yml
 - include: packages-system-tools.yml
 - include: packages-hardware-info.yml
@@ -37,7 +40,6 @@
 - include: monitor.yml
 - include: context.yml
 - include: virtualization.yml
-- include: nix.yml
 - include: avahi.yml
 - include: vpn.yml
 - include: user-groups.yml
@@ -51,8 +53,6 @@
 - include: imv.yml
 - include: remote-access.yml
 - include: power.yml
-- include: programming-languages.yml
-- include: rebar.yml
 - include: android.yml
 - include: hub.yml
 - include: aws.yml
