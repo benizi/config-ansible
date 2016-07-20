@@ -11,6 +11,10 @@
         - perl-dbd-sqlite
         - perl-www-curl
 
+    - name: Nix directory
+      file: path=/nix state=directory owner=bhaskell group=bhaskell mode=0700
+      become: true
+
     - name: Nix package manager source
       get_url: url=http://nixos.org/releases/nix/nix-{{version}}/nix-{{version}}.tar.xz
         dest={{gitbuild}}/nix-{{version}}.tar.xz
