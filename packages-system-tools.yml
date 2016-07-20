@@ -12,6 +12,7 @@
         - iotop
         - iw
         - lsof
+        - ltrace
         - nmap
         - rsync
         - socat
