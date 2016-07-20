@@ -3,12 +3,13 @@
   become: true
   tasks:
     - name: Programmer tools
-      pacman: name={{item}}
+      archpkg: name={{item}}
       with_items:
         - ack
         - dtach
         - jq
         - meld
+        - aur/rescuetime
         - screen
         - tmux
         - x11vnc
