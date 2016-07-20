@@ -17,6 +17,12 @@
 
     - meta: flush_handlers
 
+    - name: Stack old ncurses link
+      become: true
+      shell: nix-env --query --no-name --out-path ncurses-5.9 |
+        xargs -iZ find Z -name libncurses.so.5 |
+        xargs -iZ ln -nsf Z /lib/libtinfo.so.5
+
     - name: Install langs
       shell: verman {{item.lang}} installed 2>/dev/null | grep -Fxq {{item.version}} ||
         verman {{item.lang}} install {{item.version}} | with-python2 sh
