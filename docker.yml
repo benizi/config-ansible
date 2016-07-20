@@ -5,7 +5,7 @@
     bundle: bundles/{{version}}/binary
     docker_root: /usr/local/bin
     docker: '{{docker_root}}/docker'
-    version: 1.9.1
+    version: '1.11.0'
 
   tasks:
     - name: Install prereqs
@@ -35,10 +35,16 @@
         creates={{build}}/{{bundle}}/docker-{{version}}
 
     - name: Docker install
-      synchronize: src={{build}}/{{bundle}}/docker-{{version}}
+      synchronize: src={{build}}/{{bundle}}/docker-{{item}}
         dest={{docker_root}}
         archive=no
         times=yes
+      with_items:
+        - '{{version}}'
+        - containerd
+        - containerd-ctr
+        - containerd-shim
+        - runc
 
     - name: Docker link
       file: state=link dest={{docker}} src={{docker}}-{{version}}
