@@ -11,6 +11,7 @@
         - htop
         - iotop
         - iw
+        - kexec-tools
         - lsof
         - ltrace
         - nmap
