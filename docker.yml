@@ -72,9 +72,13 @@
 
     - meta: flush_handlers
 
-    - name: Docker service
+    - name: Docker socket activation
       become: true
       service: name=docker.socket state=started enabled=yes
+
+    - name: Docker service
+      become: true
+      service: name=docker.service enabled=yes
 
   handlers:
     - name: reload systemd
