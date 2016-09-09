@@ -10,4 +10,5 @@
         - hwinfo
         - lshw
         - pciutils
+        - read-edid
         - usbutils
