@@ -41,11 +41,14 @@
 
     - name: Java
       become: true
-      pacman: name={{item}}
+      archpkg: name={{item}}
       with_items:
         - jdk7-openjdk
+        - jdk8-openjdk
+        - java-openjfx
         - apache-ant
         - maven
+        - aur/jdk
 
     - name: OpenJDK8 source
       shell: hg tclone http://hg.openjdk.java.net/jdk8/jdk8
