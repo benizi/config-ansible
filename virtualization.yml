@@ -3,11 +3,12 @@
   become: true
   tasks:
     - name: Virtualization (packages)
-      pacman: name={{item}}
+      archpkg: name={{item}}
       with_items:
         - qemu
         - virtualbox
         - virtualbox-host-dkms
+        - aur/virtualbox-ext-oracle
 
     - name: Virtualization (modules)
       copy: content='vboxdrv\nvboxnetadp\nvboxnetflt\nvboxpci\n'
