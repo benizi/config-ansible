@@ -17,8 +17,8 @@ laptops
 [ansible]
 bhaskell-x240
 
-[yubikey]
-bhaskell-x240
+[yubikey:children]
+physical
 
 [sdr]
 bhaskell-x240
