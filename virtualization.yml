@@ -6,6 +6,7 @@
       archpkg: name={{item}}
       with_items:
         - qemu
+        - virt-manager
         - virtualbox
         - virtualbox-host-dkms
         - aur/virtualbox-ext-oracle
@@ -18,4 +19,4 @@
     - name: Virtualization (user groups)
       user: name=bhaskell
         append=yes
-        groups=kvm,vboxusers
+        groups=kvm,libvirt,vboxusers
