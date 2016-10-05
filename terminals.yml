@@ -1,6 +1,8 @@
 - name: Acceptable terminal emulators
   hosts: laptops
   vars:
+    branch: 24bit-build
+    extra_flags: '--enable-24-bit-color'
     rxvt_git: '{{gitbuild}}/rxvt-unicode'
     rxvt: /usr/local/bin/urxvt
 
@@ -25,13 +27,14 @@
     - name: Preferred (custom rxvt-unicode) source
       git: repo='gh:benizi/rxvt-unicode'
         dest={{rxvt_git}}
-        version=24bit-build
+        version={{branch}}
         remote=benizi
+        force=yes
 
     - name: Preferred (custom rxvt-unicode) build
       shell: sh ./autogen.sh &&
         autoreconf &&
-        ./configure --enable-24-bit-color --enable-xft --enable-perl --enable-256-color --disable-iso14755 &&
+        ./configure {{extra_flags}} --enable-xft --enable-perl --enable-256-color --disable-iso14755 &&
         make -j{{ansible_processor_vcpus}} &&
         make install
         chdir={{rxvt_git}}
