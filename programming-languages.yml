@@ -47,6 +47,7 @@
         - jdk8-openjdk
         - java-openjfx
         - apache-ant
+        - gradle
         - maven
         - aur/jdk
 
