@@ -1,0 +1,55 @@
+- name: Chromium Latest
+  hosts: arch
+  vars:
+    arch: "{{'_x64' if ansible_machine == 'x86_64' else ''}}"
+    contents: '?alt=media'
+    baseurl: https://www.googleapis.com/storage/v1/b/chromium-browser-snapshots/o
+    cache: "{{gitbuild}}/chrome.zip"
+    dlbase: "%2Fchrome-linux.zip"
+    dlpath: "{{baseurl}}/Linux{{arch}}%2F"
+    lastchange: "{{dlpath}}LAST_CHANGE{{contents}}"
+
+  tasks:
+    - name: Latest Chromium version
+      get_url: url={{lastchange}} dest={{cache}}.version
+      register: version_file
+
+    - name: Parse Latest Chromium version
+      command: cat {{cache}}.version
+      register: version
+      changed_when: version_file.changed
+
+    - name: Latest Chromium metadata
+      get_url: url={{dlpath}}{{version.stdout}}{{dlbase}}
+        dest={{cache}}.json
+      register: metadata
+
+    - name: Parse Latest Chromium link
+      shell: jq -r .mediaLink < {{cache}}.json
+      register: url
+      changed_when: metadata.changed
+
+    - name: Parse Latest Chromium checksum
+      shell: jq -r .md5Hash < {{cache}}.json |
+        openssl enc -base64 -d |
+        od -A n -t x1 |
+        awk -v RS=' ' -v ORS= 1
+      register: checksum
+      changed_when: metadata.changed
+
+    - name: Parse Latest Chromium date
+      shell: jq -r .timeCreated < {{cache}}.json |
+        awk -FT '{ print "/opt/google/chrome/" $1 }'
+      register: install_to
+      changed_when: metadata.changed
+
+    - name: Latest Chromium download
+      get_url: url={{url.stdout}}
+        dest={{cache}}
+        checksum="md5:{{checksum.stdout}}"
+
+    - name: Extract Latest Chromium
+      shell: unzip -d {{install_to.stdout}}.tmp {{cache}} &&
+        mv {{install_to.stdout}}.tmp/chrome-linux {{install_to.stdout}} &&
+        rmdir {{install_to.stdout}}.tmp
+        creates={{install_to.stdout}}/chrome
