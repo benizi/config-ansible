@@ -7,6 +7,8 @@
       with_items:
         - aur/spotify
         - festival-us
+        - fluidsynth
+        - soundfont-fluid
         - lilypond
         - pavucontrol
         - pulseaudio-alsa
