@@ -7,6 +7,7 @@
       with_items:
         - aur/spotify
         - festival-us
+        - lilypond
         - pavucontrol
         - pulseaudio-alsa
         - sox
