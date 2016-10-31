@@ -2,6 +2,15 @@
   hosts: yubikey
   become: true
   tasks:
+    - name: Yubikey manager prereqs
+      pacman: name={{item}}
+      with_items:
+        - libu2f-host
+        - libykneomgr
+        - python2-crypto
+        - python2-pyside-tools
+        - yubikey-personalization
+
     - name: Install Yubikey manager
       aura: name=yubikey-neo-manager-git
 
