@@ -7,6 +7,8 @@
       with_items:
         - bluez
         - bluez-utils
+        - obexftp
+        - ussp-push
 
     - name: Enable SDP compatibility
       lineinfile: dest=/usr/lib/systemd/system/bluetooth.service
