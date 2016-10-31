@@ -34,6 +34,22 @@ EXAMPLES = '''
 import re
 from ansible.module_utils.basic import *
 
+class AuraModule(AnsibleModule):
+    def __init__(self, *args, **kwargs):
+        super(AuraModule, self).__init__(*args, **kwargs)
+
+    def get_bin_path(self, *args, **kwargs):
+        origpath = os.environ['PATH']
+        try:
+            user = os.environ['SUDO_USER'] or os.environ['USER']
+            os.environ['PATH'] = ''.join([
+                os.path.expanduser('~%s/.local/bin' % user),
+                os.pathsep,
+                origpath])
+            return super(AuraModule, self).get_bin_path(*args, **kwargs)
+        finally:
+            os.environ['PATH'] = origpath
+
 def uncolor(output):
     return re.sub(r'\x1b\[[^m]*m', '', output)
 
@@ -94,7 +110,7 @@ def install(module, aura, pkg, state):
     module.exit_json(changed=True, msg='installed %s' % (pkg))
 
 def main():
-    module = AnsibleModule(
+    module = AuraModule(
             argument_spec = dict(
                 name = dict(),
                 state = dict(default='present', choices=['present', 'latest', 'absent']),
