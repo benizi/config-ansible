@@ -9,6 +9,7 @@
         - dtach
         - jq
         - meld
+        - python2-yapf
         - aur/rescuetime
         - screen
         - tmux
