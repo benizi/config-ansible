@@ -1,6 +1,9 @@
-- name: AWS CLI
+- name: AWS Tools
   hosts: arch
   become: true
   tasks:
     - name: AWS CLI PIP
       pip: name=awscli executable=pip2
+
+    - name: Boto
+      pip: name=boto3 executable=pip2
