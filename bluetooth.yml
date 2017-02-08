@@ -8,6 +8,7 @@
         - bluez
         - bluez-utils
         - obexftp
+        - pulseaudio-bluetooth
         - ussp-push
 
     - name: Enable SDP compatibility
