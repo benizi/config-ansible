@@ -3,5 +3,8 @@
   tasks:
     - name: PulseAudio network config
       lineinfile: dest=/etc/pulse/default.pa
-        line='load-module module-native-protocol-tcp'
-        regexp=module-native-protocol-tcp
+        line='load-module module-{{item}}'
+        regexp='module-{{item}}'
+      with_items:
+        - native-protocol-tcp
+        - switch-on-connect
