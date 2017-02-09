@@ -44,7 +44,7 @@
         cd {{build}} &&
         make &&
         sudo chown -R bhaskell bundles
-        creates={{build}}/{{bundle}}/docker-{{version}}
+        creates={{build}}/{{bundle}}-client/docker-{{version}}
 
     - name: Docker install
       synchronize: src={{build}}/{{bundle}}-{{item.0.dir}}/{{item.1}}
