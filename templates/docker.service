@@ -4,10 +4,13 @@ After=network.target docker.socket
 Requires=docker.socket
 
 [Service]
-ExecStart=/usr/local/bin/docker daemon --dns {{docker_dns}} --storage-driver {{docker_storage}} {{docker_extra_opts|default("")}} -H fd://
+ExecStart=/usr/local/bin/dockerd --dns {{docker_dns}} --storage-driver {{docker_storage}} {{docker_extra_opts|default("")}} -H fd://
 LimitNOFILE=1048576
 LimitNPROC=1048576
 Restart=on-failure
+TimeoutStartSec=0
+Delegate=yes
+KillMode=process
 
 [Install]
 WantedBy=multi-user.target

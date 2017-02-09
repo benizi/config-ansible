@@ -5,7 +5,20 @@
     bundle: bundles/{{version}}/binary
     docker_root: /usr/local/bin
     docker: '{{docker_root}}/docker'
-    version: '1.11.0'
+    files:
+      - dir: client
+        base:
+          - 'docker-{{version}}'
+      - dir: daemon
+        base:
+          - 'dockerd-{{version}}'
+          - docker-containerd
+          - docker-containerd-ctr
+          - docker-containerd-shim
+          - docker-init
+          - docker-proxy
+          - docker-runc
+    version: '1.13.0'
 
   tasks:
     - name: Install prereqs
@@ -35,19 +48,19 @@
         creates={{build}}/{{bundle}}/docker-{{version}}
 
     - name: Docker install
-      synchronize: src={{build}}/{{bundle}}/docker-{{item}}
+      synchronize: src={{build}}/{{bundle}}-{{item.0.dir}}/{{item.1}}
         dest={{docker_root}}
         archive=no
         times=yes
-      with_items:
-        - '{{version}}'
-        - containerd
-        - containerd-ctr
-        - containerd-shim
-        - runc
+      with_subelements:
+        - '{{files}}'
+        - base
 
     - name: Docker link
-      file: state=link dest={{docker}} src={{docker}}-{{version}}
+      file: state=link dest={{item}} src={{item}}-{{version}}
+      with_items:
+        - '{{docker}}'
+        - '{{docker}}d'
 
     - name: Enable IPv4 forwarding
       become: true
