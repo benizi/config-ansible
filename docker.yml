@@ -1,10 +1,9 @@
 - name: Docker
   hosts: arch
   vars:
+    bindir: /usr/local/bin
     build: '{{gitbuild}}/docker'
     bundle: bundles/{{version}}/binary
-    docker_root: /usr/local/bin
-    docker: '{{docker_root}}/docker'
     files:
       - dir: client
         base:
@@ -48,7 +47,7 @@
 
     - name: Docker install
       synchronize: src={{build}}/{{bundle}}-{{item.0.dir}}/{{item.1}}
-        dest={{docker_root}}
+        dest={{bindir}}
         archive=no
         times=yes
       with_subelements:
@@ -56,10 +55,10 @@
         - base
 
     - name: Docker link
-      file: state=link dest={{item}} src={{item}}-{{version}}
+      file: state=link dest={{bindir}}/{{item}} src={{item}}-{{version}}
       with_items:
-        - '{{docker}}'
-        - '{{docker}}d'
+        - docker
+        - dockerd
 
     - name: Enable IPv4 forwarding
       become: true
