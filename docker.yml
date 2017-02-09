@@ -35,7 +35,6 @@
       git: repo=gh:docker/docker
         dest={{build}}
         version=v{{version}}
-        update=yes
         remote=docker
 
     - name: Docker build
