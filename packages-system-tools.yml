@@ -5,6 +5,7 @@
     - name: System tools
       archpkg: name={{item}}
       with_items:
+        - aiccu
         - bind-tools
         - aur/daemontools
         - gdb
