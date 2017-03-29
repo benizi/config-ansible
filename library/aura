@@ -99,7 +99,7 @@ def install(module, aura, pkg, state):
         module.exit_json(changed=True, msg="%s would be %s" % (pkg, state))
     cmd = [aura, '-A', pkg, '--noconfirm']
     rc, out, err = module.run_command(cmd, check_rc=False)
-    well_actually = '==> ERROR: Could not' in uncolor(out)
+    well_actually = '==> ERROR: ' in uncolor(out)
     if rc != 0 or well_actually:
         msg = 'Failed to install %s' % (pkg)
         if 'have to use `sudo`' in uncolor(out):
