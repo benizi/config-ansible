@@ -1,7 +1,7 @@
 - name: Nix
   hosts: arch
   vars:
-    version: 1.11.2
+    version: 1.11.8
 
   tasks:
     - name: Nix prereqs
