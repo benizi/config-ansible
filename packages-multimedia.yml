@@ -5,6 +5,7 @@
     - name: Multimedia
       pacman: name={{item}}
       with_items:
+        - kodi
         - minidlna
         - mplayer
         - vlc
