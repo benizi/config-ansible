@@ -8,6 +8,7 @@
         - aur/spotify
         - festival-us
         - fluidsynth
+        - id3lib
         - soundfont-fluid
         - lilypond
         - pavucontrol
