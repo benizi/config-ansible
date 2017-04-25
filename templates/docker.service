@@ -1,16 +1,6 @@
-[Unit]
-Description=Docker daemon
-After=network.target docker.socket
-Requires=docker.socket
+# Overrides for Docker settings
 
 [Service]
-ExecStart=/usr/local/bin/dockerd --dns {{docker.dns}} --storage-driver {{docker.storage}} {{docker.opts|default("")}} -H fd://
-LimitNOFILE=1048576
-LimitNPROC=1048576
-Restart=on-failure
-TimeoutStartSec=0
-Delegate=yes
-KillMode=process
-
-[Install]
-WantedBy=multi-user.target
+# need blank to kill inherited:
+ExecStart=
+ExecStart=/usr/bin/dockerd --dns {{docker.dns}} --storage-driver {{docker.storage}} {{docker.opts|default("")}} -H fd://

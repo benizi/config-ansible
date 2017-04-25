@@ -1,64 +1,16 @@
 - name: Docker
   hosts: arch
   vars:
-    bindir: /usr/local/bin
-    build: '{{gitbuild}}/docker'
-    bundle: bundles/{{version}}/binary
-    files:
-      - dir: client
-        base:
-          - 'docker-{{version}}'
-      - dir: daemon
-        base:
-          - 'dockerd-{{version}}'
-          - docker-containerd
-          - docker-containerd-ctr
-          - docker-containerd-shim
-          - docker-init
-          - docker-proxy
-          - docker-runc
-    version: '1.13.0'
+    confdir: /etc/systemd/system/docker.service.d
 
   tasks:
-    - name: Install prereqs
+    - name: Install packages
       become: true
       pacman: name={{item}}
       with_items:
-        # TODO: not sure these are needed for -e=native
-        - bridge-utils
-        - lxc
-
-    - name: Docker source
-      connection: local
-      run_once: true
-      git: repo=gh:docker/docker
-        dest={{build}}
-        version=v{{version}}
-        remote=docker
-
-    - name: Docker build
-      connection: local
-      run_once: true
-      shell:
-        cd {{build}} &&
-        make &&
-        sudo chown -R bhaskell bundles
-        creates={{build}}/{{bundle}}-client/docker-{{version}}
-
-    - name: Docker install
-      synchronize: src={{build}}/{{bundle}}-{{item.0.dir}}/{{item.1}}
-        dest={{bindir}}
-        archive=no
-        times=yes
-      with_subelements:
-        - '{{files}}'
-        - base
-
-    - name: Docker link
-      file: state=link dest={{bindir}}/{{item}} src={{item}}-{{version}}
-      with_items:
         - docker
-        - dockerd
+        - docker-compose
+        - docker-machine
 
     - name: Enable IPv4 forwarding
       become: true
@@ -74,11 +26,15 @@
         append=yes
         groups=docker
 
+    - name: Docker service settings directory
+      become: true
+      file: dest={{confdir}} state=directory owner=root group=root mode=0755
+
     - name: Docker service files
       become: true
-      template: src=templates/docker.{{item}}
-        dest=/etc/systemd/system/docker.{{item}}
-      with_items: [service, socket]
+      template: src=templates/docker.service
+        dest={{confdir}}/docker-options.conf
+        owner=root group=root mode=0644
       notify: reload systemd
 
     - meta: flush_handlers
