@@ -8,20 +8,15 @@
       with_items:
         - emacs
 
-    - name: Preferred (custom vim) prereqs
+    - name: Custom vim prereqs
       become: true
       pacman: name={{item}}
       with_items:
         - lua51
         - tcl
 
-    - name: Preferred (custom vim) source
+    - name: Custom vim source
       git: repo='gh:benizi/vim'
         dest={{build}}
         version=24-bit
         remote=benizi
-
-    - name: Preferred (custom vim) install
-      command: build-vim
-        chdir={{build}}
-        creates=/usr/local/bin/vim
