@@ -92,10 +92,11 @@
       command: boot
         creates=~bhaskell/.boot/boot.properties
 
-    - name: Lua libraries
+    - name: Lua
       become: true
       pacman: name={{item}}
       with_items:
+        - lua51
         - lua-filesystem
 
     - name: GNU APL
@@ -118,6 +119,10 @@
     - name: Urbit prereqs
       become: true
       pacman: name=libsigsegv
+
+    - name: Tcl
+      become: true
+      pacman: name=tcl
 
   handlers:
     - name: Install ruby-build
