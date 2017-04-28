@@ -2,9 +2,16 @@
   hosts: arch
   become: true
   tasks:
-    # conflicts with `vim-minimal` (initially) and `gvim` (later)
-    - name: Remove conflicting Vim version
-      pacman: name=vim state=absent
+    # Versions of `vi`-like editors on Arch currently:
+    # - `vi` = minimal `vi`-clone (useful for bootstrapping)
+    # - `vim-minimal` = Vim "tiny" build (now deleted)
+    # - `vim` = terminal-only "full" Vim (lacks `+clipboard`)
+    # - `gvim` = Vim and GVim (where Vim includes `+clipboard`)
+    - name: Remove conflicting/outdated Vim versions
+      pacman: name={{item}} state=absent
+      with_items:
+        - vim
+        - vim-minimal
 
     - name: Very basic prereqs
       pacman: name={{item}}
@@ -12,17 +19,8 @@
         - git
         - ntp
         - polkit
+        - vi
         - zsh
-
-    - name: Detect whether vim-minimal is needed
-      shell: pacman -T gvim || pacman -T vim-minimal
-      register: hasvim
-      changed_when: hasvim.rc != 0
-      failed_when: false
-
-    - name: Minimal Vim for bootstrapping
-      pacman: name=vim-minimal
-      when: hasvim|changed
 
     - name: X Server prereqs
       pacman: name={{item}}
