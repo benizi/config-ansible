@@ -3,13 +3,6 @@
   vars:
     build: '{{gitbuild}}/mosh'
   tasks:
-    - name: Detect EC2
-      shell: curl -s -m 0.5 http://169.254.169.254/1.0 2>/dev/null
-        warn=no
-      register: ec2
-      changed_when: False
-      failed_when: False
-
     - name: MOSH prereqs (EC2)
       become: true
       yum: name={{item}}
@@ -24,14 +17,14 @@
         - ncurses-devel
         - zlib-devel
         - boost-devel
-      when: ec2 | success
+      when: ansible_distribution == 'Amazon'
 
     - name: MOSH prereqs (non-EC2)
       become: true
       pacman: name={{item}}
       with_items:
         - protobuf
-      when: ec2 | failed
+      when: ansible_distribution == 'Archlinux'
 
     - name: MOSH source
       git: repo=https://github.com/keithw/mosh
