@@ -19,6 +19,7 @@
 - include: programming-languages.yml
 - include: rebar.yml
 - include: arch-build.yml
+- include: docker.yml
 - include: packages-system-tools.yml
 - include: packages-hardware-info.yml
 - include: packages-audio.yml
@@ -64,6 +65,5 @@
 - include: couchdb.yml
 - include: aur.yml
 - include: yubikey-neo.yml
-- include: docker.yml
 - include: graphics-tablet.yml
 - include: google-cloud-sdk.yml
