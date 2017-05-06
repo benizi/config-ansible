@@ -45,15 +45,8 @@
       service: name=NetworkManager state=started enabled=yes
       notify: Restart NetworkManager
 
-    - meta: flush_handlers
-
-    - name: Verify inactive wicd
-      command: systemctl show wicd -t service -p UnitFileState --value
-      register: current
-      always_run: true
-      changed_when: current.stdout_lines == ['enabled']
-      failed_when: false
-      notify: Disable wicd
+    - name: Disable wicd service
+      service: name=wicd state=stopped enabled=no
 
   handlers:
     - name: Update libnm
@@ -68,9 +61,3 @@
 
     - name: Restart NetworkManager
       service: name=NetworkManager state=restarted
-
-    - name: Disable wicd
-      service: name=wicd state=stopped enabled=no
-      register: service
-      changed_when: service|changed and not service|failed
-      failed_when: service|failed and service.msg.find('could not find') < 0
