@@ -29,25 +29,29 @@
     - name: Docker service settings directory
       become: true
       file: dest={{confdir}} state=directory owner=root group=root mode=0755
+      notify: Reload Docker
 
     - name: Docker service files
       become: true
       template: src=templates/docker.service
         dest={{confdir}}/docker-options.conf
         owner=root group=root mode=0644
-      notify: reload systemd
+      notify:
+        - reload systemd
+        - Reload Docker
 
-    - meta: flush_handlers
-
-    - name: Docker socket activation
+    - name: Docker enable services
       become: true
-      service: name=docker.socket state=started enabled=yes
-
-    - name: Docker service
-      become: true
-      service: name=docker.service enabled=yes
+      service: name={{item}} state=started enabled=yes
+      with_items:
+        - docker.service
+        - docker.socket
 
   handlers:
     - name: reload systemd
       become: true
       command: systemctl daemon-reload
+
+    - name: Reload Docker
+      become: true
+      service: name=docker state=restarted
