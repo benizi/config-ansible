@@ -43,7 +43,6 @@
 
     - name: NetworkManager service
       service: name=NetworkManager state=started enabled=yes
-      notify: Restart NetworkManager
 
     - name: Disable wicd service
       service: name=wicd state=stopped enabled=no
