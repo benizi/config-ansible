@@ -2,12 +2,26 @@
   hosts: laptops
   become: true
   tasks:
+    # What's the point of a package manager that doesn't manage packages?
+    # `vte3-ng` "conflicts with" but doesn't "replace" `vte3` for some reason.
+    - name: Check that vte3 state will allow installations to proceed
+      shell: pacman -T vte3-ng || ! pacman -T vte3
+      register: vte3check
+      changed_when: vte3check|failed
+      failed_when: false
+      always_run: true
+      notify: Defuckup vte3
+
     - name: Install many terminals
       archpkg: name={{item}}
       with_items:
+        - aur/aterm
+        - deepin-terminal
+        - aur/eterm
         - fingerterm
         - gnome-terminal
         - konsole
+        - lxterminal-gtk3
         - pantheon-terminal
         - putty
         - qterminal
@@ -15,5 +29,11 @@
         - sakura
         - terminator
         - terminology
+        - termite
         - xfce4-terminal
         - yakuake
+
+  handlers:
+    - name: Defuckup vte3
+      # Accept the for-some-reason-not-default suggestion to remove `vte3`
+      shell: 'yes | pacman -S vte3-ng'
