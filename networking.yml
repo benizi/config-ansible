@@ -1,0 +1,39 @@
+- name: Networking
+  hosts: arch
+  become: true
+  vars:
+    rulesdir: /etc/polkit-1/rules.d
+
+  tasks:
+    - name: Install NetworkManager
+      pacman: name={{item}}
+      with_items:
+        - networkmanager
+        - network-manager-applet
+
+    - name: NetworkManager Polkit rule
+      copy: src=files/networkmanager.polkit.rules
+        dest={{rulesdir}}/20-networkmanager.rules
+        owner=root group=root mode=0644
+      notify: Reload Polkit
+
+    - name: NetworkManager prevent DNS interference
+      lineinfile: dest=/etc/NetworkManager/NetworkManager.conf
+        regexp={{item.regexp}}
+        line={{item.line}}
+      with_items:
+        - { regexp: '^\[', line: '[main]' }
+        - { regexp: '^rc-manager=', line: 'rc-manager=resolvconf' }
+      notify: Restart NetworkManager
+
+    - name: NetworkManager service
+      service: name=NetworkManager state=started enabled=yes
+      notify: Restart NetworkManager
+
+  handlers:
+    - name: Reload Polkit
+      command: pkill -HUP polkitd
+      ignore_errors: true
+
+    - name: Restart NetworkManager
+      service: name=NetworkManager state=restarted
