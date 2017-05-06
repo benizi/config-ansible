@@ -37,6 +37,7 @@
 - include: packages-network-monitoring.yml
 - include: packages-programmer-tools.yml
 - include: packages-x11-utilities.yml
+- include: packages-x11-wm.yml
 - include: packages-science.yml
 - include: audio.yml
 - include: radio.yml
