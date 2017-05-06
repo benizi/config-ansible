@@ -23,9 +23,15 @@
         depth=1
 
     - name: Aura build package
-      shell: stack setup && stack install
-        creates={{binary}}
-        chdir={{build}}
+      shell: |
+        if {{binary}} -h >/dev/null 2>/dev/null
+        then echo already
+        else rm -rf .stack-work && stack setup && stack install
+        fi
+      args:
+        chdir: '{{build}}'
+      register: ret
+      changed_when: ret.stdout_lines != ["already"]
 
   handlers:
     - name: set abs perms
