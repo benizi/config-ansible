@@ -13,6 +13,15 @@
       with_items:
         - wicd
         - dhclient
+        - openresolv # resolvconf
+
+    - name: Configure resolvconf.conf and resolv.conf
+      copy: content={{item.txt}}
+        dest=/etc/{{item.base}}.conf
+        owner=root group=root mode=0644
+      with_items:
+        - { base: resolvconf, txt: "resolv_conf=/etc/resolv.conf.upstream\n" }
+        - { base: resolv, txt: "search internal\nnameserver 127.0.0.1\n" }
 
     - name: Ensure wicd uses dhclient
       lineinfile: dest=/etc/wicd/manager-settings.conf
