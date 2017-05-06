@@ -5,6 +5,21 @@
     rulesdir: /etc/polkit-1/rules.d
 
   tasks:
+    - name: Prevent mismatched libnm version
+      # Exit with failure if more than one version is installed or available
+      shell: |
+        {
+          pacman -Qi libnm 2>/dev/null
+          pacman -Si libnm networkmanager 2>/dev/null
+        } | grep '^Version' | sort | uniq | awk 'END { exit (NR > 1) ? 1 : 0 }'
+      register: libnm_version
+      changed_when: libnm_version|failed
+      failed_when: false
+      always_run: true
+      notify: Update libnm
+
+    - meta: flush_handlers
+
     - name: Install NetworkManager
       pacman: name={{item}}
       with_items:
@@ -31,6 +46,12 @@
       notify: Restart NetworkManager
 
   handlers:
+    - name: Update libnm
+      pacman: name={{item}} state=latest
+      with_items:
+        - libnm
+        - libnm-glib
+
     - name: Reload Polkit
       command: pkill -HUP polkitd
       ignore_errors: true
