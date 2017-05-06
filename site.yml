@@ -20,6 +20,7 @@
 - include: rebar.yml
 - include: arch-build.yml
 - include: docker.yml
+- include: dev-dns.yml
 - include: packages-system-tools.yml
 - include: packages-hardware-info.yml
 - include: packages-audio.yml
@@ -61,7 +62,6 @@
 - include: s3cmd.yml
 - include: transproxy.yml
 - include: password-manager.yml
-- include: dev-dns.yml
 - include: dev-servers.yml
 - include: couchdb.yml
 - include: aur.yml

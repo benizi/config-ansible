@@ -1,7 +1,8 @@
 - name: Dev DNS
   hosts: arch
   vars:
-    binary: /usr/local/bin/localdns
+    bindir: /usr/local/bin
+    exe: localdns
     package: github.com/benizi/localdns
     systemd_dir: /etc/systemd/system
 
@@ -32,8 +33,12 @@
         - dhclient-exit-hooks
 
     - name: localdns binary
-      shell: go get {{package}} && go build -o {{binary}} {{package}}
-        creates={{binary}}
+      shell: |
+        docker run --rm -it -v {{bindir}}:/out golang:1.8 sh -e -c '
+        go get {{package}}
+        go build -o /out/{{exe}} {{package}}'
+      args:
+        creates: '{{bindir}}/{{exe}}'
 
     - name: localdns service
       become: true
