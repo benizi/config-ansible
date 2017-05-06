@@ -1,0 +1,19 @@
+- name: Bunch of terminal emulators for testing
+  hosts: laptops
+  become: true
+  tasks:
+    - name: Install many terminals
+      archpkg: name={{item}}
+      with_items:
+        - fingerterm
+        - gnome-terminal
+        - konsole
+        - pantheon-terminal
+        - putty
+        - qterminal
+        - roxterm
+        - sakura
+        - terminator
+        - terminology
+        - xfce4-terminal
+        - yakuake

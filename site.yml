@@ -29,6 +29,7 @@
 - include: packages-fonts.yml
 - include: packages-browsers.yml
 - include: packages-shells.yml
+- include: packages-terminals.yml
 - include: packages-graphics.yml
 - include: packages-multimedia.yml
 - include: packages-messaging.yml
