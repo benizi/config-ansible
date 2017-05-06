@@ -1,0 +1,9 @@
+- name: X11 Window Managers for testing
+  hosts: arch
+  become: true
+  tasks:
+    - name: Install window managers
+      pacman: name={{item}}
+      with_items:
+        - awesome
+        - i3-wm
