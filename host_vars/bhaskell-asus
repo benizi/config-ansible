@@ -1,0 +1,4 @@
+---
+docker:
+  dns: 172.17.0.1
+  storage: devicemapper

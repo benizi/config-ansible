@@ -3,7 +3,7 @@
 
 [laptops]
 bhaskell-x240
-bhaskell-asus docker.storage=devicemapper
+bhaskell-asus
 
 [vps]
 vps
