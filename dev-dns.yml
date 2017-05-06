@@ -10,6 +10,7 @@
       become: true
       pacman: name={{item}}
       with_items:
+        - wicd
         - dhclient
 
     - name: Ensure wicd uses dhclient
