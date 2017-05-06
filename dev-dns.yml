@@ -1,5 +1,6 @@
 - name: Dev DNS
   hosts: arch
+  become: true
   vars:
     bindir: /usr/local/bin
     exe: localdns
@@ -8,21 +9,18 @@
 
   tasks:
     - name: Install localdns prereqs
-      become: true
       pacman: name={{item}}
       with_items:
         - wicd
         - dhclient
 
     - name: Ensure wicd uses dhclient
-      become: true
       lineinfile: dest=/etc/wicd/manager-settings.conf
         regexp='dhcp_client'
         line='dhcp_client = 1'
       notify: restart wicd
 
     - name: DHClient configuration
-      become: true
       copy: src=files/{{item}}
         dest=/etc/{{item}}
         owner=root
@@ -33,6 +31,7 @@
         - dhclient-exit-hooks
 
     - name: localdns binary
+      become: false
       shell: |
         docker run --rm -it -v {{bindir}}:/out golang:1.8 sh -e -c '
         go get {{package}}
@@ -41,7 +40,6 @@
         creates: '{{bindir}}/{{exe}}'
 
     - name: localdns service
-      become: true
       copy: src=files/{{item}}
         dest={{systemd_dir}}/{{item}}
       with_items: [localdns.service]
@@ -50,7 +48,6 @@
         - restart localdns
 
     - name: localdns env
-      become: true
       template: src=templates/{{item}}.j2
         dest=/etc/{{item}}
       with_items: [localdns.env]
@@ -59,18 +56,14 @@
         - restart localdns
 
     - name: localdns service
-      become: true
       service: name=localdns state=started enabled=yes
 
   handlers:
     - name: restart localdns
-      become: true
       service: name=localdns state=restarted
 
     - name: restart wicd
-      become: true
       service: name=wicd state=restarted
 
     - name: reload systemd
-      become: true
       command: systemctl daemon-reload
