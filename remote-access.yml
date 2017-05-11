@@ -1,8 +1,9 @@
 - name: Remote access tools
   hosts: laptops
   vars:
-    tag: v-enable-scroll-lock
-    cache: '{{gitbuild}}/synergy.tar.gz'
+    tag: add-audio-pause-x11
+    cache: '{{gitbuild}}/synergy-{{tag}}.tar.gz'
+    sha256sum: 8062a2dcbab760dd561e56e4487fd4ea77b8475ccf2ed80c3b6c6d47fa1de778
 
   tasks:
     - name: VNC and RDP
@@ -22,15 +23,19 @@
     - name: Custom synergy source
       get_url: url=https://github.com/benizi/synergy/archive/{{tag}}.tar.gz
         dest={{cache}}
-        sha256sum=bc0863b0352f536473cd860b86bfcd09b345ec9fa55b3510ae595796d0e770f8
+        sha256sum={{sha256sum}}
 
     - name: Custom synergy install
-      shell: rm -rf /tmp/synergy-{{tag}} &&
-        tar zxf {{cache}} &&
-        cd synergy-{{tag}} &&
-        with-python2 ./hm.sh conf -g1 &&
-        with-python2 ./hm.sh build &&
+      shell: |
+        set -e
+        rm -rf build-synergy synergy-{{tag}}
+        mkdir build-synergy
+        tar zxf {{cache}}
+        cd build-synergy
+        cmake -g1 ../synergy-{{tag}}
+        make
         mv bin/synergy{c,d,s} ~bhaskell/bin.local/
-        chdir=/tmp
-        creates=~bhaskell/bin.local/synergyc
-        warn=no
+      args:
+        chdir: /tmp
+        creates: ~bhaskell/bin.local/synergyc
+        warn: no
