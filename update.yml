@@ -2,6 +2,9 @@
   hosts: arch
   become: true
   tasks:
-    - pacman: update_cache=yes
-    - pacman: name=archlinux-keyring state=latest
-    - pacman: upgrade=yes
+    - name: cache
+      pacman: update_cache=yes
+    - name: keys
+      pacman: name=archlinux-keyring state=latest
+    - name: upgrade
+      pacman: upgrade=yes
