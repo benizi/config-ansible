@@ -7,5 +7,6 @@
       with_items:
         - bash
         - dash # much POSIX
+        - fish # I hate `fish`, but people use it
         - mksh # MirBSD ksh
         - tcsh
