@@ -7,6 +7,7 @@
 - include: prereqs.yml
 - include: ntp.yml
 - include: initial-ssh.yml
+- include: ipv6-tunnel.yml
 - include: development.yml
 - include: mercurial.yml
 - include: xmonad.yml
