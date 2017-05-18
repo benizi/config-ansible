@@ -1,0 +1,21 @@
+## This is just a dumb thing that finds files missing from site.yml
+script: yaml2json to-add.yml | jq -r .regen | zsh -e -x
+regen: |
+    printf '- include: %s\n' *.yml |
+    grep -f =(cat site.yml to-add.yml) -Fxv - |
+    awk 'NR==1 { print "" ; print "# unsorted" } 1' |
+    tee -a to-add.yml
+
+rest:
+# TODO
+- include: drm.yml
+
+# meta
+- include: site.yml
+- include: to-add.yml
+
+# as-needed
+- include: 00-initial.yml
+- include: chromium-latest.yml
+- include: test-become.yml
+- include: update.yml
