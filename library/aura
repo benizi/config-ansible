@@ -37,6 +37,7 @@ from ansible.module_utils.basic import *
 class AuraModule(AnsibleModule):
     def __init__(self, *args, **kwargs):
         super(AuraModule, self).__init__(*args, **kwargs)
+        self.run_command_environ_update['GNUPGHOME'] = '/etc/pacman.d/gnupg'
 
     def get_bin_path(self, *args, **kwargs):
         origpath = os.environ['PATH']

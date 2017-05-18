@@ -33,6 +33,17 @@
       register: ret
       changed_when: ret.stdout_lines != ["already"]
 
+    - name: Sudo inherit GNUPGHOME
+      become: true
+      copy:
+        content: |
+          Cmnd_Alias AURATOOLS = {{binary}},/usr/bin/makepkg
+          Defaults!AURATOOLS env_keep+=GNUPGHOME
+        dest: /etc/sudoers.d/20_aura
+        owner: root
+        group: root
+        mode: 0644
+
   handlers:
     - name: set abs perms
       command: set-all-facl -u -R /var/abs
