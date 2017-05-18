@@ -42,6 +42,7 @@
 - include: packages-x11-wm.yml
 - include: packages-science.yml
 - include: audio.yml
+- include: bluetooth.yml
 - include: radio.yml
 - include: monitor.yml
 - include: context.yml
