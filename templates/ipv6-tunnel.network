@@ -1,0 +1,11 @@
+[Match]
+Name={{ansible_local.ipv6.tunnel.name}}
+
+[Network]
+Address={{ansible_local.ipv6.tunnel.address}}
+Gateway={{ansible_local.ipv6.tunnel.gateway}}
+{% if 'dns' in ansible_local.ipv6.tunnel %}
+{% for dns in ansible_local.ipv6.tunnel.dns | from_json %}
+DNS={{dns}}
+{% endfor %}
+{% endif %}

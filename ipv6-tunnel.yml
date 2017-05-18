@@ -1,0 +1,33 @@
+- name: IPv6 Tunnel
+  hosts: all
+  become: true
+  vars:
+    dev: '{{ansible_local.ipv6.tunnel.name|default("he-ipv6")}}'
+    dir: /etc/systemd/network
+
+  tasks:
+    - name: IPv6 tunnel service
+      template:
+        src: templates/ipv6-tunnel.{{item}}
+        dest: '{{dir}}/40-{{dev}}.{{item}}'
+        owner: root
+        group: root
+        mode: 0644
+      with_items: [netdev, network]
+      notify:
+        - Reload systemd
+        - Restart networkd
+      when: ansible_local.ipv6.tunnel.enabled
+
+    - name: Systemd Networkd
+      service: name=systemd-networkd enabled=yes
+      notify:
+        - Restart networkd
+      when: ansible_local.ipv6.tunnel.enabled
+
+  handlers:
+    - name: Reload systemd
+      command: systemctl daemon-reload
+
+    - name: Restart networkd
+      service: name=systemd-networkd state=restarted

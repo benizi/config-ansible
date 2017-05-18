@@ -1,0 +1,10 @@
+[Match]
+
+[NetDev]
+Name={{ansible_local.ipv6.tunnel.name}}
+Kind={{ansible_local.ipv6.tunnel.kind | default("sit")}}
+MTUBytes={{ansible_local.ipv6.tunnel.mtu | default(1480)}}
+
+[Tunnel]
+Remote={{ansible_local.ipv6.tunnel.remote}}
+TTL={{ansible_local.ipv6.tunnel.ttl | default(255)}}
