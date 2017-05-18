@@ -18,6 +18,7 @@
       with_items:
         - git
         - ntp
+        - opensc # for pkcs11-tool
         - polkit
         - vi
         - zsh
