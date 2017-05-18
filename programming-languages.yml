@@ -17,11 +17,18 @@
 
     - meta: flush_handlers
 
+    # Stack needs an old version of `ncurses`, but it will be replaced with an
+    # AUR package providing compatibility libs, once `aura` gets installed.
+    # TODO: check if this is still needed with newer versions of Stack(/GHC?).
     - name: Stack old ncurses link
       become: true
-      shell: /opt/nix/bin/nix-env --query --no-name --out-path ncurses-5.9 |
+      shell: |
+        test -e /lib/libtinfo.so.5 && exit 0
+        /opt/nix/bin/nix-env --query --no-name --out-path ncurses-5.9 |
         xargs -iZ find Z -name libncurses.so.5 |
-        xargs -iZ ln -nsf Z /lib/libtinfo.so.5
+        xargs -iZ ln -vnsf Z /lib/libtinfo.so.5
+      register: nix_ncurses
+      changed_when: nix_ncurses.stdout != ""
 
     - name: Install langs
       shell: verman {{item.lang}} installed 2>/dev/null | grep -Fxq {{item.version}} ||

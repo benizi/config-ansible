@@ -3,6 +3,7 @@
   vars:
     binary: '{{homedir}}/.local/bin/aura'
     build: '{{gitbuild}}/aura'
+    ncurses5: ncurses5-compat-libs
 
   tasks:
     - name: Arch build system prereqs
@@ -43,6 +44,52 @@
         owner: root
         group: root
         mode: 0644
+
+    - name: Remove old Nix ncurses hack
+      become: true
+      shell: |
+        pacman -T {{ncurses5}} && exit 0
+
+        set -- /lib/lib{tinfo,ncurses{,w}}.so.5{,.9}
+
+        for file
+        do test -L $file && readlink $file
+        done |
+        grep -q '^/nix/store/'
+        nix=$(( ! $? ))
+
+        for file
+        do test -e $file && echo $file
+        done |
+        xargs --no-run-if-empty pacman -Qo
+        unowned=$(( ! ! $? ))
+
+        rm -f "$@"
+
+        exit $(( nix + unowned ))
+      register: old_nix_hack
+      changed_when: old_nix_hack.rc != 0
+      failed_when: False
+      always_run: true
+
+    # `ncurses5-compat-libs` has a custom GPG key signature ...for some reason.
+    - name: Custom key for ncurses5-compat-libs
+      shell: |
+        key="{{item.keyid}}"
+        pacman-key --list-sigs $key | grep -q '^sig   L' && exit 0
+        set -e
+        pacman-key -l $key 2>/dev/null | grep -q . || sudo pacman-key -r $key
+        sudo pacman-key --lsign-key $key
+      register: pacman_key
+      changed_when: pacman_key.stdout != ""
+      with_items:
+        - name: Thomas Dickey
+          email: dickey@invisible-island.net
+          keyid: C52048C0C0748FEE227D47A2702353E0F7E48EDB
+
+    - name: Add replacement for old Nix ncurses hack
+      become: true
+      aura: name={{ncurses5}}
 
   handlers:
     - name: set abs perms
