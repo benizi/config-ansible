@@ -37,6 +37,7 @@
 - include: packages-multimedia.yml
 - include: packages-messaging.yml
 - include: packages-network-monitoring.yml
+- include: packages-opencl.yml
 - include: packages-programmer-tools.yml
 - include: packages-x11-utilities.yml
 - include: packages-x11-wm.yml
