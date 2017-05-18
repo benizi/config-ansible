@@ -12,7 +12,11 @@
         - yubikey-personalization
 
     - name: Install Yubikey manager
-      aura: name=yubikey-neo-manager-git
+      aura: name={{item}}
+      with_items:
+        - yubikey-neo-manager-git
+        - yubikey-piv-tool
+        - yubikey-piv-manager
 
     - name: CCID manager
       pacman: name=pcsclite
