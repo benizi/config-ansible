@@ -19,6 +19,7 @@
         - git
         - ntp
         - opensc # for pkcs11-tool
+        - openssl
         - polkit
         - vi
         - zsh
