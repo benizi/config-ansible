@@ -1,0 +1,11 @@
+- name: Packages for OpenCL development
+  hosts: arch
+  become: true
+  tasks:
+    - name: Packages
+      archpkg: name={{item}}
+      with_items:
+        - aur/clinfo
+        - aur/intel-opencl
+        - aur/intel-opencl-runtime
+        - opencl-mesa
