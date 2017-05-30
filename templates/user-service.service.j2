@@ -1,0 +1,24 @@
+[Unit]
+Description={{item.description}}
+{% if 'after' in item %}
+{% for service in item.after %}
+After={{service}}
+{% endfor %}
+{% endif %}
+
+[Service]
+{% for kind, lines in item.exec.items() %}
+{% for line in item.exec[kind] %}
+Exec{{kind|title}}={{line}}
+{% endfor %}
+{% endfor %}
+Restart=on-failure
+Environment=DISPLAY=:0
+{% if 'extra' in item %}
+{% for line in item.extra %}
+{{line}}
+{% endfor %}
+{% endif %}
+
+[Install]
+WantedBy=default.target

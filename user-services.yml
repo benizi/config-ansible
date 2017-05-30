@@ -1,10 +1,23 @@
 - name: User services
   hosts: arch
   vars:
-    services: # order is important
-      - lxpanel
-      - dropbox
-      - parcellite
+    services:
+      - name: lxpanel
+        description: LXPanel dock
+        exec:
+          start: [/bin/lxpanel]
+      - name: parcellite
+        description: Parcellite (clipboard manager)
+        exec:
+          start: [/bin/parcellite -d]
+        extra:
+          - StandardError=null
+      - name: dropbox
+        description: Dropbox daemon
+        after: [lxpanel.service]
+        exec:
+          start: [/usr/bin/dropbox]
+          reload: [/bin/kill -HUP $MAINPID]
     systemd: .config/systemd/user
 
   tasks:
@@ -12,9 +25,10 @@
       file: dest=~bhaskell/{{systemd}} state=directory recurse=yes
 
     - name: Services
-      copy: src=files/{{item}}.service
-        dest=~bhaskell/{{systemd}}/{{item}}.service
-        mode=0644
+      template:
+        src: templates/user-service.service.j2
+        dest: '~bhaskell/{{systemd}}/{{item.name}}.service'
+        mode: 0644
       with_items: '{{services}}'
       register: service_files
       notify:
@@ -27,9 +41,9 @@
       command: systemctl --user daemon-reload
 
     - name: enable user services
-      command: systemctl --user enable ~bhaskell/{{systemd}}/{{item}}.service
+      command: systemctl --user enable {{item.name}}.service
       with_items: '{{services}}'
 
     - name: start user services
-      command: systemctl --user start {{item}}
+      command: systemctl --user start {{item.name}}.service
       with_items: '{{services}}'
