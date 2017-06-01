@@ -1,7 +1,10 @@
 - name: OSX Stuff
   hosts: osx
   vars:
-    brewurl: https://raw.githubusercontent.com/Homebrew/install/master/install
+    brewurl: https://raw.githubusercontent.com/Homebrew/install/{{commit}}/install
+    commit: d97fb9edbe2ea308400a894f7d1df7967717a937
+    script: ~/.homebrew.install.rb
+    sha256sum: 1a48258db024391a7864c155c9b6076744c18d39cd7403b04545881bda01f4a8
   tasks:
     - name: Workaround stupid path_helper
       copy:
@@ -10,11 +13,17 @@
         dest: ~/.bashrc
         mode: 0750
 
+    - name: Homebrew install script
+      get_url:
+        dest: '{{script}}'
+        url: '{{brewurl}}'
+        sha256sum: '{{sha256sum}}'
+
     - name: Install homebrew
       shell: |
         if hash brew >/dev/null 2>/dev/null
         then echo already
-        else curl -fsSL {{brewurl}} | ruby
+        else ruby {{script}}
         fi
       register: install
       changed_when: install.stdout_lines != ['already']
