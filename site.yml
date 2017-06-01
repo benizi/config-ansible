@@ -23,6 +23,7 @@
 - include: dev-dns.yml
 - include: networking.yml
 - include: ipv6-tunnel.yml
+- include: osx.yml
 - include: packages-system-tools.yml
 - include: packages-hardware-info.yml
 - include: packages-audio.yml
