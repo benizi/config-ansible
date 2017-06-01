@@ -1,14 +1,22 @@
 ---
 - name: Sudo Arch
   hosts: arch
+  become: true
   tasks:
     - name: Install sudo
       pacman: name=sudo
 
-    - name: Passwordless sudo for wheel
-      lineinfile: "dest=/etc/sudoers.d/10_wheel
-        create=yes
-        line='%wheel ALL=(ALL) NOPASSWD: ALL'"
+- name: Sudo passwordless
+  hosts: arch
+  become: true
+  tasks:
+    - name: Passwordless sudo for admin group
+      copy:
+        content: '%{{wheel_group}} ALL=(ALL) NOPASSWD: ALL'
+        dest: /etc/sudoers.d/10_wheel
+        mode: 0640
+        owner: root
+        group: '{{root_group}}'
 
 - name: Set up initial user
   hosts: all

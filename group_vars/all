@@ -2,3 +2,5 @@ ansible_local:
   ipv6:
     tunnel:
       enabled: false
+wheel_group: wheel
+root_group: root
