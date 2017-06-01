@@ -1,0 +1,14 @@
+- name: OSX Stuff
+  hosts: osx
+  vars:
+    brewurl: https://raw.githubusercontent.com/Homebrew/install/master/install
+  tasks:
+    - name: Install homebrew
+      shell: |
+        if hash brew >/dev/null 2>/dev/null
+        then echo already
+        else curl -fsSL {{brewurl}} | ruby
+        fi
+      register: install
+      changed_when: install.stdout_lines != ['already']
+      failed_when: install.rc != 0
