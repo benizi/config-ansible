@@ -1,6 +1,6 @@
 ---
 - name: Sudo Arch
-  hosts: 'initial:&arch'
+  hosts: arch
   tasks:
     - name: Install sudo
       pacman: name=sudo
@@ -11,7 +11,7 @@
         line='%wheel ALL=(ALL) NOPASSWD: ALL'"
 
 - name: Set up initial user
-  hosts: initial
+  hosts: all
   vars_prompt:
    - name: user_password
      prompt: initial user password
@@ -32,7 +32,7 @@
         password={{user_password}}
 
 - name: Per-Host SSH Key
-  hosts: initial
+  hosts: all
   vars_prompt:
    - name: ssh_passphrase
      prompt: SSH key passphrase (03)
