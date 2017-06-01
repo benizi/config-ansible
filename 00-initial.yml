@@ -1,6 +1,6 @@
 ---
-- name: Sudo
-  hosts: 'initial:!ec2'
+- name: Sudo Arch
+  hosts: 'initial:&arch'
   tasks:
     - name: Install sudo
       pacman: name=sudo
