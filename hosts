@@ -2,7 +2,7 @@
 bhaskell-x240
 bhaskell-asus
 
-[vps]
+[ec2]
 vps
 
 [arch:children]
