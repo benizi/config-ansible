@@ -3,6 +3,13 @@
   vars:
     brewurl: https://raw.githubusercontent.com/Homebrew/install/master/install
   tasks:
+    - name: Workaround stupid path_helper
+      copy:
+        content: |
+          eval "$(/usr/libexec/path_helper -s)" 2>/dev/null
+        dest: ~/.bashrc
+        mode: 0750
+
     - name: Install homebrew
       shell: |
         if hash brew >/dev/null 2>/dev/null
