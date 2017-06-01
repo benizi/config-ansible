@@ -6,8 +6,29 @@
     - name: Install sudo
       pacman: name=sudo
 
+- name: Sudo OSX
+  hosts: osx
+  become: true
+  vars_prompt:
+    - name: ansible_become_pass
+      prompt: 'Ansible sudo password'
+      private: yes
+  tasks:
+    - name: Sudo config dir
+      file:
+        dest: /etc/sudoers.d
+        mode: 0770
+        owner: root
+        group: '{{root_group}}'
+        state: directory
+
+    - name: Sudo includedir
+      lineinfile:
+        dest: /etc/sudoers
+        line: '#includedir /etc/sudoers.d'
+
 - name: Sudo passwordless
-  hosts: arch
+  hosts: arch,osx
   become: true
   tasks:
     - name: Passwordless sudo for admin group
@@ -18,8 +39,8 @@
         owner: root
         group: '{{root_group}}'
 
-- name: Set up initial user
-  hosts: all
+- name: Create bhaskell user
+  hosts: '!osx'
   vars_prompt:
    - name: user_password
      prompt: initial user password
@@ -54,3 +75,16 @@
         bits=4096
         comment=bhaskell@{{ansible_hostname}}
         passphrase={{ssh_passphrase}}
+
+- name: Disable all but key-based SSH
+  hosts: osx
+  become: true
+  tasks:
+    - name: Disable password-based auth methods
+      lineinfile:
+        dest: /etc/sshd_config
+        line: '{{item}} no'
+        regexp: '^{{item}}'
+      with_items:
+        - PasswordAuthentication
+        - ChallengeResponseAuthentication
