@@ -18,6 +18,10 @@
         exec:
           start: [/usr/bin/dropbox]
           reload: [/bin/kill -HUP $MAINPID]
+      - name: nm-applet
+        description: NetworkManager applet
+        exec:
+          start: [/bin/nm-applet]
     systemd: .config/systemd/user
 
   tasks:
