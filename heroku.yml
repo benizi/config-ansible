@@ -18,7 +18,7 @@
 
     - name: Heroku CLI plugins
       command: heroku plugins:install {{item.git}}
-        creates=~bhaskell/.heroku/plugins/{{item.name}}
+        creates={{homedir}}/.heroku/plugins/{{item.name}}
       with_items:
         - name: 'heroku-accounts'
           git: 'https://github.com/heroku/heroku-accounts.git'

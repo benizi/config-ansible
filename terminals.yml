@@ -41,4 +41,4 @@
         creates={{rxvt}}
 
     - name: Preferred (custom rxvt-unicode) link
-      file: dest=~bhaskell/bin.local/term state=link src={{rxvt}}
+      file: dest={{homedir}}/bin.local/term state=link src={{rxvt}}

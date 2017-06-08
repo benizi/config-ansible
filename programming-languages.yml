@@ -83,21 +83,21 @@
 
     - name: Clojure (leiningen) download
       get_url: url=https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
-        dest=~bhaskell/bin.local/lein
+        dest={{homedir}}/bin.local/lein
         mode=0750
 
     - name: Clojure (leiningen) initial install
       command: lein version
-        creates=~bhaskell/.lein/self-installs
+        creates={{homedir}}/.lein/self-installs
 
     - name: Clojure Boot
       get_url: url=https://github.com/boot-clj/boot-bin/releases/download/2.4.2/boot.sh
-        dest=~bhaskell/bin.local/boot
+        dest={{homedir}}/bin.local/boot
         mode=0750
 
     - name: Clojure Boot initial install
       command: boot
-        creates=~bhaskell/.boot/boot.properties
+        creates={{homedir}}/.boot/boot.properties
 
     - name: Lua
       become: true

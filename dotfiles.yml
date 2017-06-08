@@ -2,7 +2,7 @@
   hosts: laptops
   tasks:
     - name: Directories
-      file: state=directory dest=~bhaskell/{{item}}
+      file: state=directory dest={{homedir}}/{{item}}
       with_items:
         - bin.local
         - .cache
@@ -14,13 +14,13 @@
 
     - name: Clone dotfiles
       git: repo=gh:benizi/dotfiles
-        dest=~bhaskell/dotfiles
+        dest={{homedir}}/dotfiles
         update=no
         remote=benizi
 
     # TODO: replace this and the next task with script within dotfiles repo
     - name: Link dotfiles (simple)
-      file: state=link src=dotfiles/{{item}} dest=~bhaskell/{{item}}
+      file: state=link src=dotfiles/{{item}} dest={{homedir}}/{{item}}
       with_items:
         - bin
         - .emacs.d
@@ -39,7 +39,7 @@
 
     # TODO: see prior TODO
     - name: Link dotfiles (non-homedir)
-      file: state=link src={{item.src}} dest=~bhaskell/{{item.dest}}
+      file: state=link src={{item.src}} dest={{homedir}}/{{item.dest}}
       with_items:
         - { src: ../dotfiles/.config/feh, dest: .config/feh }
         - { src: ../dotfiles/.lein/profiles.clj, dest: .lein/profiles.clj }
@@ -49,10 +49,10 @@
 
     - name: Root zsh
       become: true
-      file: state=link src=~bhaskell/.zshenv dest=~root/.zshenv
+      file: state=link src={{homedir}}/.zshenv dest=~root/.zshenv
 
     - name: Set up build for bin.local files
-      file: state=link src=../bin/{{item}} dest=~bhaskell/bin.local/{{item}}
+      file: state=link src=../bin/{{item}} dest={{homedir}}/bin.local/{{item}}
       with_items:
         - Makefile
         - src
@@ -77,7 +77,7 @@
 
     - name: Script prereqs (compiled)
       command: make {{item}}
-        chdir=~bhaskell/bin.local
+        chdir={{homedir}}/bin.local
         creates={{item}}
       with_items:
         - myod

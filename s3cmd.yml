@@ -12,5 +12,5 @@
 
     - name: Custom s3cmd wrapper
       copy: content='#!/bin/sh\nexec python2 {{build}}/s3cmd "$@"'
-        dest=~bhaskell/bin.local/s3cmd
+        dest={{homedir}}/bin.local/s3cmd
         mode=0750

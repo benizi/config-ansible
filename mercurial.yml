@@ -8,7 +8,7 @@
       hg: repo={{repo}} dest={{dest}} force=no
 
     - name: HG Extensions
-      ini_file: dest=~bhaskell/.hgrc
+      ini_file: dest={{homedir}}/.hgrc
         section=extensions
         option={{item.option}}
         value={{item.value}}

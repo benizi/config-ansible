@@ -1,5 +1,8 @@
 - name: Software Defined Radio
   hosts: sdr
+  vars:
+    confdir: '{{homedir}}/.gnuradio'
+
   tasks:
     - name: GNU Radio
       archpkg: name={{item}}
@@ -9,10 +12,10 @@
         - gnuradio-companion
 
     - name: GNU Radio config dir
-      file: dest=~bhaskell/.gnuradio state=directory
+      file: dest={{confdir}} state=directory
 
     - name: GNU Radio fix Pulse
-      ini_file: dest=~bhaskell/.gnuradio/config.conf
+      ini_file: dest={{confdir}}/config.conf
         section=audio_alsa
         option=nperiods
         value=128

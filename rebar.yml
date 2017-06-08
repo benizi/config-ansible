@@ -4,7 +4,7 @@
     build: '{{gitbuild}}/rebar'
     rebar: /usr/local/bin/rebar
     build3: '{{gitbuild}}/rebar3'
-    rebar3: ~bhaskell/.cache/rebar3/bin/rebar3
+    rebar3: '{{homedir}}/.cache/rebar3/bin/rebar3'
 
   tasks:
     - name: Rebar source

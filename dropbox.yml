@@ -8,4 +8,4 @@
     - name: Dropbox daemon install
       shell: echo y | dropbox start -i &&
         dropbox stop
-        creates=~bhaskell/.dropbox-dist
+        creates={{homedir}}/.dropbox-dist

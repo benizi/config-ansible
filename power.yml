@@ -26,11 +26,14 @@
       file: dest=/etc/acpi/events/anything mode=0750
 
     - name: Use Power Button to toggle keyboard
-      copy: content='event=button/power\naction=/home/bhaskell/bin/acpi-power-button\n'
-        dest=/etc/acpi/events/power-button
-        owner=bhaskell
-        group=root
-        mode=0750
+      copy:
+        content: |
+          event=button/power
+          action={{homedir}}/bin/acpi-power-button
+        dest: /etc/acpi/events/power-button
+        owner: bhaskell
+        group: root
+        mode: 0750
 
   handlers:
     - name: restart logind

@@ -22,16 +22,16 @@
         description: NetworkManager applet
         exec:
           start: [/bin/nm-applet]
-    systemd: .config/systemd/user
+    user_systemd: '{{homedir}}/.config/systemd/user'
 
   tasks:
     - name: User service dir
-      file: dest=~bhaskell/{{systemd}} state=directory recurse=yes
+      file: dest={{user_systemd}} state=directory recurse=yes
 
     - name: Services
       template:
         src: templates/user-service.service.j2
-        dest: '~bhaskell/{{systemd}}/{{item.name}}.service'
+        dest: '{{user_systemd}}/{{item.name}}.service'
         mode: 0644
       with_items: '{{services}}'
       register: service_files

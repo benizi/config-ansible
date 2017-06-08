@@ -1,7 +1,7 @@
 - name: LXPanel
   hosts: laptops
   vars:
-    conf_dir: ~bhaskell/.config/lxpanel/default/panels
+    conf_dir: '{{homedir}}/.config/lxpanel/default/panels'
 
   tasks:
     - name: LXPanel config dir

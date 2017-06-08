@@ -34,8 +34,8 @@
         cd build-synergy
         cmake -g1 ../synergy-{{tag}}
         make
-        mv bin/synergy{c,d,s} ~bhaskell/bin.local/
+        mv bin/synergy{c,d,s} {{homedir}}/bin.local/
       args:
         chdir: /tmp
-        creates: ~bhaskell/bin.local/synergyc
+        creates: '{{homedir}}/bin.local/synergyc'
         warn: no
