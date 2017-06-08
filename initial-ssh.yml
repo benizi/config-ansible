@@ -1,7 +1,7 @@
 - name: Initial .ssh/config
   hosts: all
   vars:
-    ssh: ~bhaskell/.ssh
+    ssh: '{{homedir}}/.ssh'
   tasks:
     - name: .ssh directory
       file: state=directory dest={{ssh}} mode=0700
