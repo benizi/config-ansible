@@ -1,10 +1,17 @@
 - name: Update Arch
   hosts: arch
   become: true
+  vars:
+    fetch: true
+    upgrade: true
+
   tasks:
-    - name: cache
+    - name: fetch
       pacman: update_cache=yes
+      when: fetch
     - name: keys
       pacman: name=archlinux-keyring state=latest
+      when: fetch
     - name: upgrade
       pacman: upgrade=yes
+      when: upgrade
