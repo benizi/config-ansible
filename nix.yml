@@ -1,6 +1,7 @@
 - name: Nix
   hosts: arch
   vars:
+    prefix: /opt/nix
     version: 1.11.8
 
   tasks:
@@ -20,12 +21,18 @@
         dest={{gitbuild}}/nix-{{version}}.tar.xz
 
     - name: Nix package manager install
-      shell: cd {{gitbuild}} &&
-        rm -rf nix-{{version}} &&
-        tar xJf {{gitbuild}}/nix-{{version}}.tar.xz &&
-        cd nix-{{version}} &&
-        ./configure --prefix=/opt/nix &&
-        make &&
+      shell: |
+        set -e
+        export PATH="{{prefix}}/bin:$PATH"
+        if hash nix-build 2>/dev/null && nix-build --version >/dev/null
+        then echo ok ; exit 0
+        fi
+        cd {{gitbuild}}
+        rm -rf nix-{{version}}
+        tar xJf {{gitbuild}}/nix-{{version}}.tar.xz
+        cd nix-{{version}}
+        ./configure --prefix={{prefix}}
+        make
         make install
-        creates=/opt/nix/bin/nix-build
-        warn=no
+      register: install
+      changed_when: install.stdout_lines != ["ok"]
