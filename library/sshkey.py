@@ -101,9 +101,9 @@ class SSHKey(object):
         ssh_dir = os.path.dirname(self.path)
         if not os.path.exists(ssh_dir):
             try:
-                os.mkdir(ssh_dir, 0700)
+                os.mkdir(ssh_dir, int('700', 8))
                 os.chown(ssh_dir, self.uid, self.gid)
-            except OSError, e:
+            except OSError as e:
                 return (1, '', 'Failed to create %s: %s' % (ssh_dir, str(e)))
 
         if os.path.exists(self.path):
