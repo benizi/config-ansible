@@ -23,6 +23,12 @@ options:
         default: current user
         description:
             - User for whom the hashed password is being stored/extracted.
+    salt:
+        required: false
+        default: extracted from password
+        description:
+            - The Base64-encoded salt value.  Will be taken from the password
+              if not explicitly provided.
 '''
 
 EXAMPLES = '''
@@ -51,6 +57,7 @@ class OSXPassword(object):
     def __init__(self, module):
         self.module = module
         self.password = module.params['password']
+        self.salt = module.params['salt']
         self.user = module.params['user'] or getpwuid(getuid())[0]
 
     def validate(self, pw, *properties):
@@ -147,6 +154,7 @@ def main():
         argument_spec = dict(
             password=dict(default=None, type='str', no_log=True),
             user=dict(default=None, type='str'),
+            salt=dict(default=None, type='str'),
         ),
         supports_check_mode=True
     )
