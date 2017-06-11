@@ -44,19 +44,34 @@ class OSXPassword(object):
 
     passlib_hash_name = 'pbkdf2-sha512'
     osx_hash_name = 'SALTED-SHA512-PBKDF2'
+    osx_iterations = 35087
+    osx_entropy_len = 128
+    osx_salt_len = 32
 
     def __init__(self, module):
         self.module = module
         self.password = module.params['password']
         self.user = module.params['user'] or getpwuid(getuid())[0]
 
+    def validate(self, pw, *properties):
+        invalid = []
+        for prop in properties:
+            _, actual, expected = prop
+            if actual != expected:
+                invalid += [prop]
+        if len(invalid) == 0:
+            return
+        lines = ["Invalid password hash: [%s]" % pw]
+        lines += ["Invalid %s: expected [%s] got [%s]" % i for i in invalid]
+        self.module.fail_json(msg="\n".join(lines))
+
     def parse_hash(self):
         ## E.g.: when split on '$': [
         # '',
         # 'pbkdf2-sha512',
-        # '25000',
-        # 'DsEYQ0gJwRgjBCBECMF4r7U2BoAQAqB0TomRMiZEqFU',
-        # 'pREwYkvy3nQdeDFhVRvd/ymzEQg/81jVZlBMaEcerD6W5dhlHJ.sq9ePN47uiAOwI5NTrxqpo7NYWeFUvcmvUQ',
+        # '35087',
+        # 'FMJYay2l1FqL8d6bM8b4n7NW6h3DWIvx3ptT6p3TWgs',
+        # 'gd6Oj0CYSUsUwBnZBOyJa/KOAFOoDV8zMju5DWGC7FvweEcVofIPi7Mb5zodsDuh.3QpeOgIBdQjiTP4YGAFaYVCFA7T.sp9kXFJCmoNd7DDHy/CPDpqJy7SZF5TwUhHjKyCJM/KKhTvPWQygfds9CAGiClxqJFQKWbydof4tIk',
         # ]
         pw = self.password
         blank, algo, iter_str, salt64, hash64 = pw.split('$')
@@ -64,12 +79,13 @@ class OSXPassword(object):
         iterations = int(iter_str)
         salt = self.b64decode(salt64)
 
-        err = "Password hash [%s] has incorrect format, expected " % pw
-        if blank != '':
-            self.module.fail_json(msg=err+"blank, got [%s]" % blank)
-        if algo != self.passlib_hash_name:
-            self.module.fail_json(msg=err + "%s, got [%s]" %
-                                  (self.passlib_hash_name, algo))
+        self.validate(
+           pw,
+           ('leading blank', '', blank),
+           ('hash type', self.passlib_hash_name, algo),
+           ('entropy length', self.osx_entropy_len, len(entropy)),
+           ('salt length', self.osx_salt_len, len(salt)),
+           ('iterations', self.osx_iterations, iterations))
 
         return dict(entropy=entropy, iterations=iterations, salt=salt)
 
