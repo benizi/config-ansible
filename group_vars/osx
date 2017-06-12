@@ -3,3 +3,4 @@ wheel_group: admin
 root_group: wheel
 # TODO: fix issue with SUDO_USER (ansible_user_dir isn't set correctly)
 homedir: /Users/bhaskell
+sshconfdir: /etc

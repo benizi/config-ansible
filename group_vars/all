@@ -5,3 +5,4 @@ ansible_local:
 wheel_group: wheel
 root_group: root
 homedir: '{{ansible_user_dir}}'
+sshconfdir: /etc/ssh

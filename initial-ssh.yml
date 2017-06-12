@@ -3,19 +3,30 @@
   vars:
     ssh: '{{homedir}}/.ssh'
   tasks:
-    - name: .ssh directory
+    - name: User SSH config dir
       file: state=directory dest={{ssh}} mode=0700
 
-    - name: .ssh/config
+    - name: Initial user SSH config
       copy: content="Host gh\nHostName github.com\nUser git\n"
         dest={{ssh}}/config
         mode=0640
         force=no
 
+    - name: System SSH config dir
+      become: true
+      file:
+        dest: '{{sshconfdir}}'
+        state: directory
+        owner: root
+        group: '{{root_group}}'
+        mode: 0755
+        # /etc => /private/etc on OS X
+        follow: yes
+
     - name: SSH known hosts
       become: true
       copy: src=files/ssh_known_hosts
-        dest=/etc/ssh/ssh_known_hosts
+        dest={{sshconfdir}}/ssh_known_hosts
         owner=root
-        group=root
+        group={{root_group}}
         mode=0644
