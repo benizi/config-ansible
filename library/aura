@@ -107,8 +107,13 @@ def install(module, aura, pkg, state):
             msg += ': `aura` requires root'
         else:
             msg += ":\n%s" % (uncolor(out))
-        module.fail_json(msg=msg,out=out,err=err,rc=rc)
-    module.exit_json(changed=True, msg='installed %s' % (pkg))
+        module.fail_json(msg=msg,stdout=out,stderr=err,rc=rc)
+    module.exit_json(
+            changed=True,
+            msg='installed %s' % (pkg),
+            stdout=out,
+            stderr=err,
+            rc=rc)
 
 def main():
     module = AuraModule(
