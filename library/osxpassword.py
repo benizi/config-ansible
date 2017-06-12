@@ -36,9 +36,11 @@ EXAMPLES = '''
 '''
 
 import base64
-from os import getuid, path
+from os import fdopen, getuid, path, unlink
 from pwd import getpwuid
 from subprocess import Popen, PIPE
+from tempfile import mkstemp
+import textwrap
 
 from ansible.module_utils.basic import AnsibleModule
 
@@ -48,7 +50,7 @@ class OSXPassword(object):
     TODO DOCS
     """
 
-    passlib_hash_name = 'pbkdf2-sha512'
+    passlib_hash_name = 'pbkdf2-sha512-osx'
     osx_hash_name = 'SALTED-SHA512-PBKDF2'
     osx_iterations = 35087
     osx_entropy_len = 128
@@ -75,7 +77,7 @@ class OSXPassword(object):
     def parse_hash(self):
         ## E.g.: when split on '$': [
         # '',
-        # 'pbkdf2-sha512',
+        # 'pbkdf2-sha512-osx',
         # '35087',
         # 'FMJYay2l1FqL8d6bM8b4n7NW6h3DWIvx3ptT6p3TWgs',
         # 'gd6Oj0CYSUsUwBnZBOyJa/KOAFOoDV8zMju5DWGC7FvweEcVofIPi7Mb5zodsDuh.3QpeOgIBdQjiTP4YGAFaYVCFA7T.sp9kXFJCmoNd7DDHy/CPDpqJy7SZF5TwUhHjKyCJM/KKhTvPWQygfds9CAGiClxqJFQKWbydof4tIk',
@@ -106,7 +108,7 @@ class OSXPassword(object):
     def modify_hash(self, xml, key, data):
         path = '.'.join([self.osx_hash_name, key])
         cmd = ['plutil', '-replace', path, '-data', self.b64encode(data), '-o', '-', '-']
-        return self.module.run_command(cmd, use_unsafe_shell=False, data=xml)
+        return self.run_or_die(cmd, data=xml)
 
     def shadow_data_plist(self):
         # ## This works to create a password, AFAICT
@@ -123,24 +125,62 @@ class OSXPassword(object):
         parsed = self.parse_hash()
         start = dict(entropy='', iterations=parsed['iterations'], salt='')
         wrapped = self.module.jsonify({self.osx_hash_name: start})
-        (rc, out, err) = self.module.run_command(
-                ['plutil', '-convert', 'xml1', '-o', '-', '-'],
-                use_unsafe_shell=False,
-                data=wrapped)
-        (rc, out, err) = self.modify_hash(out, 'entropy', parsed['entropy'])
-        (rc, out, err) = self.modify_hash(out, 'salt', parsed['salt'])
+        to_xml = ['plutil', '-convert', 'xml1', '-o', '-', '-']
+        out = self.run_or_die(to_xml, data=wrapped)
+        out = self.modify_hash(out, 'entropy', parsed['entropy'])
+        out = self.modify_hash(out, 'salt', parsed['salt'])
         return out
 
     def store(self):
-        val = self.shadow_data_plist()
-        (rc, out, err) = self.module.run_command(
-                ['plutil', '-convert', 'binary1', '-o', '-', '-'],
-                use_unsafe_shell=False,
-                data=val)
-        if rc != 0:
-            self.module.fail_json(rc=rc, out=out, err=err)
-        out = base64.b64encode(out)
+        data = self.shadow_data_plist()
+        to_binary = ['plutil', '-convert', 'binary1', '-o', '-', '-']
+        out = self.run_or_die(to_binary, data=data)
+
+        shadow_hash64 = base64.b64encode(out)
+        sep_chars = "\n\\:,"
+        recordsep, _, fieldsep, _ = sep_chars
+        separators = ' '.join(["0x%02X" % ord(x) for x in sep_chars])
+        user = self.user
+        recordtype = 'dsRecTypeStandard:Users'
+        fields = [
+            'dsAttrTypeStandard:RecordName',
+            'base64:dsAttrTypeNative:ShadowHashData',
+        ]
+        header = ' '.join([separators, recordtype, str(len(fields))] + fields)
+        record = user + fieldsep + shadow_hash64
+        dsimport_file = header + recordsep + record + recordsep
+
+        tmpfd, temp_filename = mkstemp()
+        tmp = fdopen(tmpfd, 'w')
+        tmp.write(dsimport_file + recordsep)
+        tmp.close()
+
+        delete = ['dscl', '.', 'delete', '/Users/%s' % user, 'ShadowHashData']
+        dsimport = ['dsimport', temp_filename, '/Local/Default', 'A']
+
+        out = self.run_or_die(delete)
+        out = self.run_or_die(dsimport)
+        try:
+            unlink(temp_filename)
+        except:
+            pass # TODO: error msg?
         return (rc, out, err)
+
+    def run(self, cmd, data=None):
+        kwargs = dict(use_unsafe_shell=False)
+        if data:
+            kwargs['data'] = data
+        return self.module.run_command(cmd, **kwargs)
+
+    def run_or_die(self, cmd, data=None):
+        (rc, out, err) = self.run(cmd, data)
+        if rc != 0:
+            lines = ["Failed to run %s (rc=%d)" % (repr(cmd), rc)]
+            if data:
+                lines += ["With data %s" % repr(data)]
+            msg = "\n".join(lines)
+            self.module.fail_json(msg=msg, rc=rc, out=out, err=err)
+        return out
 
     def run_unless_checking(self, cmd):
         if self.module.check_mode:
@@ -159,8 +199,8 @@ def main():
         supports_check_mode=True
     )
     osxpassword = OSXPassword(module)
-    (rc, out, err) = osxpassword.store()
-    module.exit_json(rc=rc,out=out,err=err)
+    out = osxpassword.store()
+    module.exit_json(out=out)
 
 if __name__ == '__main__':
     main()
