@@ -176,7 +176,7 @@ def main():
             user=dict(default=None, type='str'),
             file=dict(default=None, aliases=['path'], type='str'),
             comment=dict(default=defaults['comment'], type='str'),
-            passphrase=dict(default=None, type='str'),
+            passphrase=dict(default=None, type='str', no_log=True),
         ),
         supports_check_mode=True
     )
