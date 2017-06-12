@@ -1,13 +1,18 @@
-[laptops]
+[arch]
 bhaskell-x240
 bhaskell-asus
+
+[osx]
+swa
 
 [ec2]
 vps
 
-[arch:children]
-laptops
+[laptops:children]
+arch
+osx
 
+; Not sure this group is sensible now, maybe use 'laptops:arch' in host rules
 [physical:children]
 laptops
 
@@ -25,6 +30,3 @@ bhaskell-x240
 
 [android]
 # currently empty
-
-[osx]
-swa
