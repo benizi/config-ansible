@@ -62,6 +62,7 @@
     - name: Set shell
       become: true
       user: name=bhaskell shell=/bin/zsh
+      when: inventory_hostname not in groups.osx
 
     - name: Script prereqs
       become: true
@@ -76,6 +77,7 @@
         - perl-json
         - perl-tk
         - perl-xml-twig
+      when: inventory_hostname in groups.arch
 
     - name: Script prereqs (compiled)
       command: make {{item}}
@@ -84,3 +86,4 @@
       with_items:
         - myod
         - x-is-active
+      when: inventory_hostname not in groups.osx
