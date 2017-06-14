@@ -39,8 +39,31 @@
         owner: root
         group: '{{root_group}}'
 
+- name: Create bhaskell user (OS X)
+  hosts: 'osx'
+  become: true
+  vars_prompt:
+   - name: user_password
+     prompt: initial user password (OS X)
+     private: yes
+     confirm: yes
+
+  tasks:
+    - name: Create user
+      user:
+        name: bhaskell
+        comment: Benjamin R. Haskell
+        groups: '{{wheel_group}}'
+        shell: /bin/zsh
+
+    - name: Set password
+      osxpassword:
+        user: bhaskell
+        password: '{{user_password}}'
+
 - name: Create bhaskell user
   hosts: '!osx'
+  become: true
   vars_prompt:
    - name: user_password
      prompt: initial user password
