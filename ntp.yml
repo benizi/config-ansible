@@ -4,6 +4,7 @@
   tasks:
     - name: Set up NTP
       service: name=ntpd state=started enabled=yes
+      when: ntp
       notify:
         # Set the clock upon initial ntpd setup
         - stop ntpd
