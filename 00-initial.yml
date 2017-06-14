@@ -48,11 +48,6 @@
      confirm: yes
      encrypt: sha512_crypt
 
-   - name: ssh_passphrase
-     prompt: SSH key passphrase (03)
-     private: yes
-     confirm: yes
-
   tasks:
     - name: My user
       user: name=bhaskell
