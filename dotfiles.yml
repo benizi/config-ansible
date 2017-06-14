@@ -14,10 +14,11 @@
         - .zsh.local
 
     - name: Clone dotfiles
-      git: repo=gh:benizi/dotfiles
-        dest={{homedir}}/dotfiles
-        update=no
-        remote=benizi
+      git:
+        repo: https://github.com/benizi/dotfiles
+        dest: '{{homedir}}/dotfiles'
+        update: no
+        remote: benizi
 
     # TODO: replace this and the next task with script within dotfiles repo
     - name: Link dotfiles (simple)
