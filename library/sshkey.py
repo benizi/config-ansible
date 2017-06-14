@@ -109,20 +109,14 @@ class SSHKey(object):
         if os.path.exists(self.path):
             return (None, 'Key already exists', '')
 
-        cmd = [self.module.get_bin_path('ssh-keygen', True)]
-        cmd.append('-t')
-        cmd.append(self.type)
-        cmd.append('-b')
-        cmd.append(self.bits)
-        cmd.append('-C')
-        cmd.append(self.comment)
-        cmd.append('-f')
-        cmd.append(self.path)
-        cmd.append('-N')
-        if self.passphrase is not None:
-            cmd.append(self.passphrase)
-        else:
-            cmd.append('')
+        cmd = [
+            self.module.get_bin_path('ssh-keygen', True),
+            '-t', self.type,
+            '-b', self.bits,
+            '-C', self.comment,
+            '-f', self.path,
+            '-N', self.passphrase or '',
+        ]  # yapf:disable
 
         (rc, out, err) = self.run_unless_checking(cmd)
 
