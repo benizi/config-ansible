@@ -6,6 +6,7 @@
       with_items:
         - bin.local
         - .cache
+        - .config
         - git
         - .lein
         - .urxvt
