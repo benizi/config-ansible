@@ -29,6 +29,27 @@
       changed_when: install.stdout_lines != ['already']
       failed_when: install.rc != 0
 
+    - name: Fix homebrew permissions
+      become: true
+      shell: |
+        set -e
+        group={{wheel_group}}
+        for dir in /usr/local /Library/Caches/Homebrew /opt/homebrew-cask
+        do
+          test -d $dir || continue
+          if find $dir -maxdepth 2 ! -group $group | grep -q .
+          then chgrp -v -R $group $dir
+          fi
+          if find $dir -maxdepth 2 -perm -u+w ! -perm -g+w | grep -q .
+          then
+            chmod -v -R g=u $dir
+            find $dir -perm -u+w ! -perm -g+w -exec chmod -v -h g=u '{}' ';'
+          fi
+        done
+      register: perms
+      changed_when: perms.stdout_lines != []
+      failed_when: perms.rc != 0
+
     - name: Packages
       homebrew:
         name: '{{item}}'
