@@ -29,6 +29,13 @@
       changed_when: install.stdout_lines != ['already']
       failed_when: install.rc != 0
 
+    - name: Fix umask for multiuser machine
+      lineinfile:
+        dest: '{{homedir}}/.zsh.local/.zshenv'
+        line: '(( UID )) && umask 007 || umask 002'
+        create: yes
+        mode: 0644
+
     - name: Fix homebrew permissions
       become: true
       shell: |
