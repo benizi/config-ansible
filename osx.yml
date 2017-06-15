@@ -66,4 +66,5 @@
         - imagemagick
         - p7zip
         - pstree
+        - tmux
         - zsh
