@@ -33,12 +33,14 @@
       notify: Reload Polkit
 
     - name: NetworkManager prevent DNS interference
-      lineinfile: dest=/etc/NetworkManager/NetworkManager.conf
-        regexp={{item.regexp}}
-        line={{item.line}}
-      with_items:
-        - { regexp: '^\[', line: '[main]' }
-        - { regexp: '^rc-manager=', line: 'rc-manager=resolvconf' }
+      copy:
+        content: |
+          [main]
+          rc-manager=resolvconf
+        dest: /etc/NetworkManager/conf.d/use-resolvconf.conf
+        owner: root
+        group: root
+        mode: 0644
       notify: Restart NetworkManager
 
     - name: NetworkManager service
