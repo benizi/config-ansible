@@ -2,17 +2,20 @@
   hosts: arch
   become: true
   tasks:
+    - name: Remove BIND cruft
+      pacman: name=bind-tools state=absent
+
     - name: System tools
       archpkg: name={{item}}
       with_items:
         - aiccu
-        - bind-tools
         - aur/daemontools
         - gdb
         - htop
         - iotop
         - iw
         - kexec-tools
+        - ldns # for drill
         - lsof
         - ltrace
         - nmap
