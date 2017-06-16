@@ -43,6 +43,20 @@
         mode: 0644
       notify: Restart NetworkManager
 
+    - name: Resolvconf DNS setup
+      copy:
+        content: |
+          # man resolvconf.conf
+          resolv_conf=/etc/resolv.conf
+          search_domains=internal
+          name_servers=127.0.0.1
+          dnsmasq_resolv=/etc/resolv.conf.upstream
+        dest: /etc/resolvconf.conf
+        owner: root
+        group: root
+        mode: 0644
+      notify: Regenerate resolv.conf
+
     - name: NetworkManager service
       service: name=NetworkManager state=started enabled=yes
 
@@ -62,3 +76,6 @@
 
     - name: Restart NetworkManager
       service: name=NetworkManager state=restarted
+
+    - name: Regenerate resolv.conf
+      command: resolvconf -u
