@@ -1,4 +1,30 @@
 ---
+- name: Ansible custom facts
+  hosts: all
+  become: true
+  vars:
+    factdir: /etc/ansible/facts.d
+  tasks:
+  - name: Custom fact directory
+    file:
+      dest: '{{factdir}}'
+      state: directory
+      owner: root
+      group: '{{root_group}}'
+      mode: 0755
+
+  - name: Homedir fact
+    become: true
+    copy:
+      dest: '{{factdir}}/homedir.fact'
+      content: |
+        #!/usr/bin/env python
+        from os import environ
+        from os.path import expanduser
+        user = environ['SUDO_USER'] if 'SUDO_USER' in environ else ''
+        print('{"homedir":"%s"}' % expanduser('~%s' % user))
+      mode: 0755
+
 - name: Sudo Arch
   hosts: arch
   become: true

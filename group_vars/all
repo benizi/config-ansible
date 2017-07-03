@@ -4,6 +4,6 @@ ansible_local:
       enabled: false
 wheel_group: wheel
 root_group: root
-homedir: '{{ansible_user_dir}}'
+homedir: '{{ansible_local.homedir.homedir}}'
 sshconfdir: /etc/ssh
 ntp: true
