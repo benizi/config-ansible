@@ -1,6 +1,8 @@
 - name: Bluetooth
   hosts: physical
   become: true
+  vars:
+    confdir: /etc/systemd/system/bluetooth.service.d
   tasks:
     - name: Bluetooth packages
       pacman: name={{item}}
@@ -11,15 +13,32 @@
         - pulseaudio-bluetooth
         - ussp-push
 
-    - name: Enable SDP compatibility
-      lineinfile: dest=/usr/lib/systemd/system/bluetooth.service
-        regexp='^ExecStart='
-        line='ExecStart=/usr/lib/bluetooth/bluetoothd --compat'
+    - name: Service settings directory
+      file: dest={{confdir}} state=directory owner=root group=root mode=0755
       notify: restart bluetoothd
+
+    - name: Enable daemon options
+      copy:
+        content: |
+          # Overrides for daemon settings
+          [Service]
+          # blank line removes upstream cmdline
+          ExecStart=
+          ExecStart=/usr/lib/bluetooth/bluetoothd --compat --experimental
+        dest: '{{confdir}}/cmdline.conf'
+        owner: root
+        group: root
+        mode: 0644
+      notify:
+        - reload systemd
+        - restart bluetoothd
 
     - name: Bluetooth daemon
       service: name=bluetooth state=started enabled=yes
 
   handlers:
+    - name: reload systemd
+      command: systemctl daemon-reload
+
     - name: restart bluetoothd
       service: name=bluetooth state=restarted
