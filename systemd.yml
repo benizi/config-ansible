@@ -1,0 +1,26 @@
+- name: Systemd Configuration
+  hosts: arch
+  become: true
+  vars:
+    tmpconf: /etc/tmpfiles.d
+
+  tasks:
+    - name: Disable cleanup for some tmp files
+      copy:
+        content: |
+          ## Disable systemd-tmpfiles cleanup for long-dormant tmp files
+
+          # Vim temporary directories
+          x /tmp/v??????
+
+          # Chromium socket directories
+          x /tmp/.org.chromium.Chromium.*
+        dest: '{{tmpconf}}/keep-tmp.conf'
+        owner: root
+        group: root
+        mode: 0644
+      notify: reload systemd
+
+  handlers:
+    - name: reload systemd
+      command: systemctl daemon-reload

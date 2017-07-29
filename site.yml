@@ -4,6 +4,7 @@
 - include: sudo-umask.yml
 - include: inotify-limits.yml
 - include: arch-sysctl.yml
+- include: systemd.yml
 - include: prereqs.yml
 - include: ntp.yml
 - include: initial-ssh.yml
