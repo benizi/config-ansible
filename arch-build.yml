@@ -50,7 +50,7 @@
       shell: |
         pacman -T {{ncurses5}} && exit 0
 
-        set -- /lib/lib{tinfo,ncurses{,w}}.so.5{,.9}
+        set -- /lib/lib{tinfo,{ncurses,form,menu,panel}{,w}}.so.5{,.9}
 
         for file
         do test -L $file && readlink $file
