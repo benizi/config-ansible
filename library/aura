@@ -101,10 +101,12 @@ def install(module, aura, pkg, state):
     cmd = [aura, '-A', pkg, '--noconfirm']
     rc, out, err = module.run_command(cmd, check_rc=False)
     well_actually = '==> ERROR: ' in uncolor(out)
-    if rc != 0 or well_actually:
+    if rc != 0 or well_actually or err:
         msg = 'Failed to install %s' % (pkg)
         if 'have to use `sudo`' in uncolor(out):
             msg += ': `aura` requires root'
+        elif err:
+            msg += ":\n" + err
         else:
             msg += ":\n%s" % (uncolor(out))
         module.fail_json(msg=msg,stdout=out,stderr=err,rc=rc)
