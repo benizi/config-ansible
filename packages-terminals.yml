@@ -9,7 +9,7 @@
       register: vte3check
       changed_when: vte3check|failed
       failed_when: false
-      always_run: true
+      check_mode: no
       notify: Defuckup vte3
 
     - name: Install many terminals

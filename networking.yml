@@ -15,7 +15,7 @@
       register: libnm_version
       changed_when: libnm_version|failed
       failed_when: false
-      always_run: true
+      check_mode: no
       notify: Update libnm
 
     - meta: flush_handlers

@@ -70,7 +70,7 @@
       register: old_nix_hack
       changed_when: old_nix_hack.rc != 0
       failed_when: False
-      always_run: true
+      check_mode: no
 
     # `ncurses5-compat-libs` has a custom GPG key signature ...for some reason.
     - name: Custom key for ncurses5-compat-libs
