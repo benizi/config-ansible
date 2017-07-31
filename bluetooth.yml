@@ -5,10 +5,10 @@
     confdir: /etc/systemd/system/bluetooth.service.d
   tasks:
     - name: Bluetooth packages
-      pacman: name={{item}}
+      archpkg: name={{item}}
       with_items:
         - bluez
-        - bluez-utils
+        - aur/bluez-utils-compat # = `bluez-utils` with `--enable-deprecated`
         - obexftp
         - pulseaudio-bluetooth
         - ussp-push
