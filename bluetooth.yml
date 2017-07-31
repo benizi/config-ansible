@@ -11,6 +11,8 @@
         - aur/bluez-utils-compat # = `bluez-utils` with `--enable-deprecated`
         - obexftp
         - pulseaudio-bluetooth
+        - python-dbus
+        - python2-dbus
         - ussp-push
 
     - name: Service settings directory
