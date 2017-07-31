@@ -7,10 +7,14 @@
       file: state=directory dest={{ssh}} mode=0700
 
     - name: Initial user SSH config
-      copy: content="Host gh\nHostName github.com\nUser git\n"
-        dest={{ssh}}/config
-        mode=0640
-        force=no
+      copy:
+        content: |
+          Host gh
+          HostName github.com
+          User git
+        dest: '{{ssh}}/config'
+        mode: 0640
+        force: no
 
     - name: System SSH config dir
       become: true
