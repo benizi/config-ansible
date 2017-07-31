@@ -8,6 +8,21 @@
     version: 1.6.1
 
   tasks:
+    - name: Check library breakage
+      # Remove binary if it exists and libs have missing dependenc(y|ies)
+      shell: |
+        test -e {{exe}} || exit 0
+        find {{prefix}} -name priv |
+        xargs -iDIR find DIR -name '*.so' |
+        xargs -r ldd |
+        grep '=> not found' || exit 0
+        rm -v {{exe}}
+        exit 1
+      register: library
+      changed_when: library.rc != 0
+      failed_when: false
+      check_mode: no
+
     - name: CouchDB prereqs
       become: true
       pacman: name={{item}}
