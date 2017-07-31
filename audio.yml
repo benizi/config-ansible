@@ -8,3 +8,23 @@
       with_items:
         - native-protocol-tcp
         - switch-on-connect
+
+    - name: PulseAudio package
+      become: true
+      pacman:
+        name: pulseaudio
+      notify: restart pulseaudio
+
+    - name: PulseAudio service
+      systemd:
+        name: pulseaudio
+        user: yes
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: restart pulseaudio
+      systemd:
+        name: pulseaudio
+        user: yes
+        state: restarted
