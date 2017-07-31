@@ -8,7 +8,6 @@
     - name: System tools
       archpkg: name={{item}}
       with_items:
-        - aiccu
         - aur/daemontools
         - gdb
         - htop
