@@ -22,4 +22,5 @@
         - socat
         - strace
         - sysstat
+        - tftp-hpa # TFTP client for testing
         - words
