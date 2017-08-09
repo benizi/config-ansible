@@ -3,6 +3,7 @@
   vars:
     branch: 24bit-build
     extra_flags: '--enable-24-bit-color'
+    force: false
     rxvt_git: '{{gitbuild}}/rxvt-unicode'
     rxvt: /usr/local/bin/urxvt
 
@@ -32,13 +33,15 @@
         force=yes
 
     - name: Preferred (custom rxvt-unicode) build
-      shell: sh ./autogen.sh &&
-        autoreconf &&
-        ./configure {{extra_flags}} --enable-xft --enable-perl --enable-256-color --disable-iso14755 &&
-        make -j{{ansible_processor_vcpus}} &&
+      shell: |
+        set -e
+        {{force|bool}} || test ! -e {{rxvt}} || exit 0
+        cd {{rxvt_git}}
+        sh ./autogen.sh
+        autoreconf
+        ./configure {{extra_flags}} --enable-xft --enable-perl --enable-256-color
+        make -j{{ansible_processor_vcpus}}
         make install
-        chdir={{rxvt_git}}
-        creates={{rxvt}}
 
     - name: Preferred (custom rxvt-unicode) link
       file: dest={{homedir}}/bin.local/term state=link src={{rxvt}}
