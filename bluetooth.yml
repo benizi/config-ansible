@@ -4,6 +4,9 @@
   vars:
     confdir: /etc/systemd/system/bluetooth.service.d
   tasks:
+    - name: Remove conflicting packages
+      pacman: name=bluez-utils state=absent
+
     - name: Bluetooth packages
       archpkg: name={{item}}
       with_items:
