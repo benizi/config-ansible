@@ -8,11 +8,13 @@
         - ack
         - dtach
         - jq
+        - libxml2 # for xmllint
         - meld
         - python2-yapf
         - aur/rescuetime
         - rlwrap
         - screen
+        - tidy
         - tmux
         - x11vnc
         - xorg-server-xephyr
