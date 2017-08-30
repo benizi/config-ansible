@@ -2,54 +2,104 @@
   hosts: arch
   vars:
     arch: "{{'_x64' if ansible_machine == 'x86_64' else ''}}"
-    contents: '?alt=media'
-    baseurl: https://www.googleapis.com/storage/v1/b/chromium-browser-snapshots/o
+    update: false
+    # Revision information. Found in {{yaml}} after running with update=true.
+    # Google Cloud Storage provides MD5 in metadata, but Base64-encoded.
+    cl: 498337
+    date: 2017-08-30
+    md5Hash: gCLLO0t5DnSel8SlVeSluQ==
     cache: "{{gitbuild}}/chrome.zip"
-    dlbase: "%2Fchrome-linux.zip"
-    dlpath: "{{baseurl}}/Linux{{arch}}%2F"
-    lastchange: "{{dlpath}}LAST_CHANGE{{contents}}"
+    lastchange: "{{cache}}.lastchange"
+    lastchangeobject: LAST_CHANGE
+    metadata: "{{cache}}.metadata.json"
+    yaml: "{{cache}}.revision.yml"
+    prefix: '/opt/google/chrome/{{date}}'
+    # Utilities for finding upstream information
+    bucket: https://www.googleapis.com/storage/v1/b/chromium-browser-snapshots
+    shellfns: |
+      set -e
+      objectpath() { printf 'Linux{{arch}}/%s\n' "$*" | sed -e 's;/;%2F;g' ; }
+      objectmeta() { printf '%s/o/%s\n' "{{bucket}}" "$(objectpath "$1")" ; }
 
   tasks:
-    - name: Latest Chromium version
-      get_url: url={{lastchange}} dest={{cache}}.version
-      register: version_file
+    - name: Find latest revision number
+      shell: |
+        {{shellfns}}
+        objectmeta "{{lastchangeobject}}" |
+        xargs curl -s |
+        tee "{{lastchange}}.json" |
+        jq -r .mediaLink |
+        xargs curl -s |
+        sed a\\ |
+        tee "{{lastchange}}"
+      args:
+        creates: "{{omit if update else lastchange}}"
 
-    - name: Parse Latest Chromium version
-      command: cat {{cache}}.version
-      register: version
-      changed_when: version_file.changed
+    - name: Find latest revision metadata
+      shell: |
+        {{shellfns}}
+        if {{update|lower}}
+        then read cl < {{lastchange}}
+        else cl={{cl}}
+        fi
+        objectmeta $cl/chrome-linux.zip |
+        xargs curl -s |
+        tee "{{metadata}}.$cl" |
+        tee "{{metadata}}"
+      args:
+        creates: "{{omit if update else metadata}}"
 
-    - name: Latest Chromium metadata
-      get_url: url={{dlpath}}{{version.stdout}}{{dlbase}}
-        dest={{cache}}.json
-      register: metadata
+    - name: Generate YAML for latest revision
+      shell: |
+        set -e
+        cat "{{metadata}}" |
+        jq -r '
+        {
+          cl: .metadata["cr-commit-position-number"],
+          date: (.timeCreated|split("T")|.[0]),
+          md5Hash: .md5Hash
+        } |
+        to_entries |
+        map("    \(.key): \(.value)") |
+        join("\n")' |
+        tee "{{yaml}}"
+      args:
+        creates: '{{yaml}}'
 
-    - name: Parse Latest Chromium link
-      shell: jq -r .mediaLink < {{cache}}.json
-      register: url
-      changed_when: metadata.changed
+    - name: Parse MD5 for download
+      shell: |
+        {{shellfns}}
+        if {{update|lower}}
+        then jq -r .md5Hash < "{{metadata}}"
+        else echo {{md5Hash}}
+        fi |
+        openssl enc -d -a |
+        xxd -p |
+        sed 's/^/md5:/'
+      register: parsechecksum
+      changed_when: false
+      check_mode: no
 
-    - name: Parse Latest Chromium checksum
-      shell: jq -r .md5Hash < {{cache}}.json |
-        openssl enc -base64 -d |
-        od -A n -t x1 |
-        awk -v RS=' ' -v ORS= 1
-      register: checksum
-      changed_when: metadata.changed
+    - name: Parse URL for download
+      shell: 'jq -r .mediaLink < "{{metadata}}"'
+      register: parseurl
+      changed_when: false
+      check_mode: no
 
-    - name: Parse Latest Chromium date
-      shell: jq -r .timeCreated < {{cache}}.json |
-        awk -FT '{ print "/opt/google/chrome/" $1 }'
-      register: install_to
-      changed_when: metadata.changed
+    - name: Download latest version
+      get_url:
+        dest: '{{cache}}'
+        url: '{{parseurl.stdout}}'
+        checksum: '{{parsechecksum.stdout}}'
 
-    - name: Latest Chromium download
-      get_url: url={{url.stdout}}
-        dest={{cache}}
-        checksum="md5:{{checksum.stdout}}"
-
-    - name: Extract Latest Chromium
-      shell: unzip -d {{install_to.stdout}}.tmp {{cache}} &&
-        mv {{install_to.stdout}}.tmp/chrome-linux {{install_to.stdout}} &&
-        rmdir {{install_to.stdout}}.tmp
-        creates={{install_to.stdout}}/chrome
+    - name: Install latest version
+      shell: |
+        set -e
+        # acrobatics here just to strip a leading directory name
+        mkdir -p {{prefix}}
+        tmp="$(mktemp -d)"
+        ln -s {{prefix}} "$tmp/chrome-linux"
+        unzip -d "$tmp" {{cache}}
+        rm -r "$tmp"
+      args:
+        creates: '{{prefix}}/chrome'
