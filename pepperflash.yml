@@ -1,6 +1,69 @@
 - name: PepperFlash
   hosts: arch
+  vars:
+    version: 26.0.0.151
+    flashplayer: https://fpdownload.macromedia.com/pub/flashplayer
+    latestxml: '{{flashplayer}}/masterversion/masterversion.xml'
+    url: '{{flashplayer}}/pdc/{{parsedversion}}/{{basename}}'
+    parsedversion: '{{findversion.stdout}}'
+    basename: 'flash_player_ppapi_linux.x86_64.tar.gz'
+    xpath: 'string(/version/release/PPAPI_linuxchrome/@version)'
+    cache: '{{gitbuild}}/{{basename}}'
+    latest: '{{cache}}.latest'
+    root: /opt/flash
+    prefix: '{{root}}/{{version}}'
+    current: '{{root}}/current'
+    library: libpepflashplayer.so
+    manifest: manifest.json
+    update: false
+
   tasks:
-    - name: Get Pepper Flash
-      archpkg: name=aur/pepper-flash
-      become: true
+    - name: Fetch latest Flash version
+      shell: |
+        curl -s {{latestxml}} |
+        xmllint --xpath '{{xpath}}' - |
+        tr , . |
+        tee "{{latest}}"
+      args:
+        creates: '{{omit if update else latest}}'
+        # I'm not `using 'curl'`... I'm using `curl | xmllint | tr | tee`:
+        warn: no
+      register: fetchlatest
+
+    - name: Parse latest version
+      shell: |
+        if {{update|lower}}
+        then cat {{latest}}
+        else echo {{version}}
+        fi
+      changed_when: false
+      check_mode: no
+      register: findversion
+
+    - name: Download latest Flash
+      get_url:
+        url: '{{url}}'
+        dest: '{{cache}}'
+
+    - name: Install directory
+      file:
+        state: directory
+        dest: '{{prefix}}'
+        mode: 0755
+
+    - name: Install latest Flash
+      unarchive:
+        src: '{{cache}}'
+        remote_src: true
+        dest: '{{prefix}}'
+        extra_opts:
+          - '{{library}}'
+          - '{{manifest}}'
+      notify: update current link
+
+  handlers:
+    - name: update current link
+      file:
+        state: link
+        dest: '{{current}}'
+        src: '{{parsedversion}}'
