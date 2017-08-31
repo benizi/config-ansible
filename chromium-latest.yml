@@ -8,12 +8,12 @@
     cl: 498337
     date: 2017-08-30
     md5Hash: gCLLO0t5DnSel8SlVeSluQ==
-    cache: "{{gitbuild}}/chrome.zip"
+    cache: "{{gitbuild}}/chromium.zip"
     lastchange: "{{cache}}.lastchange"
     lastchangeobject: LAST_CHANGE
     metadata: "{{cache}}.metadata.json"
     yaml: "{{cache}}.revision.yml"
-    prefix: '/opt/google/chrome/{{date}}'
+    prefix: '/opt/google/chromium/{{date}}'
     # Utilities for finding upstream information
     bucket: https://www.googleapis.com/storage/v1/b/chromium-browser-snapshots
     shellfns: |
