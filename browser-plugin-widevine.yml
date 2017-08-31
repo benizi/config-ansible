@@ -1,0 +1,52 @@
+- name: Widevine
+  hosts: arch
+  vars:
+    version: 1.4.8.1008
+    platform: "linux-{{'x64' if ansible_machine == 'x86_64' else 'ia32'}}"
+    baseurl: https://dl.google.com/widevine-cdm/
+    latesturl: '{{baseurl}}/current.txt'
+    url: '{{baseurl}}/{{parsedversion}}-{{platform}}.zip'
+    parsedversion: '{{findversion.stdout}}'
+    cache: '{{gitbuild}}/widevine.zip'
+    latest: '{{cache}}.latest'
+    root: /opt/widevine
+    prefix: '{{root}}/{{version}}'
+    current: '{{root}}/current'
+    library: libwidevinecdm.so
+    manifest: manifest.json
+    update: false
+
+  tasks:
+    - name: Fetch latest Widevine version
+      get_url:
+        url: '{{latesturl}}'
+        dest: '{{latest}}'
+        force: '{{update}}'
+
+    - name: Parse latest version
+      shell: '{{update|lower}} && cat {{latest}} || echo {{version}}'
+      changed_when: false
+      check_mode: no
+      register: findversion
+
+    - name: Download latest
+      get_url:
+        url: '{{url}}'
+        dest: '{{cache}}'
+
+    - name: Install latest
+      shell: |
+        set -e
+        mkdir -p {{prefix}}
+        unzip -d {{prefix}} {{cache}} {{library}} {{manifest}}
+      args:
+        creates: '{{prefix}}/{{library}}'
+      notify: update current link
+
+  handlers:
+    - name: update current link
+      file:
+        state: link
+        dest: '{{current}}'
+        src: '{{parsedversion}}'
+
