@@ -1,0 +1,79 @@
+- name: Google Chrome Latest
+  hosts: arch
+  vars:
+    update: false
+    track: unstable
+    version: '62.0.3198.0'
+    release: '-1'
+    sha256sum: a4b5b845ad804215dae33cddf8da8ef122520b215c38a1b9bab0ebf431c2a534
+    cache: "{{gitbuild}}/chrome-{{track}}.deb"
+    packages: "{{cache}}.Packages"
+    latest: "{{cache}}.latest"
+    prefix: '/opt/google/chrome/{{parsedversion}}'
+    parsedversion: '{{findversion.stdout}}'
+    parsedrelease: '{{findrelease.stdout}}'
+    parseddeb: '{{pkg}}_{{parsedversion}}{{parsedrelease}}_amd64.deb'
+    debroot: https://dl.google.com/linux/chrome/deb
+    packagesurl: '{{debroot}}/dists/stable/main/binary-amd64/Packages'
+    pkg: 'google-chrome-{{track}}'
+    debpath: 'pool/main/g/{{pkg}}/{{parseddeb}}'
+    url: '{{debroot}}/{{debpath}}'
+    # strip components = 4 (including `.`): ./opt/google/chrome-{{track}}/
+    stripcomponents: 4
+    shellfns: |
+      set -e
+      debproperty() {
+        if {{update|lower}}
+        then
+          awk -v pkg={{pkg}} '
+          rightpkg && /^'$1':/ { print $NF ; exit }
+          $0 == "Package: " pkg { rightpkg = 1 }
+          ' {{packages}}
+        else echo "$2"
+        fi
+      }
+      pkgversion() { debproperty Version {{version}}{{release}} ; }
+      getversion() { pkgversion | awk -F- '{print $1}' ; }
+      getrelease() { pkgversion | awk -F- '{print FS $2}' ; }
+      getchecksum() { debproperty SHA256 {{sha256sum}} | sed 's/^/sha256:/' ; }
+
+  tasks:
+    - name: Find latest Chrome version info
+      get_url:
+        url: '{{packagesurl}}'
+        dest: '{{packages}}'
+        force: '{{update}}'
+      check_mode: no
+
+    - name: Parse checksum
+      shell: '{{shellfns}} getchecksum'
+      register: parsechecksum
+      changed_when: false
+      check_mode: no
+
+    - name: Parse version
+      shell: '{{shellfns}} getversion'
+      register: findversion
+      changed_when: false
+      check_mode: no
+
+    - name: Parse release
+      shell: '{{shellfns}} getrelease'
+      register: findrelease
+      changed_when: false
+      check_mode: no
+
+    - name: Download latest version
+      get_url:
+        dest: '{{cache}}'
+        url: '{{url}}'
+        checksum: '{{parsechecksum.stdout}}'
+
+    - name: Install latest version
+      shell: |
+        set -e
+        mkdir -p {{prefix}}
+        deb2targz {{cache}} |
+        tar Jx -C {{prefix}} --strip-components={{stripcomponents}} ./opt
+      args:
+        creates: '{{prefix}}/chrome'
