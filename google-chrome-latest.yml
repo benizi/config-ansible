@@ -28,8 +28,9 @@
         force: '{{update}}'
       check_mode: no
 
-    - name: Update version info from Packages
+    - name: Find version info from Packages
       shell: |
+        {{update|lower}} || exit 0
         awk -F': ' '
         $1 == "Package" { print "{" }
         $1 ~ /^(Package|Version|Filename|SHA256)$/ {
@@ -40,14 +41,13 @@
         select(.name=="{{pkg.name}}") |
         (.version/"-") as $v | . + {version: $v[0], release: ("-" + $v[1])}'
       register: findversion
-      changed_when: false
+      changed_when: findversion.stdout
       check_mode: no
-      when: update
 
-    - name: Update package attributes
+    - name: Parse package attributes
       set_fact:
-        pkg: '{{findversion.stdout|from_json}}'
-      when: update
+        pkg: '{{findversion.stdout|from_json if update else pkg}}'
+      changed_when: update
 
     - name: Download latest version
       get_url:
