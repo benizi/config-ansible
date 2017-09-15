@@ -6,6 +6,7 @@
       pacman: name={{item}}
       with_items:
         - kodi
+        - mencoder # split from `mplayer`
         - minidlna
         - mplayer
         - vlc
