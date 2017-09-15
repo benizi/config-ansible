@@ -4,6 +4,7 @@
     prefix: /opt/context
     installer: '{{prefix}}/installer'
     binary: '{{prefix}}/bin/luatex'
+    force: false
 
   tasks:
     - name: ConTeXt directory
@@ -15,4 +16,7 @@
         mode=0750
 
     - name: ConTeXt
-      shell: '{{installer}} creates={{binary}} chdir={{prefix}}'
+      command: '{{installer}}'
+      args:
+        chdir: '{{prefix}}'
+        creates: '{{omit if force else binary}}'
