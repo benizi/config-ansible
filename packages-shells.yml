@@ -6,6 +6,7 @@
       pacman: name={{item}}
       with_items:
         - bash
+        - bash-completion # not included in base package
         - dash # much POSIX
         - fish # I hate `fish`, but people use it
         - mksh # MirBSD ksh
