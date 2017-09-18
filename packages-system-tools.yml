@@ -18,6 +18,7 @@
         - lsof
         - ltrace
         - nmap
+        - ovmf # UEFI firware for qemu
         - rsync
         - socat
         - strace
