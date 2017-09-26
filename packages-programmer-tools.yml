@@ -16,6 +16,7 @@
         - screen
         - tidy
         - tmux
+        - unoconv # deal with MS Office formats
         - x11vnc
         - xorg-server-xephyr
         - xorg-server-xvfb
