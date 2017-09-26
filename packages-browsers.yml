@@ -3,9 +3,11 @@
   become: true
   tasks:
     - name: Browsers
-      pacman: name={{item}}
+      archpkg: name={{item}}
       with_items:
         - chromium
         - firefox
+        - aur/firefox-esr-bin # for NPAPI plugin support
+        - npapi-vlc
         - opera
         - w3m
