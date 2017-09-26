@@ -5,6 +5,8 @@
     - name: Fonts
       archpkg: name={{item}}
       with_items:
+        - aur/emojione-color-font
+        - aur/ttf-noto-fonts-emoji-ib
         - aur/ttf-font-awesome
         - fontforge
         - gsfonts
