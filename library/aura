@@ -100,15 +100,20 @@ def install(module, aura, pkg, state):
         module.exit_json(changed=True, msg="%s would be %s" % (pkg, state))
     cmd = [aura, '-A', pkg, '--noconfirm']
     rc, out, err = module.run_command(cmd, check_rc=False)
-    well_actually = '==> ERROR: ' in uncolor(out)
-    if rc != 0 or well_actually or err:
+    failures = []
+    plain_out = uncolor(out)
+    if 'have to use `sudo`' in plain_out:
+        failures.push('`aura` requires root')
+    if '==> ERROR: ' in plain_out:
+        failures.push("Error message in output:\n" + plain_out)
+    if err:
+        failures.push("Output on stderr:\n" + err)
+    if rc != 0:
+        failures.push("Non-zero exit code: %s" % rc)
+    if failures:
         msg = 'Failed to install %s' % (pkg)
-        if 'have to use `sudo`' in uncolor(out):
-            msg += ': `aura` requires root'
-        elif err:
-            msg += ":\n" + err
-        else:
-            msg += ":\n%s" % (uncolor(out))
+        msg += ":\n%s" % plain_out
+        msg += "\n" + "\n".join(failures)
         module.fail_json(msg=msg,stdout=out,stderr=err,rc=rc)
     module.exit_json(
             changed=True,
