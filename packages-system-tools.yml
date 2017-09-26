@@ -23,5 +23,6 @@
         - socat
         - strace
         - sysstat
+        - systemtap # for `stap`
         - tftp-hpa # TFTP client for testing
         - words
