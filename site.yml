@@ -63,6 +63,7 @@
 - include: imv.yml
 - include: remote-access.yml
 - include: power.yml
+- include: systemd-logging.yml
 - include: android.yml
 - include: hub.yml
 - include: aws.yml

@@ -1,0 +1,21 @@
+- name: Systemd settings
+  hosts: arch
+  become: true
+  vars:
+    confdir: /etc/systemd/journald.conf.d
+
+  tasks:
+    - name: systemd-journald conf dir
+      file: dest={{confdir}} state=directory owner=root group=root mode=0750
+
+    - name: Squelch excessive journald logging
+      copy: content='[Journal]\nMaxLevelStore=info\nMaxLevelSyslog=info\n'
+        dest={{confdir}}/20-logging.conf
+        owner=root
+        group=root
+        mode=0644
+      notify: restart journald
+
+  handlers:
+    - name: restart journald
+      service: name=systemd-journald state=restarted
