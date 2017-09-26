@@ -2,15 +2,19 @@
   hosts: arch
   vars:
     confdir: /etc/systemd/system/docker.service.d
+    update: false
 
   tasks:
     - name: Install packages
       become: true
-      pacman: name={{item}}
+      pacman:
+        name: '{{item}}'
+        state: '{{"latest" if update else "present"}}'
       with_items:
         - docker
         - docker-compose
         - docker-machine
+      tags: packages
 
     - name: Enable IPv4 forwarding
       become: true
