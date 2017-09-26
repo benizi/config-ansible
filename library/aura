@@ -24,6 +24,11 @@ options:
         required: false
         default: present
         choices: [present, absent, latest]
+    force:
+        description: [Remove packages if necessary]
+        required: false
+        default: false
+        choices: [true, false]
 '''
 
 EXAMPLES = '''
@@ -89,7 +94,7 @@ def query(module, aura, pkg, state='present'):
             return True, (lver == rver)
         return False, False
 
-def install(module, aura, pkg, state):
+def install(module, aura, pkg, state, force=False):
     installed = installed_version(module, aura, pkg)
     if installed and state == 'present':
         module.exit_json(changed=False, msg='package already installed')
@@ -98,6 +103,7 @@ def install(module, aura, pkg, state):
         module.exit_json(changed=False, msg='package already latest')
     if module.check_mode:
         module.exit_json(changed=True, msg="%s would be %s" % (pkg, state))
+    # TODO: modify command when `force` is specified
     cmd = [aura, '-A', pkg, '--noconfirm']
     rc, out, err = module.run_command(cmd, check_rc=False)
     failures = []
@@ -127,6 +133,7 @@ def main():
             argument_spec = dict(
                 name = dict(),
                 state = dict(default='present', choices=['present', 'latest', 'absent']),
+                force = dict(default=False, type='bool'),
             ),
             supports_check_mode = True)
     aura = module.get_bin_path('aura', True)
@@ -134,9 +141,10 @@ def main():
     if p['name']:
         pkg = p['name']
         state = p['state']
+        force = p['force']
 
         if state == 'present' or state == 'latest':
-            install(module, aura, pkg, state)
+            install(module, aura, pkg, state, force=force)
         elif state == 'absent':
             remove(module, aura, pkg)
 
