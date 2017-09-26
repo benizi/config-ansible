@@ -14,7 +14,7 @@
 
     - name: Arch build system
       become: true
-      pacman: name=abs
+      pacman: name=asp
       notify: set abs perms
 
     - name: Aura source
