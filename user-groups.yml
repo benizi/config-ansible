@@ -3,6 +3,11 @@
   tasks:
     - name: Permissions
       become: true
-      user: name=bhaskell
-        append=yes
-        groups=wireshark,audio,systemd-journal,uucp
+      user:
+        name: bhaskell
+        append: yes
+        groups:
+          - audio
+          - systemd-journal
+          - uucp
+          - wireshark
