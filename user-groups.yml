@@ -8,6 +8,7 @@
         append: yes
         groups:
           - audio
+          - lp # for BlueZ D-Bus access
           - systemd-journal
           - uucp
           - wireshark
