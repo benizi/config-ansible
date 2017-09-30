@@ -3,6 +3,7 @@
   become: true
   vars:
     confdir: /etc/systemd/system/bluetooth.service.d
+    dbusconf: /usr/share/dbus-1/system-local.conf
   tasks:
     - name: Remove conflicting packages
       pacman: name=bluez-utils state=absent
@@ -21,6 +22,17 @@
     - name: Service settings directory
       file: dest={{confdir}} state=directory owner=root group=root mode=0755
       notify: restart bluetoothd
+
+    - name: Bluetooth permissions
+      copy:
+        src: files/bluetooth.permissions.conf
+        dest: '{{dbusconf}}'
+        owner: root
+        group: root
+        mode: 0644
+      notify:
+        - reload systemd
+        - reload dbus
 
     - name: Enable daemon options
       copy:
@@ -47,3 +59,8 @@
 
     - name: restart bluetoothd
       service: name=bluetooth state=restarted
+
+    - name: reload dbus
+      service:
+        name: dbus
+        state: reloaded
