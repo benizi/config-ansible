@@ -20,6 +20,7 @@
         - nmap
         - ovmf # UEFI firware for qemu
         - rsync
+        - smartmontools # for `smartctl`
         - socat
         - strace
         - sysstat
