@@ -43,7 +43,7 @@
     - name: localdns binary
       become: false
       shell: |
-        docker run --rm -it -v {{bindir}}:/out golang:1.8 sh -e -c '
+        docker run --rm -v {{bindir}}:/out golang:1.8 sh -e -c '
         go get {{package}}
         go build -o /out/{{exe}} {{package}}'
       args:
