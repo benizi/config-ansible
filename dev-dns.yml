@@ -4,6 +4,7 @@
   vars:
     bindir: /usr/local/bin
     exe: localdns
+    force: false
     package: github.com/benizi/localdns
     systemd_dir: /etc/systemd/system
 
@@ -46,7 +47,10 @@
         go get {{package}}
         go build -o /out/{{exe}} {{package}}'
       args:
-        creates: '{{bindir}}/{{exe}}'
+        creates: '{{omit if force else "%s/%s" % (bindir, exe)}}'
+      notify:
+        - reload systemd
+        - restart localdns
 
     - name: localdns service
       copy: src=files/{{item}}
