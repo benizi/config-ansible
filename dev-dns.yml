@@ -51,6 +51,7 @@
       notify:
         - reload systemd
         - restart localdns
+      tags: build
 
     - name: localdns service
       copy: src=files/{{item}}
