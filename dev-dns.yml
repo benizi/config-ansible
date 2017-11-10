@@ -15,13 +15,6 @@
         - dhclient
         - openresolv # resolvconf
 
-    - name: Symlink for drill
-      become: false
-      file:
-        dest: '{{homedir}}/bin.local/dig'
-        state: link
-        src: /bin/drill
-
     - name: Configure resolvconf.conf and resolv.conf
       copy: content={{item.txt}}
         dest=/etc/{{item.base}}.conf
