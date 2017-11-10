@@ -48,36 +48,30 @@
         go build -o /out/{{exe}} {{package}}'
       args:
         creates: '{{omit if force else "%s/%s" % (bindir, exe)}}'
-      notify:
-        - reload systemd
-        - restart localdns
+      notify: restart localdns
       tags: build
 
     - name: localdns service
       copy: src=files/{{item}}
         dest={{systemd_dir}}/{{item}}
       with_items: [localdns.service]
-      notify:
-        - reload systemd
-        - restart localdns
+      notify: restart localdns
 
     - name: localdns env
       template: src=templates/{{item}}.j2
         dest=/etc/{{item}}
       with_items: [localdns.env]
-      notify:
-        - reload systemd
-        - restart localdns
+      notify: restart localdns
 
     - name: localdns service
       service: name=localdns state=started enabled=yes
 
   handlers:
     - name: restart localdns
-      service: name=localdns state=restarted
+      shell: |
+        set -e
+        systemctl daemon-reload
+        systemctl restart localdns
 
     - name: restart wicd
       service: name=wicd state=restarted
-
-    - name: reload systemd
-      command: systemctl daemon-reload
