@@ -1,0 +1,1 @@
+localdns_ifaces: ['mirror%{{ansible_default_ipv4.interface}}%only4']
