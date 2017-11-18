@@ -112,8 +112,6 @@ def install(module, aura, pkg, state, force=False):
         failures.append('`aura` requires root')
     if '==> ERROR: ' in plain_out:
         failures.append("Error message in output:\n" + plain_out)
-    if err:
-        failures.append("Output on stderr:\n" + err)
     if rc != 0:
         failures.append("Non-zero exit code: %s" % rc)
     if failures:
