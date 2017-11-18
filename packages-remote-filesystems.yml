@@ -13,3 +13,20 @@
       with_items:
         - smbclient
         - sshfs
+
+    - name: iSCSI Target package
+      aura:
+        name: targetcli-fb
+      notify: restart target
+
+    - name: iSCSI Target service
+      service:
+        name: target
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: restart target
+      service:
+        name: target
+        state: restarted
