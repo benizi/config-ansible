@@ -109,13 +109,13 @@ def install(module, aura, pkg, state, force=False):
     failures = []
     plain_out = uncolor(out)
     if 'have to use `sudo`' in plain_out:
-        failures.push('`aura` requires root')
+        failures.append('`aura` requires root')
     if '==> ERROR: ' in plain_out:
-        failures.push("Error message in output:\n" + plain_out)
+        failures.append("Error message in output:\n" + plain_out)
     if err:
-        failures.push("Output on stderr:\n" + err)
+        failures.append("Output on stderr:\n" + err)
     if rc != 0:
-        failures.push("Non-zero exit code: %s" % rc)
+        failures.append("Non-zero exit code: %s" % rc)
     if failures:
         msg = 'Failed to install %s' % (pkg)
         msg += ":\n%s" % plain_out
