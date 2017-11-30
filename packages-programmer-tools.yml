@@ -10,6 +10,7 @@
         - jq
         - libxml2 # for xmllint
         - meld
+        - pv # pipe viewer
         - python2-yapf
         - aur/rescuetime
         - rlwrap
