@@ -5,6 +5,7 @@
     - name: Audio
       archpkg: name={{item}}
       with_items:
+        - ardour
         - aur/spotify
         - festival-us
         - fluidsynth
@@ -13,4 +14,5 @@
         - lilypond
         - pavucontrol
         - pulseaudio-alsa
+        - pulseaudio-jack
         - sox
