@@ -25,5 +25,6 @@
         - strace
         - sysstat
         - systemtap # for `stap`
+        - tcpflow # capture TCP traffic
         - tftp-hpa # TFTP client for testing
         - words
