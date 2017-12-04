@@ -1,14 +1,17 @@
 - name: Custom s3cmd
   hosts: arch
   vars:
+    branch: customized
     build: '{{gitbuild}}/s3cmd'
+    update: false
   tasks:
     - name: Custom s3cmd source
-      git: repo=gh:benizi/s3cmd
-        dest={{build}}
-        version=feature/fog-config
-        update=no
-        remote=benizi
+      git:
+        repo: 'gh:benizi/s3cmd'
+        dest: '{{build}}'
+        version: '{{branch}}'
+        update: '{{update}}'
+        remote: 'benizi'
 
     - name: Custom s3cmd wrapper
       copy: content='#!/bin/sh\nexec python2 {{build}}/s3cmd "$@"'
