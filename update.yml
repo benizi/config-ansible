@@ -15,3 +15,12 @@
     - name: upgrade
       pacman: upgrade=yes
       when: upgrade
+
+- name: Update VPS
+  hosts: vps
+  become: true
+  tasks:
+    - name: update
+      yum:
+        name: '*'
+        state: latest
