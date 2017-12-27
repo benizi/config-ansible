@@ -2,7 +2,7 @@
   hosts: arch
   vars:
     prefix: /opt/nix
-    version: 1.11.8
+    version: 1.11.16
 
   tasks:
     - name: Nix prereqs
