@@ -46,6 +46,7 @@
 - include: packages-science.yml
 - include: audio.yml
 - include: bluetooth.yml
+- include: printers.yml
 - include: radio.yml
 - include: monitor.yml
 - include: context.yml
