@@ -1,0 +1,77 @@
+- name: Printers
+  hosts: physical
+  become: true
+  tasks:
+    - name: CUPS
+      pacman: name={{item}}
+      with_items:
+        - cups
+        - cups-pdf
+        - cups-pk-helper
+      notify:
+        - reload
+        - cups daemon
+
+    - name: CUPS daemon
+      service:
+        name: org.cups.cupsd
+        state: started
+        enabled: yes
+
+    - name: CUPS files config
+      lineinfile:
+        dest: /etc/cups/cups-files.conf
+        line: '{{item.key}} {{item.val}}'
+        regexp: '^{{item.key}} '
+      with_items:
+        - { key: SystemGroup, val: 'sys root wheel' }
+        - { key: AccessLog, val: syslog }
+        - { key: ErrorLog, val: syslog }
+        - { key: PageLog, val: syslog }
+      notify:
+        - cups daemon
+        - cfg perms
+
+    - name: CUPS daemon config
+      copy:
+        content: |
+          MaxLogSize 0
+          LogLevel debug
+          Listen localhost:631
+          Listen /run/cups/cups.sock
+          Browsing on
+          BrowseLocalProtocols dnssd
+          DefaultAuthType Basic
+          WebInterface Yes
+          <Location />
+            Order deny,allow
+          </Location>
+          <Policy default>
+            JobPrivateAccess all
+            JobPrivateValues none
+            SubscriptionPrivateAccess all
+            SubscriptionPrivateValues none
+            <Limit All>
+              Order deny,allow
+            </Limit>
+          </Policy>
+        dest: /etc/cups/cupsd.conf
+        owner: root
+        group: lp
+        mode: 0644
+      notify:
+        - cups daemon
+        - cfg perms
+
+  handlers:
+    - name: reload
+      command: systemctl daemon-reload
+
+    - name: cups daemon
+      service:
+        name: org.cups.cupsd
+        state: restarted
+
+    - name: cfg perms
+      become: no
+      shell: 'set-all-facl -u /etc/cups/cups*.conf'
