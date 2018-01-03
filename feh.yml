@@ -2,6 +2,7 @@
   hosts: arch
   vars:
     build: '{{gitbuild}}/feh'
+    branch: auto-rotate-exif
   tasks:
     - name: Feh (image viewer) prereqs
       become: true
@@ -11,9 +12,12 @@
         - giblib
 
     - name: Feh (image viewer) source
-      git: repo=gh:benizi/feh
-        dest={{build}}
-        remote=benizi
+      git:
+        repo: 'gh:benizi/feh'
+        dest: '{{build}}'
+        remote: benizi
+        version: '{{branch}}'
+        force: yes
       notify: install feh
 
   handlers:
