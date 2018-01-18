@@ -36,7 +36,7 @@
 
     - name: Bluetooth audio services
       ini_file:
-        dest: '/etc/bluetooth/main.conf'
+        dest: '/etc/bluetooth/audio.conf'
         section: General
         option: Enable
         value: 'Source,Sink,Media,Socket'
