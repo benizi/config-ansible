@@ -3,7 +3,7 @@
   become: true
   vars:
     confdir: /etc/systemd/system/bluetooth.service.d
-    dbusconf: /usr/share/dbus-1/system-local.conf
+    dbusconf: /etc/dbus-1/system-local.conf
   tasks:
     - name: Remove conflicting packages
       pacman: name=bluez-utils state=absent
