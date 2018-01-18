@@ -34,12 +34,15 @@
         - reload systemd
         - reload dbus
 
-    - name: Bluetooth audio services
+    - name: Bluetooth ini config options
       ini_file:
-        dest: '/etc/bluetooth/audio.conf'
-        section: General
-        option: Enable
-        value: 'Source,Sink,Media,Socket'
+        dest: '/etc/bluetooth/{{item.split("/")[0]}}.conf'
+        section: '{{item.split("/")[1]}}'
+        option: '{{item.split("/")[2]}}'
+        value: '{{item.split("/")[3]}}'
+      with_items:
+        - 'audio/General/Enable/Source,Sink,Media,Socket'
+        - 'main/Policy/AutoEnable/true'
       notify: restart bluetoothd
 
     - name: Enable daemon options
