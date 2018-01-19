@@ -20,7 +20,7 @@
         update: no
         remote: benizi
 
-    # TODO: replace this and the next task with script within dotfiles repo
+    # TODO: (1/3) set up symlinks using script in the dotfiles repo itself
     - name: Link dotfiles (simple)
       file: state=link src=dotfiles/{{item}} dest={{homedir}}/{{item}}
       with_items:
@@ -39,7 +39,7 @@
         - .xmonad
         - .xsession
 
-    # TODO: see prior TODO
+    # TODO: (2/3)
     - name: Link dotfiles (non-homedir)
       file: state=link src={{item.src}} dest={{homedir}}/{{item.dest}}
       with_items:
@@ -48,6 +48,16 @@
         - { src: ../dotfiles/.urxvt, dest: .urxvt/ext }
         - { src: dotfiles/.vim/vimrc, dest: .vimrc }
         - { src: dotfiles/.zsh/.zshenv, dest: .zshenv }
+
+    # TODO: (3/3)
+    - name: Link dotfiles (global)
+      file:
+        state: link
+        src: '{{item.src}}'
+        dest: '{{item.dest}}'
+      with_items:
+        - src: '{{homedir}}/dotfiles/bin/google-drive-ocamlfuse-helper'
+          dest: /usr/local/bin/google-drive
 
     - name: Root zsh
       become: true
