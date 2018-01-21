@@ -6,6 +6,7 @@
       pacman: name={{item}}
       with_items:
         - lxpanel
+        - mesa-demos # glxinfo and glxgears
         - parcellite
         - rofi # dmenu-replacement
         - xclip
