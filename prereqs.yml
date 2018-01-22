@@ -13,6 +13,11 @@
         - vim
         - vim-minimal
 
+    - name: Remove outdated Intel Xorg driver
+      pacman:
+        name: xf86-video-intel
+        state: absent
+
     - name: Very basic prereqs
       pacman: name={{item}}
       with_items:
@@ -28,7 +33,6 @@
       pacman: name={{item}}
       with_items:
         - xorg-server
-        - xf86-video-intel
         - xf86-input-evdev
         - xf86-input-keyboard
         - xf86-input-mouse
