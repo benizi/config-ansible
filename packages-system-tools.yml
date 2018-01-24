@@ -5,6 +5,15 @@
     - name: Remove BIND cruft
       pacman: name=bind-tools state=absent
 
+    - name: Golang `dig` replacement
+      become: false
+      shell: |
+        set -e
+        cd {{homedir}}/bin.local
+        test -e dig || make dig
+      register: build
+      changed_when: build.stdout != ''
+
     - name: System tools
       archpkg: name={{item}}
       with_items:
