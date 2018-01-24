@@ -17,7 +17,6 @@
     - name: System tools
       archpkg: name={{item}}
       with_items:
-        - aur/daemontools
         - gdb
         - htop
         - iotop
