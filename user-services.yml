@@ -22,6 +22,10 @@
         description: NetworkManager applet
         exec:
           start: [/bin/nm-applet]
+      - name: mpd
+        description: Music Player Daemon
+        exec:
+          start: [/bin/mpd --verbose --stderr --no-daemon]
     user_systemd: '{{homedir}}/.config/systemd/user'
 
   tasks:
