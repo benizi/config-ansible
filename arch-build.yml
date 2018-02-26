@@ -23,6 +23,18 @@
         update=no
         depth=1
 
+    - name: Check library breakage
+      shell: |
+        test -e {{binary}} || exit 0
+        ldd {{binary}} |
+        grep '=> not found' || exit 0
+        rm -v {{binary}}
+        exit 1
+      register: libcheck
+      changed_when: libcheck|failed
+      failed_when: false
+      check_mode: no
+
     - name: Aura build package
       shell: |
         if {{binary}} -h >/dev/null 2>/dev/null
