@@ -5,6 +5,7 @@
     branch: auto-rotate-exif
     options: >
       exif=1
+      debug=1
   tasks:
     - name: Feh (image viewer) prereqs
       become: true
