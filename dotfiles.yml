@@ -1,5 +1,7 @@
 - name: Dotfiles
   hosts: laptops
+  vars:
+    dotfiles: '{{homedir}}/dotfiles'
   tasks:
     - name: Directories
       file: state=directory dest={{homedir}}/{{item}}
@@ -16,7 +18,7 @@
     - name: Clone dotfiles
       git:
         repo: https://github.com/benizi/dotfiles
-        dest: '{{homedir}}/dotfiles'
+        dest: '{{dotfiles}}'
         update: no
         remote: benizi
 
@@ -56,7 +58,7 @@
         src: '{{item.src}}'
         dest: '{{item.dest}}'
       with_items:
-        - src: '{{homedir}}/dotfiles/bin/google-drive-ocamlfuse-helper'
+        - src: '{{dotfiles}}/bin/google-drive-ocamlfuse-helper'
           dest: /usr/local/bin/google-drive
 
     - name: Root zsh
