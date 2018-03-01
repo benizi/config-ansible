@@ -47,7 +47,7 @@ class AuraModule(AnsibleModule):
     def get_bin_path(self, *args, **kwargs):
         origpath = os.environ['PATH']
         try:
-            user = os.environ['SUDO_USER'] or os.environ['USER']
+            user = os.environ.get('SUDO_USER', os.environ['USER'])
             os.environ['PATH'] = ''.join([
                 os.path.expanduser('~%s/.local/bin' % user),
                 os.pathsep,
