@@ -89,7 +89,7 @@
         - perl-json
         - perl-tk
         - perl-xml-twig
-      when: inventory_hostname in groups.arch
+      when: ansible_pkg_mgr == 'pacman'
 
     - name: Script prereqs (compiled)
       command: make {{item}}
