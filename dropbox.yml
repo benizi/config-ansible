@@ -3,7 +3,9 @@
   tasks:
     - name: Dropbox package
       become: true
-      archpkg: name=aur/dropbox
+      archpkg:
+        name: aur/dropbox
+        state: latest
 
     - name: Dropbox daemon install
       shell: echo y | dropbox start -i &&
