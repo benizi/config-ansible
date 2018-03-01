@@ -52,14 +52,14 @@
         - { src: dotfiles/.zsh/.zshenv, dest: .zshenv }
 
     # TODO: (3/3)
-    - name: Link dotfiles (global)
+    - name: Link dotfiles (mount helpers)
       file:
         state: link
-        src: '{{item.src}}'
-        dest: '{{item.dest}}'
+        src: '{{dotfiles}}/bin/{{item.src}}'
+        dest: '/usr/local/bin/{{item.dest}}'
       with_items:
-        - src: '{{dotfiles}}/bin/google-drive-ocamlfuse-helper'
-          dest: /usr/local/bin/google-drive
+        - { src: google-drive-ocamlfuse-helper, dest: google-drive }
+        - { src: go-mtpfs-helper, dest: mtpfs }
 
     - name: Root zsh
       become: true
