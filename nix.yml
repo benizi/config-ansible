@@ -3,6 +3,8 @@
   vars:
     prefix: /opt/nix
     version: 1.11.16
+    dirname: 'nix-{{version}}'
+    filename: '{{dirname}}.tar.xz'
 
   tasks:
     - name: Nix prereqs
@@ -17,19 +19,21 @@
       become: true
 
     - name: Nix package manager source
-      get_url: url=http://nixos.org/releases/nix/nix-{{version}}/nix-{{version}}.tar.xz
-        dest={{gitbuild}}/nix-{{version}}.tar.xz
+      get_url:
+        url: 'http://nixos.org/releases/nix/{{dirname}}/{{filename}}'
+        dest: '{{gitbuild}}/{{filename}}'
 
     - name: Nix package manager install
       shell: |
         set -e
         export PATH="{{prefix}}/bin:$PATH"
-        if hash nix-build 2>/dev/null && nix-build --version >/dev/null
+        if hash nix-build 2>/dev/null && nix-build --version |
+          grep -Fxq "nix-build (Nix) {{version}}"
         then echo ok ; exit 0
         fi
         cd {{gitbuild}}
-        rm -rf nix-{{version}}
-        tar xJf {{gitbuild}}/nix-{{version}}.tar.xz
+        rm -rf {{dirname}}
+        tar xJf {{gitbuild}}/{{filename}}
         cd nix-{{version}}
         ./configure --prefix={{prefix}}
         make
