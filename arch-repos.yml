@@ -3,8 +3,8 @@
   become: true
   vars:
     mirrorlist: /etc/pacman.d/mirrorlist
-    repos: [testing, core, extra, community, multilib]
-    deprecated: [atlassian]
+    repos: [core, extra, community, multilib]
+    deprecated: [atlassian, testing]
 
   tasks:
     - name: Ensure old repos are deleted
