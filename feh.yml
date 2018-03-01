@@ -20,6 +20,8 @@
         remote: benizi
         version: '{{branch}}'
         force: yes
+      register: git
+      changed_when: 'git|changed or force|default(False)'
       notify: install feh
 
   handlers:
