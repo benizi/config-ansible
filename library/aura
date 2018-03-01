@@ -95,14 +95,29 @@ def query(module, aura, pkg, state='present'):
         return False, False
 
 def install(module, aura, pkg, state, force=False):
+    info = {'pkg': pkg, 'state': state}
     installed = installed_version(module, aura, pkg)
+    info['versions'] = {'installed': installed}
     if installed and state == 'present':
-        module.exit_json(changed=False, msg='package already installed')
+        info['msg'] = 'package already installed'
+        module.exit_json(changed=False, **info)
     available = available_version(module, aura, pkg)
+    info['versions']['available'] = available
     if state == 'latest' and installed and installed == available:
-        module.exit_json(changed=False, msg='package already latest')
+        info['msg'] = 'package already latest'
+        module.exit_json(changed=False, **info)
     if module.check_mode:
-        module.exit_json(changed=True, msg="%s would be %s" % (pkg, state))
+        if not available:
+            info['failed'] = True
+            info['msg'] = "package %s not found" % pkg
+        else:
+            info['changed'] = True
+            if state == 'latest' and installed:
+                action = "upgraded (%s => %s)" % (installed, available)
+            else:
+                action = "installed"
+            info['msg'] = "%s would be %s" % (pkg, action)
+        module.exit_json(**info)
     # TODO: modify command when `force` is specified
     cmd = [aura, '-A', pkg, '--noconfirm']
     rc, out, err = module.run_command(cmd, check_rc=False)
