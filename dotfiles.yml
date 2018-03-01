@@ -1,5 +1,5 @@
 - name: Dotfiles
-  hosts: laptops
+  hosts: 'laptops:vps'
   vars:
     dotfiles: '{{homedir}}/dotfiles'
   tasks:
