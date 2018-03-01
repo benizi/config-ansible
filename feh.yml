@@ -3,6 +3,8 @@
   vars:
     build: '{{gitbuild}}/feh'
     branch: auto-rotate-exif
+    options: >
+      exif=1
   tasks:
     - name: Feh (image viewer) prereqs
       become: true
@@ -22,5 +24,9 @@
 
   handlers:
     - name: install feh
-      shell: make && make install
-        chdir={{build}}
+      shell: |
+        set -e
+        make {{options}}
+        make install
+      args:
+        chdir: '{{build}}'
