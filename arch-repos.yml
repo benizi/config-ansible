@@ -4,9 +4,15 @@
   vars:
     mirrorlist: /etc/pacman.d/mirrorlist
     repos: [testing, core, extra, community, multilib]
-    allrepos: '{{repos + ["atlassian"]}}'
+    deprecated: [atlassian]
 
   tasks:
+    - name: Ensure old repos are deleted
+      file:
+        name: '/etc/pacman.d/repo.{{item}}'
+        state: absent
+      with_items: '{{deprecated}}'
+
     - name: Disable all repos (no includes)
       lineinfile: dest=/etc/pacman.conf
         state=absent
@@ -24,39 +30,28 @@
         line='Include = /etc/pacman.d/ansible.repos'
       notify: Update packages
 
-    - name: Create files for each repo
-      copy: content='[{{item}}]\nInclude = {{mirrorlist}}\n'
-        dest=/etc/pacman.d/repo.{{item}}
-        owner=root
-        group=root
-        mode=0644
+    - name: Create file for each repo
+      copy:
+        content: |
+          [{{item}}]
+          Include = {{mirrorlist}}
+        dest: /etc/pacman.d/repo.{{item}}
+        owner: root
+        group: root
+        mode: 0644
       with_items: '{{repos}}'
       notify: Update packages
 
-    - name: Atlassian repo
-      copy: src=files/atlassian.repo
-        dest=/etc/pacman.d/repo.atlassian
-        owner=root
-        group=root
-        mode=0644
-      notify:
-        - Atlassian key
-        - Update packages
-
-    - name: All repos
-      template: src=templates/ansible.repos.j2
-        dest=/etc/pacman.d/ansible.repos
-        owner=root
-        group=root
-        mode=0644
+    - name: Master repo list
+      template:
+        src: templates/ansible.repos.j2
+        dest: /etc/pacman.d/ansible.repos
+        owner: root
+        group: root
+        mode: 0644
       notify: Update packages
 
   handlers:
-    - name: Atlassian key
-      shell: curl https://www.hipchat.com/keys/hipchat-linux.key |
-        GNUPGHOME=/etc/pacman.d/gnupg gpg --import
-        warn=no
-
     - name: Refresh keys
       command: pacman-key --refresh-keys
 
