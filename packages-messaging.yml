@@ -3,9 +3,5 @@
   become: true
   tasks:
     - name: Messaging
-      pacman: name={{item}}
-      with_items:
-        - qt5-multimedia # unspecified hipchat dep
-        - vlc # pulls in unspecified hipchat dep
-        - hipchat
-        - irssi
+      pacman:
+        name: irssi
