@@ -7,6 +7,7 @@
       with_items:
         - lxpanel
         - mesa-demos # glxinfo and glxgears
+        - notification-daemon # displays `notify-send` messages
         - parcellite
         - rofi # dmenu-replacement
         - xclip
