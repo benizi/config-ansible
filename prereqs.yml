@@ -42,7 +42,7 @@
     - name: X-related idiosyncratic prereqs
       pacman: name={{item}}
       with_items:
-        - unclutter
+        - unclutter # auto-hide mouse pointer
         - xbindkeys
         - xdotool
         - xorg-twm # fallback window manager
