@@ -19,7 +19,8 @@
       git:
         repo: https://github.com/benizi/dotfiles
         dest: '{{dotfiles}}'
-        update: no
+        update: yes
+        force: no
         remote: benizi
 
     # TODO: (1/3) set up symlinks using script in the dotfiles repo itself
