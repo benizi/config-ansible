@@ -16,7 +16,7 @@
         description: Dropbox daemon
         after: [lxpanel.service]
         exec:
-          start: [/usr/bin/dropbox]
+          start: ['{{homedir}}/.dropbox-dist/dropboxd']
           reload: [/bin/kill -HUP $MAINPID]
       - name: notification-daemon
         description: Notification daemon

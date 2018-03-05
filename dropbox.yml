@@ -1,13 +1,42 @@
 - name: Install Dropbox
   hosts: arch
+  vars:
+    dir: '{{homedir}}/.local/bin'
+    wrapper: '{{dir}}/dropbox'
+    script: '{{dir}}/dropbox.py'
+    script_url: 'https://www.dropbox.com/download?dl=packages/dropbox.py'
+    sha256: 'c4ec04afdc6524c614af5e26ad7ddd2eb9bb529fec444391d0b2d5327da06398'
   tasks:
-    - name: Dropbox package
+    - name: Ensure AUR version of Dropbox is removed
       become: true
-      archpkg:
-        name: aur/dropbox
-        state: latest
+      pacman:
+        name: dropbox
+        state: absent
+
+    - name: Dropbox headless wrapper
+      get_url:
+        url: '{{script_url}}'
+        dest: '{{script}}'
+        sha256sum: '{{sha256}}'
+
+    # Script doesn't work with Py3, so ensure it runs with Py2
+    - name: Dropbox headless wrapper python2 wrapper
+      copy:
+        content: |
+          #!/bin/sh
+          python2 "{{script}}" "$@"
+        dest: '{{wrapper}}'
+        mode: 0750
 
     - name: Dropbox daemon install
-      shell: echo y | dropbox start -i &&
+      shell: |
+        set -e
+        echo y | env -u DISPLAY dropbox start -i
         dropbox stop
-        creates={{homedir}}/.dropbox-dist
+      args:
+        creates: '{{homedir}}/.dropbox-dist'
+
+    - name: Dropbox prevent autostart
+      file:
+        dest: '{{homedir}}/.config/autostart/dropbox.desktop'
+        state: absent
