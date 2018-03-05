@@ -2,7 +2,7 @@
   hosts: arch
   vars:
     prefix: /opt/nix
-    version: 1.11.16
+    version: 2.0
     dirname: 'nix-{{version}}'
     filename: '{{dirname}}.tar.xz'
 
