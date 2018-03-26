@@ -1,9 +1,27 @@
 - name: AWS Tools
   hosts: arch
   become: true
+  vars:
+    packages:
+      # AWS Command Line Interface
+      - { name: awscli, scripts: [aws] }
+      # S3 library
+      - { name: boto3 }
   tasks:
-    - name: AWS CLI PIP
-      pip: name=awscli executable=pip2
+    - name: Python packages
+      pip:
+        name: '{{item.name}}'
+        virtualenv: '/opt/virtenv/{{item.name}}'
+        virtualenv_command: virtualenv2
+      with_items:
+        - '{{packages}}'
 
-    - name: Boto
-      pip: name=boto3 executable=pip2
+    - name: Packaged scripts
+      file:
+        state: link
+        src: '/opt/virtenv/{{item.0.name}}/bin/{{item.1}}'
+        dest: '/usr/bin/{{item.1}}'
+      with_subelements:
+        - '{{packages}}'
+        - scripts
+        - { skip_missing: true }
