@@ -45,6 +45,13 @@ import textwrap
 from ansible.module_utils.basic import AnsibleModule
 
 
+class Dict(dict):
+    """Super-simple "keys-are-attributes" dictionary object"""
+
+    def __init__(self, **kwargs):
+        self.__dict__ = kwargs
+
+
 class OSXPassword(object):
     """
     TODO DOCS
@@ -96,7 +103,7 @@ class OSXPassword(object):
            ('salt length', self.osx_salt_len, len(salt)),
            ('iterations', self.osx_iterations, iterations))
 
-        return dict(entropy=entropy, iterations=iterations, salt=salt)
+        return Dict(entropy=entropy, iterations=iterations, salt=salt)
 
     def b64decode(self, data):
         add = '=' * (-len(data) % 4)
@@ -123,12 +130,12 @@ class OSXPassword(object):
         # -int value.  The other two have to be merged in, since they're -data
         # values (not representable by the .plist JSON format).
         parsed = self.parse_hash()
-        start = dict(entropy='', iterations=parsed['iterations'], salt='')
+        start = Dict(entropy='', iterations=parsed.iterations, salt='')
         wrapped = self.module.jsonify({self.osx_hash_name: start})
         to_xml = ['plutil', '-convert', 'xml1', '-o', '-', '-']
         out = self.run_or_die(to_xml, data=wrapped)
-        out = self.modify_hash(out, 'entropy', parsed['entropy'])
-        out = self.modify_hash(out, 'salt', parsed['salt'])
+        out = self.modify_hash(out, 'entropy', parsed.entropy)
+        out = self.modify_hash(out, 'salt', parsed.salt)
         return out
 
     def store(self):
