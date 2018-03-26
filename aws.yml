@@ -7,6 +7,8 @@
       - { name: awscli, scripts: [aws] }
       # S3 library
       - { name: boto3 }
+      # Yet Another S3-backed File System
+      - { name: yas3fs, scripts: [yas3fs] }
   tasks:
     - name: Python packages
       pip:
