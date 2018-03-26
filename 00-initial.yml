@@ -75,6 +75,9 @@
      confirm: yes
 
   tasks:
+    # TODO: (1/4) Combine these, omitting attributes where not needed:
+    # `user` needs `shell` on OSX, needs `password` on !OSX
+    # `osxpassword` only needed on OSX
     - name: Create user
       user:
         name: bhaskell
@@ -82,6 +85,7 @@
         groups: '{{wheel_group}}'
         shell: /bin/zsh
 
+    # TODO: (2/4)
     - name: Set password
       osxpassword:
         user: bhaskell
@@ -99,10 +103,20 @@
 
   tasks:
     - name: My user
-      user: name=bhaskell
-        comment='Benjamin R. Haskell'
-        groups=wheel
-        password={{user_password}}
+      user:
+        name: bhaskell
+        comment: 'Benjamin R. Haskell'
+        groups: '{{wheel_group}}'
+        password: '{{user_password}}'
+        # TODO: (3/4)
+        shell: '"/bin/zsh" if inventory_hostname in groups.osx else omit'
+
+    # TODO: (4/4)
+    - name: Set password
+      osxpassword:
+        user: bhaskell
+        password: '{{user_password}}'
+      when: inventory_hostname in groups.osx
 
 - name: Per-Host SSH Key
   hosts: all
