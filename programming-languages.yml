@@ -1,5 +1,5 @@
 - name: Prog langs
-  hosts: laptops
+  hosts: 'laptops:arch'
   vars:
     rubybuild: '{{gitbuild}}/ruby-build'
   tasks:
