@@ -68,3 +68,26 @@
         - pstree
         - tmux
         - zsh
+
+    - name: Activate Remote Desktop
+      become: true
+      shell: |
+        set -e
+        if ps -a -x -o 'command=' |
+          awk -F/ '{print$NF}' |
+          grep -Fxq ARDAgent
+        then echo already ; exit 0
+        fi
+        {
+          echo $USER
+          stat -f %Su /usr/local/bin
+        } |
+        sort |
+        uniq |
+        paste -sd, - |
+        while read usernames
+        do /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart \
+          -activate -configure -access -on -users $usernames -privs -all -restart -agent
+        done
+      register: activated
+      changed_when: activated.stdout_lines != ["already"]
