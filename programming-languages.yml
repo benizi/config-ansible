@@ -69,6 +69,7 @@
       with_items:
         - python
         - python2
+        - python2-virtualenv # provides virtualenv2
 
     - name: PHP
       become: true
