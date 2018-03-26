@@ -6,6 +6,7 @@
       archpkg: name={{item}}
       with_items:
         - ack
+        - doxygen # documentation tool
         - dtach
         - jq
         - libxml2 # for xmllint
@@ -15,6 +16,7 @@
         - aur/rescuetime
         - rlwrap
         - screen
+        - python-sphinx # documentation tool
         - tidy
         - tmux
         - unoconv # deal with MS Office formats
