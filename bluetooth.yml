@@ -43,6 +43,7 @@
       with_items:
         - ini: [audio, General, Enable, 'Source,Sink,Media,Socket']
         - ini: [main, Policy, AutoEnable, 'true']
+        - ini: [input, General, UserspaceHID, 'true']
       notify: restart bluetoothd
 
     - name: Enable daemon options
