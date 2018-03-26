@@ -1,5 +1,5 @@
 - name: Inotify limits
-  hosts: laptops
+  hosts: linux
   become: true
   tasks:
     - name: Increase inotify user limit

@@ -16,6 +16,10 @@ osx
 [physical:children]
 laptops
 
+[linux:children]
+arch
+ec2
+
 [ansible]
 bhaskell-x240
 
