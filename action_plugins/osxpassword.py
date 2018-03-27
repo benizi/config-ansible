@@ -97,7 +97,7 @@ if testing():
 
     def do_test(name, password, hashed=None, salt=None):
         if not hashed:
-            kwargs = {'salt':salt} if salt else {}
+            kwargs = {'salt': salt} if salt else {}
             hashed = do_encrypt(password, digest.name, **kwargs)
         ok = digest.verify(password, hashed)
         tests[name] = results(hashed, ok)
