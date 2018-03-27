@@ -95,13 +95,15 @@ class OSXPassword(object):
         iterations = int(iter_str)
         salt = self.b64decode(salt64)
 
-        self.validate(
-           pw,
-           ('leading blank', '', blank),
-           ('hash type', self.passlib_hash_name, algo),
-           ('entropy length', self.osx_entropy_len, len(entropy)),
-           ('salt length', self.osx_salt_len, len(salt)),
-           ('iterations', self.osx_iterations, iterations))
+        expectations = [
+            ('leading blank', '', blank),
+            ('hash type', self.passlib_hash_name, algo),
+            ('entropy length', self.osx_entropy_len, len(entropy)),
+            ('salt length', self.osx_salt_len, len(salt)),
+            ('iterations', self.osx_iterations, iterations),
+        ]
+
+        self.validate(pw, *expectations)
 
         return Dict(entropy=entropy, iterations=iterations, salt=salt)
 
@@ -114,7 +116,8 @@ class OSXPassword(object):
 
     def modify_hash(self, xml, key, data):
         path = '.'.join([self.osx_hash_name, key])
-        cmd = ['plutil', '-replace', path, '-data', self.b64encode(data), '-o', '-', '-']
+        encoded = self.b64encode(data)
+        cmd = ['plutil', '-replace', path, '-data', encoded, '-o', '-', '-']
         return self.run_or_die(cmd, data=xml)
 
     def shadow_data_plist(self):
@@ -198,16 +201,16 @@ class OSXPassword(object):
 
 def main():
     module = AnsibleModule(
-        argument_spec = dict(
+        argument_spec=dict(
             password=dict(default=None, type='str', no_log=True),
             user=dict(default=None, type='str'),
             salt=dict(default=None, type='str'),
         ),
-        supports_check_mode=True
-    )
+        supports_check_mode=True)
     osxpassword = OSXPassword(module)
     out = osxpassword.store()
     module.exit_json(out=out)
+
 
 if __name__ == '__main__':
     main()
