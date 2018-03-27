@@ -176,9 +176,8 @@ class OSXPassword(object):
         delete = ['dscl', '.', 'delete', '/Users/%s' % user, 'ShadowHashData']
         dsimport = ['dsimport', temp_filename, '/Local/Default', 'A']
 
-        out = self.run_or_die(delete)
-        out = self.run_or_die(dsimport)
-        return (rc, out, err)
+        self.run_or_die(delete)
+        return self.run_or_die(dsimport)
 
     def run(self, cmd, data=None):
         kwargs = dict(use_unsafe_shell=False, binary_data=True)
