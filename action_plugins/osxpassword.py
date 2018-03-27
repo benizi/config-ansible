@@ -1,8 +1,20 @@
-import ansible
-from ansible import utils
-from ansible.errors import AnsibleError
-from ansible.plugins.action import ActionBase
-from ansible.utils.encrypt import do_encrypt
+def testing():
+    return __name__ == '__main__'
+
+
+try:
+    import ansible
+    from ansible import utils
+    from ansible.errors import AnsibleError
+    from ansible.plugins.action import ActionBase
+    from ansible.utils.encrypt import do_encrypt
+except:
+    if not testing():
+        raise
+
+    def do_encrypt(plain, digest, **kwargs):
+        return passlib.hash.getattr(digest).encrypt(plain, **kwargs)
+
 
 try:
     import passlib
@@ -60,7 +72,7 @@ class ActionModule(ActionBase):
             task_vars=task_vars)
 
 
-if __name__ == '__main__':
+if testing():
     from base64 import b64decode
     from os import environ
     from json import dumps
