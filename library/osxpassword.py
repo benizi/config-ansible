@@ -171,16 +171,13 @@ class OSXPassword(object):
         tmp = fdopen(tmpfd, 'w')
         tmp.write(dsimport_file)
         tmp.close()
+        self.module.add_cleanup_file(temp_filename)
 
         delete = ['dscl', '.', 'delete', '/Users/%s' % user, 'ShadowHashData']
         dsimport = ['dsimport', temp_filename, '/Local/Default', 'A']
 
         out = self.run_or_die(delete)
         out = self.run_or_die(dsimport)
-        try:
-            unlink(temp_filename)
-        except:
-            pass # TODO: error msg?
         return (rc, out, err)
 
     def run(self, cmd, data=None):
