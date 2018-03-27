@@ -23,6 +23,12 @@ options:
         default: current user
         description:
             - User for whom the hashed password is being stored/extracted.
+    hash:
+        required: false
+        aliases: [algorithm]
+        default: SALTED-SHA512-PBKDF2
+        description:
+            - Type of hash used for the password.
     salt:
         required: false
         default: extracted from password
@@ -66,6 +72,7 @@ class OSXPassword(object):
     def __init__(self, module):
         self.module = module
         self.password = module.params['password']
+        self.hash = module.params['hash'] or self.osx_hash_name
         self.salt = module.params['salt']
         self.user = module.params['user'] or getpwuid(getuid())[0]
 
@@ -205,6 +212,11 @@ def main():
             password=dict(default=None, type='str', no_log=True),
             user=dict(default=None, type='str'),
             salt=dict(default=None, type='str'),
+            hash=dict(
+                default=None,
+                aliases=['algorithm'],
+                choices=['SALTED-SHA512-PBKDF2'],
+                type='str'),
         ),
         supports_check_mode=True)
     osxpassword = OSXPassword(module)
