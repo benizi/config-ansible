@@ -169,7 +169,7 @@ class OSXPassword(object):
 
         tmpfd, temp_filename = mkstemp()
         tmp = fdopen(tmpfd, 'w')
-        tmp.write(dsimport_file + recordsep)
+        tmp.write(dsimport_file)
         tmp.close()
 
         delete = ['dscl', '.', 'delete', '/Users/%s' % user, 'ShadowHashData']
@@ -184,7 +184,7 @@ class OSXPassword(object):
         return (rc, out, err)
 
     def run(self, cmd, data=None):
-        kwargs = dict(use_unsafe_shell=False)
+        kwargs = dict(use_unsafe_shell=False, binary_data=True)
         if data:
             kwargs['data'] = data
         return self.module.run_command(cmd, **kwargs)
