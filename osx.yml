@@ -66,6 +66,7 @@
         - imagemagick
         - p7zip
         - pstree
+        - rsync # system version was 2.6.9, ©2006
         - tmux
         - zsh
 
