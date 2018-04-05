@@ -1,13 +1,18 @@
 - name: Heroku Toolbelt
   hosts: arch
   vars:
-    cache: '{{gitbuild}}/heroku-client.tar.gz'
+    cache: '{{gitbuild}}/{{targz}}'
     dir: /usr/local/heroku
+    os: linux
+    arch: x64
+    targz: 'heroku-cli-{{os}}-{{arch}}.tar.gz'
+    url: 'https://cli-assets.heroku.com/heroku-cli/channels/stable/{{targz}}'
 
   tasks:
     - name: Heroku CLI download
-      get_url: url=https://s3.amazonaws.com/assets.heroku.com/heroku-client/heroku-client.tgz
-        dest={{cache}}
+      get_url:
+        url: '{{url}}'
+        dest: '{{cache}}'
 
     - name: Heroku CLI directory
       file: dest={{dir}} state=directory
