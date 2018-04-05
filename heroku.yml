@@ -18,8 +18,10 @@
       file: dest={{dir}} state=directory
 
     - name: Heroku CLI install
-      command: tar -C {{dir}} --strip-components 1 -xf {{cache}}
-        creates={{dir}}/bin/heroku
+      unarchive:
+        src: '{{cache}}'
+        dest: '{{dir}}'
+        extra_opts: ['--strip-components', '1']
 
     - name: Heroku CLI plugins
       command: heroku plugins:install {{item.git}}
