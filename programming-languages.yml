@@ -30,6 +30,11 @@
       register: nix_ncurses
       changed_when: nix_ncurses.stdout != ""
 
+    - name: Old GCC (prereq for some Ruby versions)
+      pacman:
+        name: gcc6
+      become: true
+
     - name: Install langs
       shell: verman {{item.lang}} installed 2>/dev/null | grep -Fxq {{item.version}} ||
         verman {{item.lang}} install {{item.version}} | with-python2 sh
