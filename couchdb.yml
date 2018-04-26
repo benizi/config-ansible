@@ -53,7 +53,7 @@
         cd {{build}}
         sh ./bootstrap
         eval "$(VERMAN_EVAL=1 verman erlang use 17.5.1)"
-        ./configure --prefix={{prefix}}
+        ./configure --prefix={{prefix}} --disable-docs
         grep -rl _BSD_SOURCE . | xargs sed -i 's/_BSD_SOURCE/_DEFAULT_SOURCE/g'
         touch THANKS
         make
