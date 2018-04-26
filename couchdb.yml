@@ -45,20 +45,23 @@
         remote=apache
 
     - name: CouchDB install
-      shell: rm -rf {{build}} &&
-        mkdir {{build}} &&
-        git archive {{version}} | tar -C {{build}} -x &&
-        cd {{build}} &&
-        sh ./bootstrap &&
-        eval "$(VERMAN_EVAL=1 verman erlang use 17.5.1)" &&
-        ./configure --prefix={{prefix}} &&
-        grep -rl _BSD_SOURCE . | xargs sed -i 's/_BSD_SOURCE/_DEFAULT_SOURCE/g' &&
-        touch THANKS &&
-        make &&
+      shell: |
+        set -e
+        rm -rf {{build}}
+        mkdir {{build}}
+        git archive {{version}} | tar -C {{build}} -x
+        cd {{build}}
+        sh ./bootstrap
+        eval "$(VERMAN_EVAL=1 verman erlang use 17.5.1)"
+        ./configure --prefix={{prefix}}
+        grep -rl _BSD_SOURCE . | xargs sed -i 's/_BSD_SOURCE/_DEFAULT_SOURCE/g'
+        touch THANKS
+        make
         make install
-        chdir={{git}}
-        creates={{exe}}
-        warn=no
+      args:
+        chdir: '{{git}}'
+        creates: '{{exe}}'
+        warn: no
       notify: set couchdb permissions
 
     - name: CouchDB service file
