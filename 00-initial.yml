@@ -109,7 +109,7 @@
         groups: '{{wheel_group}}'
         password: '{{user_password}}'
         # TODO: (3/4)
-        shell: '"/bin/zsh" if inventory_hostname in groups.osx else omit'
+        shell: '{{"/bin/zsh" if inventory_hostname in groups.osx else omit}}'
 
     # TODO: (4/4)
     - name: Set password
