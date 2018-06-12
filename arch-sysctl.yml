@@ -1,8 +1,0 @@
-- name: Arch sysctl compatibility
-  hosts: arch
-  become: true
-  tasks:
-    - name: Link file to systemd location
-      file: state=link
-        src=/etc/sysctl.conf
-        dest=/etc/sysctl.d/99-sysctl.conf
