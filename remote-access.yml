@@ -4,6 +4,7 @@
     tag: add-audio-pause-x11
     cache: '{{gitbuild}}/synergy-{{tag}}.tar.gz'
     sha256sum: 8062a2dcbab760dd561e56e4487fd4ea77b8475ccf2ed80c3b6c6d47fa1de778
+    prefix: '{{homedir}}/.local/bin'
 
   tasks:
     - name: VNC and RDP
@@ -35,8 +36,8 @@
         set -- -DSYNERGY_BUILD_LEGACY_{GUI,SERVICE,INSTALLER}=OFF
         cmake "$@" -g1 ../synergy-{{tag}}
         make
-        mv bin/synergy{c,s} {{homedir}}/bin.local/
+        mv bin/synergy{c,s} {{prefix}}
       args:
         chdir: /tmp
-        creates: '{{homedir}}/bin.local/synergyc'
+        creates: '{{prefix}}/synergyc'
         warn: no
