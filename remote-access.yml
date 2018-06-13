@@ -32,9 +32,10 @@
         mkdir build-synergy
         tar zxf {{cache}}
         cd build-synergy
-        cmake -g1 ../synergy-{{tag}}
+        set -- -DSYNERGY_BUILD_LEGACY_{GUI,SERVICE,INSTALLER}=OFF
+        cmake "$@" -g1 ../synergy-{{tag}}
         make
-        mv bin/synergy{c,d,s} {{homedir}}/bin.local/
+        mv bin/synergy{c,s} {{homedir}}/bin.local/
       args:
         chdir: /tmp
         creates: '{{homedir}}/bin.local/synergyc'
