@@ -26,6 +26,24 @@
         - networkmanager
         - network-manager-applet
 
+    - name: NetworkManager no notifications
+      shell: |
+        set -e
+        nm=org.gnome.nm-applet
+        gsettings list-keys $nm |
+        grep 'disable-.*-notifications' |
+        while read setting
+        do
+          if ! $(gsettings get $nm $setting)
+          then
+            echo $setting
+            gsettings set $nm $setting true
+          fi
+        done
+      register: notifications
+      changed_when: notifications.stdout != ""
+      become: false
+
     - name: NetworkManager Polkit rule
       copy: src=files/networkmanager.polkit.rules
         dest={{rulesdir}}/20-networkmanager.rules
