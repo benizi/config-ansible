@@ -6,6 +6,7 @@
       pacman: name={{item}}
       with_items:
         - kodi
+        - libdvdcss # DVD decryption
         - mencoder # split from `mplayer`
         - minidlna
         - mplayer
