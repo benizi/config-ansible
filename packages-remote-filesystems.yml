@@ -14,6 +14,17 @@
         - smbclient
         - sshfs
 
+    - name: NBD package
+      pacman:
+        name: nbd # network block device
+      notify: restart nbd
+
+    - name: NBD service
+      service:
+        name: nbd
+        state: started
+        enabled: yes
+
     - name: iSCSI Target package
       aura:
         name: targetcli-fb
@@ -29,4 +40,9 @@
     - name: restart target
       service:
         name: target
+        state: restarted
+
+    - name: restart nbd
+      service:
+        name: nbd
         state: restarted
