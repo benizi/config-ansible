@@ -10,5 +10,6 @@
         - mencoder # split from `mplayer`
         - minidlna
         - mplayer
+        - mpv # mplayer fork
         - qt5-multimedia # common dependency
         - vlc
