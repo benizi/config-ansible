@@ -59,6 +59,7 @@
 - include: mosh.yml
 - include: pepperflash.yml
 - include: user-services.yml
+- include: dunst-notifier.yml
 - include: feh.yml
 - include: imv.yml
 - include: remote-access.yml

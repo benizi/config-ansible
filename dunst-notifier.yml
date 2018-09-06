@@ -1,0 +1,49 @@
+- name: Dunst notifier
+  hosts: arch
+  vars:
+    rcdir: '{{homedir}}/.config/dunst'
+    rcfile: '{{rcdir}}/dunstrc'
+    template: '/usr/share/dunst/dunstrc'
+
+  tasks:
+    - name: Dunst (notifier) package
+      become: true
+      pacman:
+        name: dunst
+
+    - name: Dunst (notifier) config dir
+      file:
+        state: directory
+        dest: '{{rcdir}}'
+
+    - name: Dunst (notifier) config
+      copy:
+        dest: '{{rcfile}}'
+        src: '{{template}}'
+        force: no
+      notify: restart dunst
+
+    - name: Dunst (notifier) config mods
+      ini_file:
+        dest: '{{rcfile}}'
+        section: '{{item.0}}'
+        option: '{{item.1}}'
+        value: '{{item.2}}'
+      with_items:
+        - [[global, font, 'Bitstream Vera Sans Mono 12']]
+        - [[global, browser, open]]
+      notify: restart dunst
+
+    - name: Dunst (notifier) service
+      systemd:
+        name: dunst
+        user: true
+        enabled: true
+        state: started
+
+  handlers:
+    - name: restart dunst
+      systemd:
+        name: dunst
+        user: true
+        state: restarted
