@@ -1,6 +1,7 @@
 - name: User services
   hosts: arch
   vars:
+    removed: [notification-daemon, xfce4-notifyd]
     services:
       - name: lxpanel
         description: LXPanel dock
@@ -18,10 +19,6 @@
         exec:
           start: ['{{homedir}}/.dropbox-dist/dropboxd']
           reload: [/bin/kill -HUP $MAINPID]
-      - name: notification-daemon
-        description: Notification daemon
-        exec:
-          start: [/usr/lib/notification-daemon-1.0/notification-daemon]
       - name: nm-applet
         description: NetworkManager applet
         exec:
@@ -35,6 +32,17 @@
   tasks:
     - name: User service dir
       file: dest={{user_systemd}} state=directory recurse=yes
+
+    - name: Ensure old services are removed
+      systemd:
+        user: true
+        name: '{{item}}'
+        enabled: no
+        state: stopped
+        daemon_reload: yes
+      with_items: '{{removed}}'
+      # never fail, e.g., if the service isn't even installed
+      failed_when: False
 
     - name: Services
       template:
