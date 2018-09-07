@@ -2,6 +2,10 @@
   hosts: 'laptops:&arch'
   vars:
     rubybuild: '{{gitbuild}}/ruby-build'
+    cljtoolsversion: 1.9.0.391
+    cljtoolssha: |
+      9f49ceefb34b9d0effcc410578d4985779f4f2d136fc33ae6cb08684eeb2409c
+    cljtoolsfile: clojure-tools-{{cljtoolsversion}}.tar.gz
   tasks:
     - name: Install Verman
       git: repo=gh:benizi/verman
@@ -104,6 +108,47 @@
     - name: Clojure Boot initial install
       command: boot
         creates={{homedir}}/.boot/boot.properties
+
+    - name: Clojure (clj) download
+      get_url:
+        url: https://download.clojure.org/install/{{cljtoolsfile}}
+        sha256sum: '{{cljtoolssha}}'
+        dest: '{{gitbuild}}/{{cljtoolsfile}}'
+
+    - name: Clojure (clj) verman dirs
+      file:
+        dest: /opt/clj/{{item.0}}/{{cljtoolsversion}}/{{item.1}}
+        state: directory
+      with_items:
+        - [[unpack, '']]
+        - [[versions, lib]]
+        - [[versions, bin]]
+        - [[versions, share/man/man1]]
+        - [[versions, lib/clojure/libexec]]
+
+    - name: Clojure (clj) unpack
+      shell: |
+        set -e
+        cd /opt/clj/unpack/{{cljtoolsversion}}
+        prefix="/opt/clj/versions/{{cljtoolsversion}}"
+        tar xf {{gitbuild}}/{{cljtoolsfile}}
+        for fullpath in \
+          lib/clojure/deps.edn \
+          lib/clojure/example-deps.edn \
+          lib/clojure/libexec/clojure-tools-{{cljtoolsversion}}.jar \
+          bin/clojure \
+          bin/clj \
+          share/man/man1/clojure.1 \
+          share/man/man1/clj.1
+        do
+          file="$(basename "$fullpath")"
+          dir="$(dirname "$fullpath")"
+          dest="$prefix/$dir/$file"
+          cp "clojure-tools/$file" "$dest"
+          test "$dir" = bin && x=x || x=
+          chmod u+w,ugo+r$x "$dest"
+        done
+        sed -i -e 's@=PREFIX@="'"$prefix/lib/clojure"'"@' "$prefix/bin/clojure"
 
     - name: Lua
       become: true
