@@ -1,18 +1,15 @@
 - name: User services
   hosts: arch
   vars:
-    removed: [notification-daemon, xfce4-notifyd]
+    removed:
+      - notification-daemon
+      - parcellite
+      - xfce4-notifyd
     services:
       - name: lxpanel
         description: LXPanel dock
         exec:
           start: [/bin/lxpanel]
-      - name: parcellite
-        description: Parcellite (clipboard manager)
-        exec:
-          start: [/bin/parcellite -d]
-        extra:
-          - StandardError=null
       - name: dropbox
         description: Dropbox daemon
         after: [lxpanel.service]
