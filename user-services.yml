@@ -14,8 +14,10 @@
         description: Dropbox daemon
         after: [lxpanel.service]
         exec:
-          start: ['{{homedir}}/.dropbox-dist/dropboxd']
+          start: ['/usr/local/bin/fakeext4 {{homedir}}/.dropbox-dist/dropboxd']
           reload: [/bin/kill -HUP $MAINPID]
+        env:
+          LD_PRELOAD: /usr/local/lib/libfakeext4.so
       - name: nm-applet
         description: NetworkManager applet
         exec:
@@ -25,6 +27,7 @@
         exec:
           start: [/bin/mpd --verbose --stderr --no-daemon]
     user_systemd: '{{homedir}}/.config/systemd/user'
+    with_env: '{{services | selectattr("env", "defined") | list}}'
 
   tasks:
     - name: User service dir
@@ -40,6 +43,38 @@
       with_items: '{{removed}}'
       # never fail, e.g., if the service isn't even installed
       failed_when: False
+
+    - name: Env override dirs
+      file:
+        dest: '{{user_systemd}}/{{item.name}}.service.d'
+        state: directory
+      with_items: '{{with_env}}'
+
+    - name: Env override config files
+      template:
+        src: templates/user-service.conf.j2
+        dest: '{{user_systemd}}/{{item.name}}.service.d/environment.conf'
+        mode: 0644
+      with_items: '{{with_env}}'
+      notify:
+        - reload user services
+
+    - name: Dropbox wrapper (source)
+      git:
+        repo: 'gh:benizi/libfakeext4'
+        dest: '{{gitbuild}}/libfakeext4'
+        remote: benizi
+
+    - name: Dropbox wrapper (build)
+      shell: |
+        set -e
+        cd {{gitbuild}}/libfakeext4
+        mkdir -p build
+        cd build
+        cmake ..
+        make install
+      args:
+        creates: /usr/local/bin/fakeext4
 
     - name: Services
       template:
