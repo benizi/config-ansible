@@ -28,6 +28,9 @@
           start: [/bin/mpd --verbose --stderr --no-daemon]
     user_systemd: '{{homedir}}/.config/systemd/user'
     with_env: '{{services | selectattr("env", "defined") | list}}'
+    x_loop_control: &loopctl
+      loop_control:
+        label: '{{item.name}}/{{item.description}}'
 
   tasks:
     - name: User service dir
@@ -49,6 +52,7 @@
         dest: '{{user_systemd}}/{{item.name}}.service.d'
         state: directory
       with_items: '{{with_env}}'
+      <<: *loopctl
 
     - name: Env override config files
       template:
@@ -56,6 +60,7 @@
         dest: '{{user_systemd}}/{{item.name}}.service.d/environment.conf'
         mode: 0644
       with_items: '{{with_env}}'
+      <<: *loopctl
       notify:
         - reload user services
 
@@ -82,6 +87,7 @@
         dest: '{{user_systemd}}/{{item.name}}.service'
         mode: 0644
       with_items: '{{services}}'
+      <<: *loopctl
       register: service_files
       notify:
         - reload user services
