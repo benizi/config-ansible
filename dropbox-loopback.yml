@@ -1,0 +1,84 @@
+- name: Dropbox ext4 loopback filesystem
+  hosts: arch
+  vars:
+    loopfile: '{{homedir}}/loop.Dropbox'
+    mountpoint: '{{homedir}}/Dropbox'
+    tempbackup: '{{homedir}}/old.Dropbox'
+
+    # return true if mounted
+    is_mounted: 'mountpoint "{{mountpoint}}" >/dev/null 2>/dev/null'
+
+    # echo OK and exit if already mounted
+    bail_if_mounted: |
+      ! {{is_mounted}} || exec echo OK
+
+    # mark as unchanged when process exits with only the output "OK"
+    x_ok_changed: &ok_changed
+      register: cmdresult
+      changed_when: 'cmdresult.stdout_lines != ["OK"]'
+      failed_when: cmdresult.rc != 0
+
+  tasks:
+    - name: Ensure mountpoint exists
+      file:
+        dest: '{{mountpoint}}'
+        state: directory
+
+    - name: Check for failed run
+      <<: *ok_changed
+      shell: |
+        test -d "{{tempbackup}}" || exec echo OK
+        echo "{{tempbackup}} directory exists. Previous run failed?"
+        false
+
+    - name: Move existing Dropbox to migration location
+      <<: *ok_changed
+      shell: |
+        set -e
+        {{bail_if_mounted}}
+        test -d "{{mountpoint}}" || exec echo OK
+        find "{{mountpoint}}" ! -empty | grep -q . || exec echo OK
+        mv "{{mountpoint}}" "{{tempbackup}}"
+        mkdir -p "{{mountpoint}}"
+        for cmd in chown chmod
+        do sudo $cmd --reference="{{tempbackup}}" "{{mountpoint}}"
+        done
+
+    - name: Create backing file
+      <<: *ok_changed
+      shell: |
+        set -e
+        {{bail_if_mounted}}
+        if ! test -f "{{loopfile}}"
+        then
+          dd of="{{loopfile}}" bs=1G seek=7 count=0
+          mkfs.ext4 "{{loopfile}}"
+        fi
+        test -f "{{loopfile}}"
+
+    - name: Add entry to /etc/fstab
+      become: true
+      mount:
+        path: '{{mountpoint}}'
+        src: '{{loopfile}}'
+        fstype: ext4
+        opts: 'loop,relatime'
+        state: mounted
+
+    - name: Move migration files into place
+      <<: *ok_changed
+      shell: |
+        set -e
+        {{is_mounted}}
+        test -d "{{tempbackup}}" || exec echo OK
+        if ! test "$(stat -c %u "{{mountpoint}}")" = "$(id -u)"
+        then
+          echo needed to set permissions/ownership
+          for cmd in chown chmod
+          do sudo $cmd --reference="{{tempbackup}}" "{{mountpoint}}" "{{mountpoint}}/lost+found"
+          done
+        fi
+        {{is_mounted}}
+        rsync --remove-source-files -PHAXvax "{{tempbackup}}/" "{{mountpoint}}/"
+        ! test -d "{{tempbackup}}" || find "{{tempbackup}}" -type d -empty -delete
+        ! test -d "{{tempbackup}}" || echo FAILED TO DELETE
