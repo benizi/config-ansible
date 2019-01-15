@@ -14,10 +14,8 @@
         description: Dropbox daemon
         after: [lxpanel.service]
         exec:
-          start: ['/usr/local/bin/fakeext4 {{homedir}}/.dropbox-dist/dropboxd']
+          start: ['{{homedir}}/.dropbox-dist/dropboxd']
           reload: [/bin/kill -HUP $MAINPID]
-        env:
-          LD_PRELOAD: /usr/local/lib/libfakeext4.so
       - name: nm-applet
         description: NetworkManager applet
         exec:
