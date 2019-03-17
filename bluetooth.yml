@@ -5,17 +5,24 @@
     confdir: /etc/systemd/system/bluetooth.service.d
     dbusconf: /etc/dbus-1/system-local.conf
   tasks:
-    # Remove `bluez-utils-compat`
-    - name: Remove conflicting package
-      pacman:
-        name: bluez-utils-compat
-        state: absent
+    # Remove old `bluez-utils` (exact-matched name), but not
+    # `bluez-utils-compat`, which "provides" `bluez-utils`
+    - name: Remove conflicting packages
+      shell: |
+        set -e -x
+        pacman -Qi bluez-utils 2>/dev/null |
+        grep -qx 'Name *: *bluez-utils' ||
+        exit 0
+        pacman -R --noconfirm bluez-utils
+      register: old_bluez_utils
+      changed_when: old_bluez_utils.stdout != ""
+      failed_when: old_bluez_utils.rc != 0
 
     - name: Bluetooth packages
       archpkg: name={{item}}
       with_items:
         - bluez
-        - bluez-utils # CLI tools (btmgmt)
+        - aur/bluez-utils-compat # = `bluez-utils` with `--enable-deprecated`
         - obexftp
         - pulseaudio-bluetooth
         - python-dbus
