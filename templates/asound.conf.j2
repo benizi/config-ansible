@@ -1,0 +1,26 @@
+# Use PulseAudio by default
+{% for dir in nix_alsa_dir.stdout_lines %}
+pcm_type.pulse {
+  lib {{ dir }}/lib/alsa-lib/libasound_module_pcm_pulse.so
+}
+{% endfor %}
+pcm.!default {
+  type pulse
+  fallback "sysdefault"
+  hint {
+    show on
+    description "Default ALSA Output (currently PulseAudio Sound Server)"
+  }
+}
+
+{% for dir in nix_alsa_dir.stdout_lines %}
+ctl_type.pulse {
+  lib {{ dir }}/lib/alsa-lib/libasound_module_ctl_pulse.so
+}
+{% endfor %}
+ctl.!default {
+  type pulse
+  fallback "sysdefault"
+}
+
+# vim{# #}:set ft=alsaconf:

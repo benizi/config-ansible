@@ -22,6 +22,23 @@
         state: started
         enabled: yes
 
+    - name: ALSA config for Nixpkgs (detect)
+      shell: |
+        nix-env -qas --out-path alsa-plugins 2>/dev/null |
+        awk '/^.P/ { dir = $NF } END { if (dir) print dir }'
+      register: nix_alsa_dir
+      changed_when: False
+
+    - name: ALSA config for Nixpkgs (file)
+      become: true
+      template:
+        src: templates/asound.conf.j2
+        dest: /etc/asound.conf
+        owner: root
+        group: root
+        mode: 0644
+      when: nix_alsa_dir.stdout != ""
+
   handlers:
     - name: restart pulseaudio
       systemd:
