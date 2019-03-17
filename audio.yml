@@ -1,5 +1,5 @@
 - name: Audio
-  hosts: physical
+  hosts: 'physical:&arch'
   tasks:
     - name: PulseAudio network config
       lineinfile: dest=/etc/pulse/default.pa
