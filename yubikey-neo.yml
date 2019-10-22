@@ -2,24 +2,22 @@
   hosts: yubikey
   become: true
   tasks:
-    - name: Yubikey manager prereqs
+    - name: Yubikey manager and personalization
       pacman: name={{item}}
       with_items:
         - libu2f-host
-        - libykneomgr
         - python2-crypto
-        - python2-pyside-tools
-        - yubikey-personalization
-
-    - name: Install Yubikey manager
-      aura: name={{item}}
-      with_items:
-        - yubikey-neo-manager-git
-        - yubikey-piv-tool
-        - yubikey-piv-manager
+        - yubikey-manager-qt
+        - yubikey-personalization-gui
 
     - name: CCID manager
-      pacman: name=pcsclite
+      pacman:
+        name: pcsclite
+      register: ccid_manager
 
     - name: CCID manager service
-      service: name=pcscd state=started enabled=yes
+      systemd:
+        name: pcscd.socket
+        state: '{{"restarted" if ccid_manager is changed else "started"}}'
+        enabled: yes
+        daemon_reload: '{{ccid_manager is changed}}'
